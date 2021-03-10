@@ -1,4 +1,4 @@
-name: 'Install CUDA'
+name: 'cuda'
 description: 'Installs CUDA and adds it to PATH'
 inputs:
   cuda:  # id of input
