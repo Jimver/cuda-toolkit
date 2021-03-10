@@ -1,2 +1,2 @@
+* text eol=lf
 dist/** -diff linguist-generated=true
-* text=auto eol=lf # Needed for Windows CI failing on prettier check: https://github.com/prettier/prettier/issues/7825#issuecomment-602171740
