@@ -5,11 +5,7 @@ inputs:
   cuda:
     description: 'Cuda version'
     required: false
-    default: '11.0.167'
-  visual_studio:
-    description: 'Visual Studio version (Windows only)'
-    required: false
-    default: 'Visual Studio 16 2019'
+    default: '11.2.1'
 runs:
   using: 'node12'
   main: dist/index.js
