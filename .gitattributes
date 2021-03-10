@@ -1,2 +1,2 @@
-* text eol=lf
+* text eol=lf # Force LF line endings for prettier
 dist/** -diff linguist-generated=true
