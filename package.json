@@ -2,7 +2,7 @@
   "name": "cuda",
   "version": "0.1.0",
   "description": "GitHub Action to install CUDA",
-  "main": "lib/main.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "format": "prettier --write **/*.ts jest.config.js",
