@@ -6,17 +6,16 @@ inputs:
     required: false
     default: '11.0.167'
   visual_studio:
-    description: 'Visual Studio version (Windows only)
+    description: 'Visual Studio version (Windows only)'
     required: false
     default: 'Visual Studio 16 2019'
 runs:
   using: "composite"
   steps:
-    - run: echo Cuda version: ${{ inputs.cuda }}.
+    - run: echo Cuda version ${{ inputs.cuda }}.
       shell: bash
-    - run: echo Visual Studio version: ${{ inputs.visual_studio }}.
+    - run: echo Visual Studio version ${{ inputs.visual_studio }}.
       shell: bash
-    - run: ${{ github.action_path }}/scripts/goodbye.sh
     - name: Install CUDA (Windows)
       if: runner.os == 'Windows'
       env:
@@ -34,3 +33,4 @@ runs:
           echo "$env:CUDA_PATH_VX_Y=$env:CUDA_PATH" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "$env:CUDA_PATH/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         }
+        
