@@ -46,7 +46,6 @@ function download(version) {
     return __awaiter(this, void 0, void 0, function* () {
         // First try to find tool with desired version in tool cache
         const toolName = 'cuda_installer';
-        core.debug(`At toolcache`);
         const toolPath = tc.find(toolName, `${version}`);
         if (toolPath) {
             // Tool is already in cache
@@ -170,9 +169,9 @@ function getLinks() {
         const osType = yield platform_1.getOs();
         switch (osType) {
             case platform_1.OSType.windows:
-                return windowsLinks_1.windowsLinks.Instance;
+                return windowsLinks_1.WindowsLinks.Instance;
             case platform_1.OSType.linux:
-                return linuxLinks_1.linuxLinks.Instance;
+                return linuxLinks_1.LinuxLinks.Instance;
         }
     });
 }
@@ -187,7 +186,7 @@ exports.getLinks = getLinks;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.linuxLinks = void 0;
+exports.LinuxLinks = void 0;
 const semver_1 = __webpack_require__(1383);
 const cudaVersionStringToURLStringLinux = new Map([
     [
@@ -214,7 +213,7 @@ const cudaVersionStringToURLStringLinux = new Map([
 /**
  * Singleton class for windows links.
  */
-class linuxLinks {
+class LinuxLinks {
     // Private constructor to prevent instantiation
     constructor() {
         // Map of cuda SemVer version to download URL
@@ -238,7 +237,7 @@ class linuxLinks {
         return urlString;
     }
 }
-exports.linuxLinks = linuxLinks;
+exports.LinuxLinks = LinuxLinks;
 
 
 /***/ }),
@@ -249,7 +248,7 @@ exports.linuxLinks = linuxLinks;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.windowsLinks = void 0;
+exports.WindowsLinks = void 0;
 const semver_1 = __webpack_require__(1383);
 // 11.2.1   https://developer.download.nvidia.com/compute/cuda/11.2.1/local_installers/cuda_11.2.1_461.09_win10.exe
 // 10.2     https://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_441.22_win10.exe
@@ -294,7 +293,7 @@ const cudaVersionStringToURLStringWindows = new Map([
 /**
  * Singleton class for windows links.
  */
-class windowsLinks {
+class WindowsLinks {
     // Private constructor to prevent instantiation
     constructor() {
         // Map of cuda SemVer version to download URL
@@ -318,7 +317,7 @@ class windowsLinks {
         return urlString;
     }
 }
-exports.windowsLinks = windowsLinks;
+exports.WindowsLinks = WindowsLinks;
 
 
 /***/ }),
