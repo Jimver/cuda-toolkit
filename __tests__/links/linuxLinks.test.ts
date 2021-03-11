@@ -1,9 +1,9 @@
 import {SemVer} from 'semver'
-import {ILinks} from '../../src/links/links'
+import {AbstractLinks} from '../../src/links/links'
 import {LinuxLinks} from '../../src/links/linuxLinks'
 
 test('Linux Cuda versions in descending order', async () => {
-  const wLinks: ILinks = LinuxLinks.Instance
+  const wLinks: AbstractLinks = LinuxLinks.Instance
   const versions = wLinks.getAvailableCudaVersions()
   for (let i = 0; i < versions.length - 1; i++) {
     const versionA: SemVer = versions[i]

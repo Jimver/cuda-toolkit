@@ -1,7 +1,8 @@
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import {SemVer} from 'semver'
-import {getLinks, ILinks} from './links/links'
+import {getLinks} from './links/getLinks'
+import {AbstractLinks} from './links/links'
 import {getOs, OSType} from './platform'
 
 // Download helper which returns the installer executable and caches it for next runs
@@ -16,7 +17,7 @@ export async function download(version: SemVer): Promise<string> {
   } else {
     core.debug(`Not found in cache, downloading...`)
     // Get download URL
-    const links: ILinks = await getLinks()
+    const links: AbstractLinks = await getLinks()
     const url: URL = links.getURLFromCudaVersion(version)
     // Get intsaller filename extension depending on OS
     let fileExtension: string

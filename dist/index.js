@@ -39,7 +39,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.download = void 0;
 const core = __importStar(__webpack_require__(2186));
 const tc = __importStar(__webpack_require__(7784));
-const links_1 = __webpack_require__(2642);
+const getLinks_1 = __webpack_require__(2568);
 const platform_1 = __webpack_require__(9238);
 // Download helper which returns the installer executable and caches it for next runs
 function download(version) {
@@ -55,7 +55,7 @@ function download(version) {
         else {
             core.debug(`Not found in cache, downloading...`);
             // Get download URL
-            const links = yield links_1.getLinks();
+            const links = yield getLinks_1.getLinks();
             const url = links.getURLFromCudaVersion(version);
             // Get intsaller filename extension depending on OS
             let fileExtension;
@@ -144,7 +144,7 @@ exports.install = install;
 
 /***/ }),
 
-/***/ 2642:
+/***/ 2568:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -180,6 +180,35 @@ exports.getLinks = getLinks;
 
 /***/ }),
 
+/***/ 2642:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AbstractLinks = void 0;
+const semver_1 = __webpack_require__(1383);
+// Interface for getting cuda versions and corresponding download URLs
+class AbstractLinks {
+    constructor() {
+        this.cudaVersionToURL = new Map();
+    }
+    getAvailableCudaVersions() {
+        return Array.from(this.cudaVersionToURL.keys()).map(s => new semver_1.SemVer(s));
+    }
+    getURLFromCudaVersion(version) {
+        const urlString = this.cudaVersionToURL.get(`${version}`);
+        if (urlString === undefined) {
+            throw new Error(`Invalid version: ${version}`);
+        }
+        return new URL(urlString);
+    }
+}
+exports.AbstractLinks = AbstractLinks;
+
+
+/***/ }),
+
 /***/ 9852:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -187,54 +216,41 @@ exports.getLinks = getLinks;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LinuxLinks = void 0;
-const semver_1 = __webpack_require__(1383);
-const cudaVersionStringToURLStringLinux = new Map([
-    [
-        '11.2.2',
-        'https://developer.download.nvidia.com/compute/cuda/11.2.2/local_installers/cuda_11.2.2_460.32.03_linux.run'
-    ],
-    [
-        '11.2.1',
-        'https://developer.download.nvidia.com/compute/cuda/11.2.1/local_installers/cuda_11.2.1_460.32.03_linux.run'
-    ],
-    [
-        '10.2.89',
-        'https://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_440.33.01_linux.run'
-    ],
-    [
-        '9.2.148',
-        'https://developer.nvidia.com/compute/cuda/9.2/Prod2/local_installers/cuda_9.2.148_396.37_linux'
-    ],
-    [
-        '8.0.61',
-        'https://developer.nvidia.com/compute/cuda/8.0/Prod2/local_installers/cuda_8.0.61_375.26_linux-run'
-    ]
-]);
+const links_1 = __webpack_require__(2642);
 /**
  * Singleton class for windows links.
  */
-class LinuxLinks {
+class LinuxLinks extends links_1.AbstractLinks {
     // Private constructor to prevent instantiation
     constructor() {
+        super();
         // Map of cuda SemVer version to download URL
-        this.cudaVersionToURL = new Map([...cudaVersionStringToURLStringLinux].map(([k, v]) => [
-            new semver_1.SemVer(k),
-            new URL(v)
-        ]));
+        this.cudaVersionToURL = new Map([
+            [
+                '11.2.2',
+                'https://developer.download.nvidia.com/compute/cuda/11.2.2/local_installers/cuda_11.2.2_460.32.03_linux.run'
+            ],
+            [
+                '11.2.1',
+                'https://developer.download.nvidia.com/compute/cuda/11.2.1/local_installers/cuda_11.2.1_460.32.03_linux.run'
+            ],
+            [
+                '10.2.89',
+                'https://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_440.33.01_linux.run'
+            ],
+            [
+                '9.2.148',
+                'https://developer.nvidia.com/compute/cuda/9.2/Prod2/local_installers/cuda_9.2.148_396.37_linux'
+            ],
+            [
+                '8.0.61',
+                'https://developer.nvidia.com/compute/cuda/8.0/Prod2/local_installers/cuda_8.0.61_375.26_linux-run'
+            ]
+        ]);
     }
     static get Instance() {
         // Do you need arguments? Make it a regular static method instead.
         return this._instance || (this._instance = new this());
-    }
-    getAvailableCudaVersions() {
-        return Array.from(this.cudaVersionToURL.keys());
-    }
-    getURLFromCudaVersion(version) {
-        const urlString = this.cudaVersionToURL.get(version);
-        if (urlString === undefined) {
-            throw new Error(`Invalid version: ${version}`);
-        }
-        return urlString;
     }
 }
 exports.LinuxLinks = LinuxLinks;
@@ -249,11 +265,7 @@ exports.LinuxLinks = LinuxLinks;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.WindowsLinks = void 0;
-const semver_1 = __webpack_require__(1383);
-// 11.2.1   https://developer.download.nvidia.com/compute/cuda/11.2.1/local_installers/cuda_11.2.1_461.09_win10.exe
-// 10.2     https://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_441.22_win10.exe
-// 9.2      https://developer.nvidia.com/compute/cuda/9.2/Prod2/local_installers2/cuda_9.2.148_win10
-// 8.0 GA 2 https://developer.nvidia.com/compute/cuda/8.0/Prod2/local_installers/cuda_8.0.61_win10-exe
+const links_1 = __webpack_require__(2642);
 // # Dictionary of known cuda versions and thier download URLS, which do not follow a consistent pattern :(
 // $CUDA_KNOWN_URLS = @{
 //     "8.0.44" = "http://developer.nvidia.com/compute/cuda/8.0/Prod/network_installers/cuda_8.0.44_win10_network-exe";
@@ -268,53 +280,40 @@ const semver_1 = __webpack_require__(1383);
 //     "10.2.89" = "http://developer.download.nvidia.com/compute/cuda/10.2/Prod/network_installers/cuda_10.2.89_win10_network.exe";
 //     "11.0.167" = "http://developer.download.nvidia.com/compute/cuda/11.0.1/network_installers/cuda_11.0.1_win10_network.exe"
 // }
-const cudaVersionStringToURLStringWindows = new Map([
-    [
-        '11.2.2',
-        'https://developer.download.nvidia.com/compute/cuda/11.2.2/local_installers/cuda_11.2.2_461.33_win10.exe'
-    ],
-    [
-        '11.2.1',
-        'https://developer.download.nvidia.com/compute/cuda/11.2.1/local_installers/cuda_11.2.1_461.09_win10.exe'
-    ],
-    [
-        '10.2.89',
-        'https://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_441.22_win10.exe'
-    ],
-    [
-        '9.2.148',
-        'https://developer.nvidia.com/compute/cuda/9.2/Prod2/local_installers2/cuda_9.2.148_win10'
-    ],
-    [
-        '8.0.61',
-        'https://developer.nvidia.com/compute/cuda/8.0/Prod2/local_installers/cuda_8.0.61_win10-exe'
-    ]
-]);
 /**
  * Singleton class for windows links.
  */
-class WindowsLinks {
+class WindowsLinks extends links_1.AbstractLinks {
     // Private constructor to prevent instantiation
     constructor() {
+        super();
         // Map of cuda SemVer version to download URL
-        this.cudaVersionToURL = new Map([...cudaVersionStringToURLStringWindows].map(([k, v]) => [
-            new semver_1.SemVer(k),
-            new URL(v)
-        ]));
+        this.cudaVersionToURL = new Map([
+            [
+                '11.2.2',
+                'https://developer.download.nvidia.com/compute/cuda/11.2.2/local_installers/cuda_11.2.2_461.33_win10.exe'
+            ],
+            [
+                '11.2.1',
+                'https://developer.download.nvidia.com/compute/cuda/11.2.1/local_installers/cuda_11.2.1_461.09_win10.exe'
+            ],
+            [
+                '10.2.89',
+                'https://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_441.22_win10.exe'
+            ],
+            [
+                '9.2.148',
+                'https://developer.nvidia.com/compute/cuda/9.2/Prod2/local_installers2/cuda_9.2.148_win10'
+            ],
+            [
+                '8.0.61',
+                'https://developer.nvidia.com/compute/cuda/8.0/Prod2/local_installers/cuda_8.0.61_win10-exe'
+            ]
+        ]);
     }
     static get Instance() {
         // Do you need arguments? Make it a regular static method instead.
         return this._instance || (this._instance = new this());
-    }
-    getAvailableCudaVersions() {
-        return Array.from(this.cudaVersionToURL.keys());
-    }
-    getURLFromCudaVersion(version) {
-        const urlString = this.cudaVersionToURL.get(version);
-        if (urlString === undefined) {
-            throw new Error(`Invalid version: ${version}`);
-        }
-        return urlString;
     }
 }
 exports.WindowsLinks = WindowsLinks;
@@ -465,13 +464,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getVersion = void 0;
 const semver_1 = __webpack_require__(1383);
-const links_1 = __webpack_require__(2642);
 const core_1 = __webpack_require__(2186);
+const getLinks_1 = __webpack_require__(2568);
 // Helper for converting string to SemVer and verifying it exists in the links
 function getVersion(versionString) {
     return __awaiter(this, void 0, void 0, function* () {
         const version = new semver_1.SemVer(versionString);
-        const links = yield links_1.getLinks();
+        const links = yield getLinks_1.getLinks();
         core_1.debug(`At links: ${links}`);
         const versions = links.getAvailableCudaVersions();
         core_1.debug(`Available versions: ${versions}`);

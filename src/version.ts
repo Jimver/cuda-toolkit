@@ -1,11 +1,12 @@
 import {SemVer} from 'semver'
-import {getLinks, ILinks} from './links/links'
+import {AbstractLinks} from './links/links'
 import {debug} from '@actions/core'
+import {getLinks} from './links/getLinks'
 
 // Helper for converting string to SemVer and verifying it exists in the links
 export async function getVersion(versionString: string): Promise<SemVer> {
   const version = new SemVer(versionString)
-  const links: ILinks = await getLinks()
+  const links: AbstractLinks = await getLinks()
   debug(`At links: ${links}`)
   const versions = links.getAvailableCudaVersions()
   debug(`Available versions: ${versions}`)

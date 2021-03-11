@@ -1,9 +1,9 @@
-import {ILinks} from './links'
+import {AbstractLinks} from './links'
 
 /**
  * Singleton class for windows links.
  */
-export class LinuxLinks extends ILinks {
+export class LinuxLinks extends AbstractLinks {
   // Singleton instance
   private static _instance: LinuxLinks
 

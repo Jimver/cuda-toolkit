@@ -1,9 +1,9 @@
 import {SemVer} from 'semver'
 import {WindowsLinks} from '../../src/links/windowsLinks'
-import {ILinks} from '../../src/links/links'
+import {AbstractLinks} from '../../src/links/links'
 
 test('Windows Cuda versions in descending order', async () => {
-  const wLinks: ILinks = WindowsLinks.Instance
+  const wLinks: AbstractLinks = WindowsLinks.Instance
   const versions = wLinks.getAvailableCudaVersions()
   for (let i = 0; i < versions.length - 1; i++) {
     const versionA: SemVer = versions[i]

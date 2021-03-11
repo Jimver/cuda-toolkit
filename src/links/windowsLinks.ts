@@ -1,4 +1,4 @@
-import {ILinks} from './links'
+import {AbstractLinks} from './links'
 
 // # Dictionary of known cuda versions and thier download URLS, which do not follow a consistent pattern :(
 // $CUDA_KNOWN_URLS = @{
@@ -18,7 +18,7 @@ import {ILinks} from './links'
 /**
  * Singleton class for windows links.
  */
-export class WindowsLinks extends ILinks {
+export class WindowsLinks extends AbstractLinks {
   // Singleton instance
   private static _instance: WindowsLinks
 

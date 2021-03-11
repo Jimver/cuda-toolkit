@@ -1,4 +1,4 @@
-import {getLinks} from '../../src/links/links'
+import {getLinks} from '../../src/links/getLinks'
 import {LinuxLinks} from '../../src/links/linuxLinks'
 import {WindowsLinks} from '../../src/links/windowsLinks'
 
