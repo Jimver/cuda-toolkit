@@ -1,13 +1,17 @@
 import * as core from '@actions/core'
+import {install} from './installer'
+import {getVersion} from './version'
 
 async function run(): Promise<void> {
   try {
     const cuda: string = core.getInput('cuda')
     core.debug(`Desired cuda version: ${cuda}`) // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
 
-    // TODO Install cuda here
-    // 1. Install
-    // 2. Add CUDA environment variables to GitHub environment variables
+    // Parse version string
+    const version = await getVersion(cuda)
+    // Install
+    await install(version)
+    // TODO Add CUDA environment variables to GitHub environment variables
 
     //  steps:
     //    - run: echo Cuda version ${{ inputs.cuda }}.

@@ -5,7 +5,7 @@ inputs:
   cuda:
     description: 'Cuda version'
     required: false
-    default: '11.2.1'
+    default: '11.2.2'
 runs:
   using: 'node12'
   main: dist/index.js
