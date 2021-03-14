@@ -5,6 +5,7 @@ import {getLinks} from './links/getLinks'
 import {AbstractLinks} from './links/links'
 import {getOs, OSType} from './platform'
 import fs from 'fs'
+import * as glob from '@actions/glob'
 
 // Download helper which returns the installer executable and caches it for next runs
 export async function download(version: SemVer): Promise<string> {
@@ -49,7 +50,7 @@ export async function download(version: SemVer): Promise<string> {
   // String with full executable path
   let fullExecutablePath: string
   // Get list of files in tool cache
-  const filesInCache = await fs.promises.readdir(executablePath)
+  const filesInCache = await (await glob.create(`${executablePath}/**`)).glob()
   if (filesInCache.length > 1) {
     throw new Error(`Got multiple file in tool cache: ${filesInCache.length}`)
   } else if (filesInCache.length === 0) {
