@@ -2,7 +2,7 @@ import {SemVer} from 'semver'
 import {AbstractLinks} from '../../src/links/links'
 import {LinuxLinks} from '../../src/links/linuxLinks'
 
-test('Linux Cuda versions in descending order', async () => {
+test.concurrent('Linux Cuda versions in descending order', async () => {
   const wLinks: AbstractLinks = LinuxLinks.Instance
   const versions = wLinks.getAvailableLocalCudaVersions()
   for (let i = 0; i < versions.length - 1; i++) {
@@ -12,14 +12,17 @@ test('Linux Cuda versions in descending order', async () => {
   }
 })
 
-test('Linux Cuda version to URL map contains valid URLs', async () => {
-  for (const version of LinuxLinks.Instance.getAvailableLocalCudaVersions()) {
-    const url: URL = LinuxLinks.Instance.getLocalURLFromCudaVersion(version)
-    expect(url).toBeInstanceOf(URL)
+test.concurrent(
+  'Linux Cuda version to URL map contains valid URLs',
+  async () => {
+    for (const version of LinuxLinks.Instance.getAvailableLocalCudaVersions()) {
+      const url: URL = LinuxLinks.Instance.getLocalURLFromCudaVersion(version)
+      expect(url).toBeInstanceOf(URL)
+    }
   }
-})
+)
 
-test('There is at least linux 1 version url pair', async () => {
+test.concurrent('There is at least linux 1 version url pair', async () => {
   expect(
     LinuxLinks.Instance.getAvailableLocalCudaVersions().length
   ).toBeGreaterThanOrEqual(1)

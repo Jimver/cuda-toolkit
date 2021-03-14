@@ -8,7 +8,7 @@ test.concurrent.each(['local', 'network'])(
   }
 )
 
-test('Parse invalid method', async () => {
+test.concurrent('Parse invalid method', async () => {
   const invalidMethod = 'invalidMethodString'
   expect(() => parseMethod(invalidMethod)).toThrowError(
     `Invalid method string: ${invalidMethod}`

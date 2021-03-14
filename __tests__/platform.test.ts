@@ -1,7 +1,7 @@
 import {getOs, OSType} from '../src/platform'
 import os from 'os'
 
-test('Return either windows of linux platform', async () => {
+test.concurrent('Return either windows of linux platform', async () => {
   const osPlatform = await getOs()
   const osString = os.platform()
   let expected: OSType

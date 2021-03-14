@@ -1,6 +1,6 @@
 import {SemVer} from 'semver'
 import {AbstractLinks} from './links/links'
-import {debug} from '@actions/core'
+import * as core from '@actions/core'
 import {getLinks} from './links/getLinks'
 import {Method} from './method'
 import {getOs, OSType} from './platform'
@@ -13,7 +13,6 @@ export async function getVersion(
 ): Promise<SemVer> {
   const version = new SemVer(versionString)
   const links: AbstractLinks = await getLinks()
-  debug(`At links: ${links}`)
   let versions
   switch (method) {
     case 'local':
@@ -30,12 +29,12 @@ export async function getVersion(
           break
       }
   }
-  debug(`Available versions: ${versions}`)
+  core.debug(`Available versions: ${versions}`)
   if (versions.find(v => v.compare(version) === 0) !== undefined) {
-    debug(`Version available: ${version}`)
+    core.debug(`Version available: ${version}`)
     return version
   } else {
-    debug(`Version not available error!`)
+    core.debug(`Version not available error!`)
     throw new Error(`Version not available: ${version}`)
   }
 }
