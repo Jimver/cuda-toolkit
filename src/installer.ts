@@ -53,10 +53,7 @@ export async function install(
     if ((await getOs()) === OSType.linux) {
       const artifactClient = artifact.create()
       const artifactName = 'install-log'
-      const files = [
-        '/var/log/cuda-installer.log',
-        '/var/log/nvidia-installer.log'
-      ]
+      const files = ['/var/log/cuda-installer.log']
       const rootDirectory = '/var/log'
       const artifactOptions = {
         continueOnError: true
