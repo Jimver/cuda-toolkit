@@ -11,6 +11,7 @@ export async function download(version: SemVer): Promise<string> {
   // First try to find tool with desired version in tool cache
   const toolName = 'cuda_installer'
   const toolPath = tc.find(toolName, `${version}`)
+  // Path that contains the executable file
   let executablePath: string
   if (toolPath) {
     // Tool is already in cache
@@ -45,19 +46,32 @@ export async function download(version: SemVer): Promise<string> {
     )
     executablePath = cachedPath
   }
+  // String with full executable path
+  let fullExecutablePath: string | undefined
+  // Execute options with callback for stdout
   const options = {
     listeners: {
       stdout: (data: Buffer) => {
-        core.debug(data.toString())
+        // Check if path was already set
+        if (fullExecutablePath) {
+          throw new Error(
+            `Path was already set to ${fullExecutablePath}, while trying it to set to ${executablePath}/${data.toString()}. Only 1 executable file is expected to be in the tool cache!`
+          )
+        }
+        // Set full executablepath to path + filename
+        fullExecutablePath = `${executablePath}/${data.toString()}`
       },
       stderr: (data: Buffer) => {
         core.debug(data.toString())
+        throw new Error('Error getting executable in tool cache!')
       }
     }
   }
-  core.debug(`List files in ${executablePath}:`)
+  // list files
   await exec('ls', [executablePath], options)
-  core.debug(`Done list files in ${executablePath}`)
+  if (!fullExecutablePath) {
+    throw new Error(`No tool found in tool cache: ${executablePath}`)
+  }
   // Return full executable path
-  return executablePath
+  return fullExecutablePath
 }
