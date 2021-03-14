@@ -34,7 +34,7 @@ The cuda version installed.
 ## Example usage
 
 ```yaml
-uses: Jimver/cuda@v0.1
+uses: Jimver/cuda-toolkit@v0.1
 with:
   cuda: '11.2.2'
 ```
