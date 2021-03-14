@@ -2,7 +2,6 @@ import {exec} from '@actions/exec'
 import * as core from '@actions/core'
 import {getOs, OSType} from './platform'
 import * as artifact from '@actions/artifact'
-import {stderr, stdout} from 'node:process'
 
 export async function install(
   executablePath: string,
