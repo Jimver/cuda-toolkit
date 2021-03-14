@@ -11,7 +11,8 @@ import * as glob from '@actions/glob'
 export async function download(version: SemVer): Promise<string> {
   // First try to find tool with desired version in tool cache
   const toolName = 'cuda_installer'
-  const toolPath = tc.find(toolName, `${version}`)
+  const osType = await getOs()
+  const toolPath = tc.find(`${toolName}-${osType}`, `${version}`)
   // Path that contains the executable file
   let executablePath: string
   if (toolPath) {
@@ -25,7 +26,6 @@ export async function download(version: SemVer): Promise<string> {
     const url: URL = links.getURLFromCudaVersion(version)
     // Get intsaller filename extension depending on OS
     let fileExtension: string
-    const osType = await getOs()
     switch (osType) {
       case OSType.windows:
         fileExtension = 'exe'
@@ -42,7 +42,7 @@ export async function download(version: SemVer): Promise<string> {
     const cachedPath = await tc.cacheFile(
       path,
       destFileName,
-      toolName,
+      `${toolName}-${osType}`,
       `${version}`
     )
     executablePath = cachedPath

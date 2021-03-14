@@ -2,8 +2,8 @@ import os from 'os'
 import {debug} from '@actions/core'
 
 export enum OSType {
-  windows,
-  linux
+  windows = 'windows',
+  linux = 'linux'
 }
 
 export async function getOs(): Promise<OSType> {
