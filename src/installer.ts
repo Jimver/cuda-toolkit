@@ -49,7 +49,9 @@ export async function install(
     core.debug(`Installer exit code: ${exitCode}`)
   } catch (error) {
     core.debug(`Error during installation: ${error}`)
+    throw error
   } finally {
+    // Always upload installation log regardless of error
     if ((await getOs()) === OSType.linux) {
       const artifactClient = artifact.create()
       const artifactName = 'install-log'
