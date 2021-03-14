@@ -14,6 +14,7 @@ export async function install(
   let command: string
   // Subset of subpackages to install instead of everything, see: https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/index.html#install-cuda-software
   const subPackages: string[] = subPackagesArray
+  // Execution options which contain callback functions for stdout and stderr of install process
   const execOptions = {
     listeners: {
       stdout: (data: Buffer) => {
@@ -27,11 +28,9 @@ export async function install(
   switch (await getOs()) {
     case OSType.linux:
       // Root permission needed on linux
-      command = `sudo ${executablePath}`
+      command = `sudo ${executablePath} --toolkit -- samples`
       // Install silently
       installArgs = ['--silent']
-      // Unload nouveau kernel module
-      await exec('sudo rmmod nouveau', [], execOptions)
       break
     case OSType.windows:
       // Windows handles permissions automatically
