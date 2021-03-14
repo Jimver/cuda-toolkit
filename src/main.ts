@@ -5,12 +5,27 @@ import {getVersion} from './version'
 async function run(): Promise<void> {
   try {
     const cuda: string = core.getInput('cuda')
-    core.debug(`Desired cuda version: ${cuda}`) // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
+    core.debug(`Desired cuda version: ${cuda}`)
+    const subPackages: string = core.getInput('subPackages')
+    core.debug(`Desired subPackes: ${subPackages}`)
 
     // Parse version string
     const version = await getVersion(cuda)
+
+    // Parse subPackages array
+    let subPackagesArray: string[] = []
+    try {
+      subPackagesArray = JSON.parse(subPackages)
+      // TODO verify that elements are valid package names (nvcc, etc.)
+    } catch (error) {
+      const errString = `Error parsing input 'subPackages' to a JSON string array: ${subPackages}`
+      core.debug(errString)
+      throw new Error(errString)
+    }
+
     // Install
-    await install(version)
+    await install(version, subPackagesArray)
+
     // TODO Add CUDA environment variables to GitHub environment variables
 
     //  steps:

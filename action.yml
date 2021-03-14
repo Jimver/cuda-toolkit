@@ -6,6 +6,10 @@ inputs:
     description: 'Cuda version'
     required: false
     default: '11.2.2'
+  subPackages:
+    description: 'Only installs specified subpackages, must be in the form of a JSON array. For example, if you only want to install nvcc and visual studio integration: "[''nvcc'', ''visual_studio_integration'']"'
+    required: false
+    default: '[]'
 runs:
   using: 'node12'
   main: dist/index.js
