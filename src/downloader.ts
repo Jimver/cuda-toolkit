@@ -51,6 +51,10 @@ export async function download(version: SemVer): Promise<string> {
   let fullExecutablePath: string
   // Get list of files in tool cache
   const filesInCache = await (await glob.create(`${executablePath}/**`)).glob()
+  core.debug(`Files in tool cache:`)
+  for (const f of filesInCache) {
+    core.debug(f)
+  }
   if (filesInCache.length > 1) {
     throw new Error(`Got multiple file in tool cache: ${filesInCache.length}`)
   } else if (filesInCache.length === 0) {
