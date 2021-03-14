@@ -1,3 +1,4 @@
+import {SemVer} from 'semver'
 import {AbstractLinks} from './links'
 
 // # Dictionary of known cuda versions and thier download URLS, which do not follow a consistent pattern :(
@@ -21,6 +22,29 @@ import {AbstractLinks} from './links'
 export class WindowsLinks extends AbstractLinks {
   // Singleton instance
   private static _instance: WindowsLinks
+
+  private cudaVersionToNetworkUrl: Map<string, string> = new Map([
+    [
+      '11.2.2',
+      'https://developer.download.nvidia.com/compute/cuda/11.2.2/network_installers/cuda_11.2.2_win10_network.exe'
+    ],
+    [
+      '11.2.1',
+      'https://developer.download.nvidia.com/compute/cuda/11.2.1/network_installers/cuda_11.2.1_win10_network.exe'
+    ],
+    [
+      '10.2.89',
+      'https://developer.download.nvidia.com/compute/cuda/10.2/Prod/network_installers/cuda_10.2.89_win10_network.exe'
+    ],
+    [
+      '9.2.148',
+      'https://developer.nvidia.com/compute/cuda/9.2/Prod2/network_installers2/cuda_9.2.148_win10_network'
+    ],
+    [
+      '8.0.61',
+      'https://developer.nvidia.com/compute/cuda/8.0/Prod2/network_installers/cuda_8.0.61_win10_network-exe'
+    ]
+  ])
 
   // Private constructor to prevent instantiation
   private constructor() {
@@ -53,5 +77,19 @@ export class WindowsLinks extends AbstractLinks {
   static get Instance(): WindowsLinks {
     // Do you need arguments? Make it a regular static method instead.
     return this._instance || (this._instance = new this())
+  }
+
+  getAvailableNetworkCudaVersions(): SemVer[] {
+    return Array.from(this.cudaVersionToNetworkUrl.keys()).map(
+      s => new SemVer(s)
+    )
+  }
+
+  getNetworkURLFromCudaVersion(version: SemVer): URL {
+    const urlString = this.cudaVersionToNetworkUrl.get(`${version}`)
+    if (urlString === undefined) {
+      throw new Error(`Invalid version: ${version}`)
+    }
+    return new URL(urlString)
   }
 }

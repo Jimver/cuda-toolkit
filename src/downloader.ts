@@ -6,9 +6,14 @@ import {AbstractLinks} from './links/links'
 import {getOs, OSType} from './platform'
 import fs from 'fs'
 import * as glob from '@actions/glob'
+import {Method} from './method'
+import {WindowsLinks} from './links/windowsLinks'
 
 // Download helper which returns the installer executable and caches it for next runs
-export async function download(version: SemVer): Promise<string> {
+export async function download(
+  version: SemVer,
+  method: Method
+): Promise<string> {
   // First try to find tool with desired version in tool cache
   const toolName = 'cuda_installer'
   const osType = await getOs()
@@ -23,7 +28,20 @@ export async function download(version: SemVer): Promise<string> {
     core.debug(`Not found in cache, downloading...`)
     // Get download URL
     const links: AbstractLinks = await getLinks()
-    const url: URL = links.getURLFromCudaVersion(version)
+    let url: URL
+    switch (method) {
+      case 'local':
+        url = links.getLocalURLFromCudaVersion(version)
+        break
+      case 'network':
+        if (!(links instanceof WindowsLinks)) {
+          core.debug(`Tried to get windows links but got linux links instance`)
+          throw new Error(
+            `Network mode is not supported by linux, shouldn't even get here`
+          )
+        }
+        url = links.getNetworkURLFromCudaVersion(version)
+    }
     // Get intsaller filename extension depending on OS
     let fileExtension: string
     switch (osType) {

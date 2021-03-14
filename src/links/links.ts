@@ -4,11 +4,11 @@ import {SemVer} from 'semver'
 export abstract class AbstractLinks {
   protected cudaVersionToURL: Map<string, string> = new Map()
 
-  getAvailableCudaVersions(): SemVer[] {
+  getAvailableLocalCudaVersions(): SemVer[] {
     return Array.from(this.cudaVersionToURL.keys()).map(s => new SemVer(s))
   }
 
-  getURLFromCudaVersion(version: SemVer): URL {
+  getLocalURLFromCudaVersion(version: SemVer): URL {
     const urlString = this.cudaVersionToURL.get(`${version}`)
     if (urlString === undefined) {
       throw new Error(`Invalid version: ${version}`)

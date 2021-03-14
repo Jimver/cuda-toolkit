@@ -1,7 +1,9 @@
 import * as core from '@actions/core'
 import {download} from './downloader'
 import {install} from './installer'
+import {aptInstall, aptSetup} from './linuxNetwork'
 import {Method, parseMethod} from './method'
+import {getOs, OSType} from './platform'
 import {getVersion} from './version'
 
 async function run(): Promise<void> {
@@ -12,9 +14,6 @@ async function run(): Promise<void> {
     core.debug(`Desired subPackes: ${subPackages}`)
     const methodString: string = core.getInput('method')
     core.debug(`Desired method: ${methodString}`)
-
-    // Parse version string
-    const version = await getVersion(cuda)
 
     // Parse subPackages array
     let subPackagesArray: string[] = []
@@ -31,8 +30,27 @@ async function run(): Promise<void> {
     const methodParsed: Method = parseMethod(methodString)
     core.debug(`Parsed method: ${methodParsed}`)
 
+    // Parse version string
+    const version = await getVersion(cuda, methodParsed)
+
+    // Check method local, TODO remove when network is implemented
+    if (methodParsed === 'network') {
+      core.debug(
+        `'network' install mode is not yet implemented! Please use 'local' mode instead.`
+      )
+    }
+
+    // Linux network install (uses apt repository)
+    if ((await getOs()) === OSType.linux && methodParsed === 'network') {
+      const packageName = await aptSetup(version)
+      const installResult = await aptInstall(packageName)
+      core.debug(`Install result: ${installResult}`)
+      core.setOutput('cuda', cuda)
+      return
+    }
+
     // Download
-    const executablePath: string = await download(version)
+    const executablePath: string = await download(version, methodParsed)
 
     // Install
     await install(executablePath, subPackagesArray)

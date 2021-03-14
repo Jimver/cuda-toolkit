@@ -46,8 +46,9 @@ const getLinks_1 = __webpack_require__(2568);
 const platform_1 = __webpack_require__(9238);
 const fs_1 = __importDefault(__webpack_require__(5747));
 const glob = __importStar(__webpack_require__(8090));
+const windowsLinks_1 = __webpack_require__(1389);
 // Download helper which returns the installer executable and caches it for next runs
-function download(version) {
+function download(version, method) {
     return __awaiter(this, void 0, void 0, function* () {
         // First try to find tool with desired version in tool cache
         const toolName = 'cuda_installer';
@@ -64,7 +65,18 @@ function download(version) {
             core.debug(`Not found in cache, downloading...`);
             // Get download URL
             const links = yield getLinks_1.getLinks();
-            const url = links.getURLFromCudaVersion(version);
+            let url;
+            switch (method) {
+                case 'local':
+                    url = links.getLocalURLFromCudaVersion(version);
+                    break;
+                case 'network':
+                    if (!(links instanceof windowsLinks_1.WindowsLinks)) {
+                        core.debug(`Tried to get windows links but got linux links instance`);
+                        throw new Error(`Network mode is not supported by linux, shouldn't even get here`);
+                    }
+                    url = links.getNetworkURLFromCudaVersion(version);
+            }
             // Get intsaller filename extension depending on OS
             let fileExtension;
             switch (osType) {
@@ -162,12 +174,24 @@ function install(executablePath, subPackagesArray) {
         let command;
         // Subset of subpackages to install instead of everything, see: https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/index.html#install-cuda-software
         const subPackages = subPackagesArray;
+        // Execution options which contain callback functions for stdout and stderr of install process
+        const execOptions = {
+            listeners: {
+                stdout: (data) => {
+                    core.debug(data.toString());
+                },
+                stderr: (data) => {
+                    core.debug(`Error: ${data.toString()}`);
+                }
+            }
+        };
+        // Configure OS dependent run command and args
         switch (yield platform_1.getOs()) {
             case platform_1.OSType.linux:
                 // Root permission needed on linux
                 command = `sudo ${executablePath}`;
-                // Install silently
-                installArgs = ['--silent'];
+                // Install silently, and install toolkit and samples, no driver
+                installArgs = ['--silent', '--toolkit', '--samples'];
                 break;
             case platform_1.OSType.windows:
                 // Windows handles permissions automatically
@@ -176,21 +200,12 @@ function install(executablePath, subPackagesArray) {
                 installArgs = ['-s'];
                 break;
         }
-        // Add subpackages (if any)
+        // Add subpackages to command args (if any)
         installArgs = installArgs.concat(subPackages);
+        // Run installer
         try {
             core.debug(`Running install executable: ${executablePath}`);
-            const options = {
-                listeners: {
-                    stdout: (data) => {
-                        core.debug(data.toString());
-                    },
-                    stderr: (data) => {
-                        core.debug(`Error: ${data.toString()}`);
-                    }
-                }
-            };
-            const exitCode = yield exec_1.exec(command, installArgs, options);
+            const exitCode = yield exec_1.exec(command, installArgs, execOptions);
             core.debug(`Installer exit code: ${exitCode}`);
         }
         catch (error) {
@@ -267,10 +282,10 @@ class AbstractLinks {
     constructor() {
         this.cudaVersionToURL = new Map();
     }
-    getAvailableCudaVersions() {
+    getAvailableLocalCudaVersions() {
         return Array.from(this.cudaVersionToURL.keys()).map(s => new semver_1.SemVer(s));
     }
-    getURLFromCudaVersion(version) {
+    getLocalURLFromCudaVersion(version) {
         const urlString = this.cudaVersionToURL.get(`${version}`);
         if (urlString === undefined) {
             throw new Error(`Invalid version: ${version}`);
@@ -339,6 +354,7 @@ exports.LinuxLinks = LinuxLinks;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.WindowsLinks = void 0;
+const semver_1 = __webpack_require__(1383);
 const links_1 = __webpack_require__(2642);
 // # Dictionary of known cuda versions and thier download URLS, which do not follow a consistent pattern :(
 // $CUDA_KNOWN_URLS = @{
@@ -361,6 +377,28 @@ class WindowsLinks extends links_1.AbstractLinks {
     // Private constructor to prevent instantiation
     constructor() {
         super();
+        this.cudaVersionToNetworkUrl = new Map([
+            [
+                '11.2.2',
+                'https://developer.download.nvidia.com/compute/cuda/11.2.2/network_installers/cuda_11.2.2_win10_network.exe'
+            ],
+            [
+                '11.2.1',
+                'https://developer.download.nvidia.com/compute/cuda/11.2.1/network_installers/cuda_11.2.1_win10_network.exe'
+            ],
+            [
+                '10.2.89',
+                'https://developer.download.nvidia.com/compute/cuda/10.2/Prod/network_installers/cuda_10.2.89_win10_network.exe'
+            ],
+            [
+                '9.2.148',
+                'https://developer.nvidia.com/compute/cuda/9.2/Prod2/network_installers2/cuda_9.2.148_win10_network'
+            ],
+            [
+                '8.0.61',
+                'https://developer.nvidia.com/compute/cuda/8.0/Prod2/network_installers/cuda_8.0.61_win10_network-exe'
+            ]
+        ]);
         // Map of cuda SemVer version to download URL
         this.cudaVersionToURL = new Map([
             [
@@ -389,8 +427,72 @@ class WindowsLinks extends links_1.AbstractLinks {
         // Do you need arguments? Make it a regular static method instead.
         return this._instance || (this._instance = new this());
     }
+    getAvailableNetworkCudaVersions() {
+        return Array.from(this.cudaVersionToNetworkUrl.keys()).map(s => new semver_1.SemVer(s));
+    }
+    getNetworkURLFromCudaVersion(version) {
+        const urlString = this.cudaVersionToNetworkUrl.get(`${version}`);
+        if (urlString === undefined) {
+            throw new Error(`Invalid version: ${version}`);
+        }
+        return new URL(urlString);
+    }
 }
 exports.WindowsLinks = WindowsLinks;
+
+
+/***/ }),
+
+/***/ 4493:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.aptInstall = exports.aptSetup = void 0;
+const core = __importStar(__webpack_require__(2186));
+function aptSetup(version) {
+    return __awaiter(this, void 0, void 0, function* () {
+        core.debug(`Setup packages for ${version}`);
+        return 'cuda';
+    });
+}
+exports.aptSetup = aptSetup;
+function aptInstall(packageName) {
+    return __awaiter(this, void 0, void 0, function* () {
+        core.debug(`Install package: ${packageName}`);
+        return 0;
+    });
+}
+exports.aptInstall = aptInstall;
 
 
 /***/ }),
@@ -432,7 +534,9 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__webpack_require__(2186));
 const downloader_1 = __webpack_require__(5587);
 const installer_1 = __webpack_require__(1480);
+const linuxNetwork_1 = __webpack_require__(4493);
 const method_1 = __webpack_require__(3607);
+const platform_1 = __webpack_require__(9238);
 const version_1 = __webpack_require__(8217);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -443,8 +547,6 @@ function run() {
             core.debug(`Desired subPackes: ${subPackages}`);
             const methodString = core.getInput('method');
             core.debug(`Desired method: ${methodString}`);
-            // Parse version string
-            const version = yield version_1.getVersion(cuda);
             // Parse subPackages array
             let subPackagesArray = [];
             try {
@@ -459,8 +561,22 @@ function run() {
             // Parse method
             const methodParsed = method_1.parseMethod(methodString);
             core.debug(`Parsed method: ${methodParsed}`);
+            // Parse version string
+            const version = yield version_1.getVersion(cuda, methodParsed);
+            // Check method local, TODO remove when network is implemented
+            if (methodParsed === 'network') {
+                core.debug(`'network' install mode is not yet implemented! Please use 'local' mode instead.`);
+            }
+            // Linux network install (uses apt repository)
+            if ((yield platform_1.getOs()) === platform_1.OSType.linux && methodParsed === 'network') {
+                const packageName = yield linuxNetwork_1.aptSetup(version);
+                const installResult = yield linuxNetwork_1.aptInstall(packageName);
+                core.debug(`Install result: ${installResult}`);
+                core.setOutput('cuda', cuda);
+                return;
+            }
             // Download
-            const executablePath = yield downloader_1.download(version);
+            const executablePath = yield downloader_1.download(version, methodParsed);
             // Install
             yield installer_1.install(executablePath, subPackagesArray);
             // TODO Add CUDA environment variables to GitHub environment variables
@@ -584,13 +700,29 @@ exports.getVersion = void 0;
 const semver_1 = __webpack_require__(1383);
 const core_1 = __webpack_require__(2186);
 const getLinks_1 = __webpack_require__(2568);
+const platform_1 = __webpack_require__(9238);
 // Helper for converting string to SemVer and verifying it exists in the links
-function getVersion(versionString) {
+function getVersion(versionString, method) {
     return __awaiter(this, void 0, void 0, function* () {
         const version = new semver_1.SemVer(versionString);
         const links = yield getLinks_1.getLinks();
         core_1.debug(`At links: ${links}`);
-        const versions = links.getAvailableCudaVersions();
+        let versions;
+        switch (method) {
+            case 'local':
+                versions = links.getAvailableLocalCudaVersions();
+                break;
+            case 'network':
+                switch (yield platform_1.getOs()) {
+                    case platform_1.OSType.linux:
+                        // TODO adapt this to actual available network versions for linux
+                        versions = links.getAvailableLocalCudaVersions();
+                        break;
+                    case platform_1.OSType.windows:
+                        versions = links.getAvailableNetworkCudaVersions();
+                        break;
+                }
+        }
         core_1.debug(`Available versions: ${versions}`);
         if (versions.find(v => v.compare(version) === 0) !== undefined) {
             core_1.debug(`Version available: ${version}`);
