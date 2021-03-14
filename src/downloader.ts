@@ -1,5 +1,4 @@
 import * as core from '@actions/core'
-import {exec} from '@actions/exec'
 import * as tc from '@actions/tool-cache'
 import {SemVer} from 'semver'
 import {getLinks} from './links/getLinks'
@@ -48,33 +47,15 @@ export async function download(version: SemVer): Promise<string> {
     executablePath = cachedPath
   }
   // String with full executable path
-  let fullExecutablePath: string | undefined
-  // Execute options with callback for stdout
-  const options = {
-    listeners: {
-      stdout: (data: Buffer) => {
-        // Check if path was already set
-        if (fullExecutablePath) {
-          throw new Error(
-            `Path was already set to ${fullExecutablePath}, while trying it to set to ${executablePath}/${data.toString()}. Only 1 executable file is expected to be in the tool cache!`
-          )
-        }
-        // Set full executablepath to path + filename
-        fullExecutablePath = `${executablePath}/${data.toString()}`.replace(
-          /\r?\n|\r/g,
-          ''
-        ) // Remove all line breaks from stdout
-      },
-      stderr: (data: Buffer) => {
-        core.debug(data.toString())
-        throw new Error('Error getting executable in tool cache!')
-      }
-    }
-  }
-  // list files
-  await exec('ls', [executablePath], options)
-  if (!fullExecutablePath) {
-    throw new Error(`No tool found in tool cache: ${executablePath}`)
+  let fullExecutablePath: string
+  // Get list of files in tool cache
+  const filesInCache = await fs.promises.readdir(executablePath)
+  if (filesInCache.length > 1) {
+    throw new Error(`Got multiple file in tool cache: ${filesInCache.length}`)
+  } else if (filesInCache.length === 0) {
+    throw new Error(`Got no files in tool cahce`)
+  } else {
+    fullExecutablePath = filesInCache[0]
   }
   // Make file executable on linux
   if ((await getOs()) === OSType.linux) {
