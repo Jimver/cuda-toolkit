@@ -28,23 +28,28 @@ export async function install(version: SemVer): Promise<void> {
       installArgs = ['-s']
       break
   }
-  core.debug(`Running install executable: ${executablePath}`)
-  const exitCode = await exec(executablePath, installArgs, options)
-  core.debug(`Installer exit code: ${exitCode}`)
-  if ((await getOs()) === OSType.linux) {
-    const artifactClient = artifact.create()
-    const artifactName = 'install-log'
-    const files = ['/tmp/cuda-installer.log']
-    const rootDirectory = '/tmp'
-    const artifactOptions = {
-      continueOnError: true
+  try {
+    core.debug(`Running install executable: ${executablePath}`)
+    const exitCode = await exec(executablePath, installArgs, options)
+    core.debug(`Installer exit code: ${exitCode}`)
+  } catch (error) {
+    core.debug(`Error during installation: ${error}`)
+  } finally {
+    if ((await getOs()) === OSType.linux) {
+      const artifactClient = artifact.create()
+      const artifactName = 'install-log'
+      const files = ['/tmp/cuda-installer.log']
+      const rootDirectory = '/tmp'
+      const artifactOptions = {
+        continueOnError: true
+      }
+      const uploadResult = await artifactClient.uploadArtifact(
+        artifactName,
+        files,
+        rootDirectory,
+        artifactOptions
+      )
+      core.debug(`Upload result: ${uploadResult}`)
     }
-    const uploadResult = await artifactClient.uploadArtifact(
-      artifactName,
-      files,
-      rootDirectory,
-      artifactOptions
-    )
-    core.debug(`Upload result: ${uploadResult}`)
   }
 }
