@@ -1,4 +1,4 @@
-name: 'cuda-install'
+name: 'cuda-toolkit'
 description: 'Installs NVIDIA CUDA Toolkit and adds it to PATH'
 author: 'Jim Verheijde'
 inputs:
