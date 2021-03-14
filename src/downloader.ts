@@ -50,7 +50,9 @@ export async function download(version: SemVer): Promise<string> {
   // String with full executable path
   let fullExecutablePath: string
   // Get list of files in tool cache
-  const filesInCache = await (await glob.create(`${executablePath}/**`)).glob()
+  const filesInCache = await (
+    await glob.create(`${executablePath}/**.*`)
+  ).glob()
   core.debug(`Files in tool cache:`)
   for (const f of filesInCache) {
     core.debug(f)
