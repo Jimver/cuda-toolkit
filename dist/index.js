@@ -537,6 +537,7 @@ const installer_1 = __webpack_require__(1480);
 const linuxNetwork_1 = __webpack_require__(4493);
 const method_1 = __webpack_require__(3607);
 const platform_1 = __webpack_require__(9238);
+const updatePath_1 = __webpack_require__(2425);
 const version_1 = __webpack_require__(8217);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -579,29 +580,8 @@ function run() {
             const executablePath = yield downloader_1.download(version, methodParsed);
             // Install
             yield installer_1.install(executablePath, subPackagesArray);
-            // TODO Add CUDA environment variables to GitHub environment variables
-            //  steps:
-            //    - run: echo Cuda version ${{ inputs.cuda }}.
-            //      shell: bash
-            //    - run: echo Visual Studio version ${{ inputs.visual_studio }}.
-            //      shell: bash
-            //    - name: Install CUDA (Windows)
-            //      if: runner.os == 'Windows'
-            //      env:
-            //        cuda: ${{ inputs.cuda }}
-            //        visual_studio: ${{ inputs.visual_studio }}
-            //        ACTION_PATH: ${{ github.action_path }}
-            //      shell: powershell
-            //      run: |
-            //        # Install CUDA via a powershell script
-            //        $env:ACTION_PATH\scripts\install_cuda_windows.ps1
-            //        if ($?) {
-            //          # Set paths for subsequent steps, using $env:CUDA_PATH
-            //          echo "Adding CUDA to CUDA_PATH, CUDA_PATH_X_Y and PATH"
-            //          echo "CUDA_PATH=$env:CUDA_PATH" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-            //          echo "$env:CUDA_PATH_VX_Y=$env:CUDA_PATH" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-            //          echo "$env:CUDA_PATH/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-            //        }
+            // Add CUDA environment variables to GitHub environment variables
+            yield updatePath_1.updatePath(version);
             core.setOutput('cuda', cuda);
         }
         catch (error) {
@@ -681,11 +661,108 @@ exports.getOs = getOs;
 
 /***/ }),
 
+/***/ 2425:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.updatePath = void 0;
+const platform_1 = __webpack_require__(9238);
+const path = __importStar(__webpack_require__(5622));
+const core = __importStar(__webpack_require__(2186));
+function updatePath(version) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let cudaPath;
+        switch (yield platform_1.getOs()) {
+            case platform_1.OSType.linux:
+                cudaPath = `/usr/local/cuda-${version.major}.${version.minor}`;
+                break;
+            case platform_1.OSType.windows:
+                cudaPath = `C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v${version.major}.${version.minor}`;
+        }
+        core.debug(`Cuda path: ${cudaPath}`);
+        // Export $CUDA_PATH
+        core.exportVariable('CUDA_PATH', cudaPath);
+        core.debug(`Cuda path vx_y: ${cudaPath}`);
+        // Export $CUDA_PATH_VX_Y
+        core.exportVariable('CUDA_PATH_VX_Y', `CUDA_PATH_V${version.major}_${version.minor}`);
+        // Add $CUDA_PATH/bin to $PATH
+        const binPath = path.join(cudaPath, 'bin');
+        core.debug(`Adding to PATH: ${binPath}`);
+        core.addPath(binPath);
+        // Update LD_LIBRARY_PATH on linux, see: https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#environment-setup
+        if ((yield platform_1.getOs()) === platform_1.OSType.linux) {
+            // Get LD_LIBRARY_PATH
+            const libPath = process.env.LD_LIBRARY_PATH
+                ? process.env.LD_LIBRARY_PATH
+                : '';
+            // Get CUDA lib path
+            const cudaLibPath = path.join(cudaPath, 'lib64');
+            if (!libPath.split(':').includes(cudaLibPath)) {
+                core.debug(`Adding to LD_LIBRARY_PATH: ${cudaLibPath}`);
+                core.exportVariable('LD_LIBRARY_PATH', cudaLibPath + path.delimiter + libPath);
+            }
+        }
+    });
+}
+exports.updatePath = updatePath;
+
+
+/***/ }),
+
 /***/ 8217:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -698,7 +775,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getVersion = void 0;
 const semver_1 = __webpack_require__(1383);
-const core_1 = __webpack_require__(2186);
+const core = __importStar(__webpack_require__(2186));
 const getLinks_1 = __webpack_require__(2568);
 const platform_1 = __webpack_require__(9238);
 // Helper for converting string to SemVer and verifying it exists in the links
@@ -706,7 +783,6 @@ function getVersion(versionString, method) {
     return __awaiter(this, void 0, void 0, function* () {
         const version = new semver_1.SemVer(versionString);
         const links = yield getLinks_1.getLinks();
-        core_1.debug(`At links: ${links}`);
         let versions;
         switch (method) {
             case 'local':
@@ -723,13 +799,13 @@ function getVersion(versionString, method) {
                         break;
                 }
         }
-        core_1.debug(`Available versions: ${versions}`);
+        core.debug(`Available versions: ${versions}`);
         if (versions.find(v => v.compare(version) === 0) !== undefined) {
-            core_1.debug(`Version available: ${version}`);
+            core.debug(`Version available: ${version}`);
             return version;
         }
         else {
-            core_1.debug(`Version not available error!`);
+            core.debug(`Version not available error!`);
             throw new Error(`Version not available: ${version}`);
         }
     });
@@ -11706,6 +11782,385 @@ module.exports.win32 = win32;
 
 /***/ }),
 
+/***/ 4959:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = rimraf
+rimraf.sync = rimrafSync
+
+var assert = __webpack_require__(2357)
+var path = __webpack_require__(5622)
+var fs = __webpack_require__(5747)
+var glob = undefined
+try {
+  glob = __webpack_require__(1957)
+} catch (_err) {
+  // treat glob as optional.
+}
+var _0666 = parseInt('666', 8)
+
+var defaultGlobOpts = {
+  nosort: true,
+  silent: true
+}
+
+// for EMFILE handling
+var timeout = 0
+
+var isWindows = (process.platform === "win32")
+
+function defaults (options) {
+  var methods = [
+    'unlink',
+    'chmod',
+    'stat',
+    'lstat',
+    'rmdir',
+    'readdir'
+  ]
+  methods.forEach(function(m) {
+    options[m] = options[m] || fs[m]
+    m = m + 'Sync'
+    options[m] = options[m] || fs[m]
+  })
+
+  options.maxBusyTries = options.maxBusyTries || 3
+  options.emfileWait = options.emfileWait || 1000
+  if (options.glob === false) {
+    options.disableGlob = true
+  }
+  if (options.disableGlob !== true && glob === undefined) {
+    throw Error('glob dependency not found, set `options.disableGlob = true` if intentional')
+  }
+  options.disableGlob = options.disableGlob || false
+  options.glob = options.glob || defaultGlobOpts
+}
+
+function rimraf (p, options, cb) {
+  if (typeof options === 'function') {
+    cb = options
+    options = {}
+  }
+
+  assert(p, 'rimraf: missing path')
+  assert.equal(typeof p, 'string', 'rimraf: path should be a string')
+  assert.equal(typeof cb, 'function', 'rimraf: callback function required')
+  assert(options, 'rimraf: invalid options argument provided')
+  assert.equal(typeof options, 'object', 'rimraf: options should be object')
+
+  defaults(options)
+
+  var busyTries = 0
+  var errState = null
+  var n = 0
+
+  if (options.disableGlob || !glob.hasMagic(p))
+    return afterGlob(null, [p])
+
+  options.lstat(p, function (er, stat) {
+    if (!er)
+      return afterGlob(null, [p])
+
+    glob(p, options.glob, afterGlob)
+  })
+
+  function next (er) {
+    errState = errState || er
+    if (--n === 0)
+      cb(errState)
+  }
+
+  function afterGlob (er, results) {
+    if (er)
+      return cb(er)
+
+    n = results.length
+    if (n === 0)
+      return cb()
+
+    results.forEach(function (p) {
+      rimraf_(p, options, function CB (er) {
+        if (er) {
+          if ((er.code === "EBUSY" || er.code === "ENOTEMPTY" || er.code === "EPERM") &&
+              busyTries < options.maxBusyTries) {
+            busyTries ++
+            var time = busyTries * 100
+            // try again, with the same exact callback as this one.
+            return setTimeout(function () {
+              rimraf_(p, options, CB)
+            }, time)
+          }
+
+          // this one won't happen if graceful-fs is used.
+          if (er.code === "EMFILE" && timeout < options.emfileWait) {
+            return setTimeout(function () {
+              rimraf_(p, options, CB)
+            }, timeout ++)
+          }
+
+          // already gone
+          if (er.code === "ENOENT") er = null
+        }
+
+        timeout = 0
+        next(er)
+      })
+    })
+  }
+}
+
+// Two possible strategies.
+// 1. Assume it's a file.  unlink it, then do the dir stuff on EPERM or EISDIR
+// 2. Assume it's a directory.  readdir, then do the file stuff on ENOTDIR
+//
+// Both result in an extra syscall when you guess wrong.  However, there
+// are likely far more normal files in the world than directories.  This
+// is based on the assumption that a the average number of files per
+// directory is >= 1.
+//
+// If anyone ever complains about this, then I guess the strategy could
+// be made configurable somehow.  But until then, YAGNI.
+function rimraf_ (p, options, cb) {
+  assert(p)
+  assert(options)
+  assert(typeof cb === 'function')
+
+  // sunos lets the root user unlink directories, which is... weird.
+  // so we have to lstat here and make sure it's not a dir.
+  options.lstat(p, function (er, st) {
+    if (er && er.code === "ENOENT")
+      return cb(null)
+
+    // Windows can EPERM on stat.  Life is suffering.
+    if (er && er.code === "EPERM" && isWindows)
+      fixWinEPERM(p, options, er, cb)
+
+    if (st && st.isDirectory())
+      return rmdir(p, options, er, cb)
+
+    options.unlink(p, function (er) {
+      if (er) {
+        if (er.code === "ENOENT")
+          return cb(null)
+        if (er.code === "EPERM")
+          return (isWindows)
+            ? fixWinEPERM(p, options, er, cb)
+            : rmdir(p, options, er, cb)
+        if (er.code === "EISDIR")
+          return rmdir(p, options, er, cb)
+      }
+      return cb(er)
+    })
+  })
+}
+
+function fixWinEPERM (p, options, er, cb) {
+  assert(p)
+  assert(options)
+  assert(typeof cb === 'function')
+  if (er)
+    assert(er instanceof Error)
+
+  options.chmod(p, _0666, function (er2) {
+    if (er2)
+      cb(er2.code === "ENOENT" ? null : er)
+    else
+      options.stat(p, function(er3, stats) {
+        if (er3)
+          cb(er3.code === "ENOENT" ? null : er)
+        else if (stats.isDirectory())
+          rmdir(p, options, er, cb)
+        else
+          options.unlink(p, cb)
+      })
+  })
+}
+
+function fixWinEPERMSync (p, options, er) {
+  assert(p)
+  assert(options)
+  if (er)
+    assert(er instanceof Error)
+
+  try {
+    options.chmodSync(p, _0666)
+  } catch (er2) {
+    if (er2.code === "ENOENT")
+      return
+    else
+      throw er
+  }
+
+  try {
+    var stats = options.statSync(p)
+  } catch (er3) {
+    if (er3.code === "ENOENT")
+      return
+    else
+      throw er
+  }
+
+  if (stats.isDirectory())
+    rmdirSync(p, options, er)
+  else
+    options.unlinkSync(p)
+}
+
+function rmdir (p, options, originalEr, cb) {
+  assert(p)
+  assert(options)
+  if (originalEr)
+    assert(originalEr instanceof Error)
+  assert(typeof cb === 'function')
+
+  // try to rmdir first, and only readdir on ENOTEMPTY or EEXIST (SunOS)
+  // if we guessed wrong, and it's not a directory, then
+  // raise the original error.
+  options.rmdir(p, function (er) {
+    if (er && (er.code === "ENOTEMPTY" || er.code === "EEXIST" || er.code === "EPERM"))
+      rmkids(p, options, cb)
+    else if (er && er.code === "ENOTDIR")
+      cb(originalEr)
+    else
+      cb(er)
+  })
+}
+
+function rmkids(p, options, cb) {
+  assert(p)
+  assert(options)
+  assert(typeof cb === 'function')
+
+  options.readdir(p, function (er, files) {
+    if (er)
+      return cb(er)
+    var n = files.length
+    if (n === 0)
+      return options.rmdir(p, cb)
+    var errState
+    files.forEach(function (f) {
+      rimraf(path.join(p, f), options, function (er) {
+        if (errState)
+          return
+        if (er)
+          return cb(errState = er)
+        if (--n === 0)
+          options.rmdir(p, cb)
+      })
+    })
+  })
+}
+
+// this looks simpler, and is strictly *faster*, but will
+// tie up the JavaScript thread and fail on excessively
+// deep directory trees.
+function rimrafSync (p, options) {
+  options = options || {}
+  defaults(options)
+
+  assert(p, 'rimraf: missing path')
+  assert.equal(typeof p, 'string', 'rimraf: path should be a string')
+  assert(options, 'rimraf: missing options')
+  assert.equal(typeof options, 'object', 'rimraf: options should be object')
+
+  var results
+
+  if (options.disableGlob || !glob.hasMagic(p)) {
+    results = [p]
+  } else {
+    try {
+      options.lstatSync(p)
+      results = [p]
+    } catch (er) {
+      results = glob.sync(p, options.glob)
+    }
+  }
+
+  if (!results.length)
+    return
+
+  for (var i = 0; i < results.length; i++) {
+    var p = results[i]
+
+    try {
+      var st = options.lstatSync(p)
+    } catch (er) {
+      if (er.code === "ENOENT")
+        return
+
+      // Windows can EPERM on stat.  Life is suffering.
+      if (er.code === "EPERM" && isWindows)
+        fixWinEPERMSync(p, options, er)
+    }
+
+    try {
+      // sunos lets the root user unlink directories, which is... weird.
+      if (st && st.isDirectory())
+        rmdirSync(p, options, null)
+      else
+        options.unlinkSync(p)
+    } catch (er) {
+      if (er.code === "ENOENT")
+        return
+      if (er.code === "EPERM")
+        return isWindows ? fixWinEPERMSync(p, options, er) : rmdirSync(p, options, er)
+      if (er.code !== "EISDIR")
+        throw er
+
+      rmdirSync(p, options, er)
+    }
+  }
+}
+
+function rmdirSync (p, options, originalEr) {
+  assert(p)
+  assert(options)
+  if (originalEr)
+    assert(originalEr instanceof Error)
+
+  try {
+    options.rmdirSync(p)
+  } catch (er) {
+    if (er.code === "ENOENT")
+      return
+    if (er.code === "ENOTDIR")
+      throw originalEr
+    if (er.code === "ENOTEMPTY" || er.code === "EEXIST" || er.code === "EPERM")
+      rmkidsSync(p, options)
+  }
+}
+
+function rmkidsSync (p, options) {
+  assert(p)
+  assert(options)
+  options.readdirSync(p).forEach(function (f) {
+    rimrafSync(path.join(p, f), options)
+  })
+
+  // We only end up here once we got ENOTEMPTY at least once, and
+  // at this point, we are guaranteed to have removed all the kids.
+  // So, we know that it won't be ENOENT or ENOTDIR or anything else.
+  // try really hard to delete stuff on windows, because it has a
+  // PROFOUNDLY annoying habit of not closing handles promptly when
+  // files are deleted, resulting in spurious ENOTEMPTY errors.
+  var retries = isWindows ? 100 : 1
+  var i = 0
+  do {
+    var threw = true
+    try {
+      var ret = options.rmdirSync(p, options)
+      threw = false
+      return ret
+    } finally {
+      if (++i < retries && threw)
+        continue
+    }
+  } while (true)
+}
+
+
+/***/ }),
+
 /***/ 1532:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -13990,7 +14445,7 @@ const crypto = __webpack_require__(6417);
 const _c = fs.constants && os.constants ?
   { fs: fs.constants, os: os.constants } :
   process.binding('constants');
-const rimraf = __webpack_require__(2371);
+const rimraf = __webpack_require__(4959);
 
 /*
  * The working inner variables.
@@ -14734,385 +15189,6 @@ module.exports.tmpName = tmpName;
 module.exports.tmpNameSync = tmpNameSync;
 
 module.exports.setGracefulCleanup = setGracefulCleanup;
-
-
-/***/ }),
-
-/***/ 2371:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-module.exports = rimraf
-rimraf.sync = rimrafSync
-
-var assert = __webpack_require__(2357)
-var path = __webpack_require__(5622)
-var fs = __webpack_require__(5747)
-var glob = undefined
-try {
-  glob = __webpack_require__(1957)
-} catch (_err) {
-  // treat glob as optional.
-}
-var _0666 = parseInt('666', 8)
-
-var defaultGlobOpts = {
-  nosort: true,
-  silent: true
-}
-
-// for EMFILE handling
-var timeout = 0
-
-var isWindows = (process.platform === "win32")
-
-function defaults (options) {
-  var methods = [
-    'unlink',
-    'chmod',
-    'stat',
-    'lstat',
-    'rmdir',
-    'readdir'
-  ]
-  methods.forEach(function(m) {
-    options[m] = options[m] || fs[m]
-    m = m + 'Sync'
-    options[m] = options[m] || fs[m]
-  })
-
-  options.maxBusyTries = options.maxBusyTries || 3
-  options.emfileWait = options.emfileWait || 1000
-  if (options.glob === false) {
-    options.disableGlob = true
-  }
-  if (options.disableGlob !== true && glob === undefined) {
-    throw Error('glob dependency not found, set `options.disableGlob = true` if intentional')
-  }
-  options.disableGlob = options.disableGlob || false
-  options.glob = options.glob || defaultGlobOpts
-}
-
-function rimraf (p, options, cb) {
-  if (typeof options === 'function') {
-    cb = options
-    options = {}
-  }
-
-  assert(p, 'rimraf: missing path')
-  assert.equal(typeof p, 'string', 'rimraf: path should be a string')
-  assert.equal(typeof cb, 'function', 'rimraf: callback function required')
-  assert(options, 'rimraf: invalid options argument provided')
-  assert.equal(typeof options, 'object', 'rimraf: options should be object')
-
-  defaults(options)
-
-  var busyTries = 0
-  var errState = null
-  var n = 0
-
-  if (options.disableGlob || !glob.hasMagic(p))
-    return afterGlob(null, [p])
-
-  options.lstat(p, function (er, stat) {
-    if (!er)
-      return afterGlob(null, [p])
-
-    glob(p, options.glob, afterGlob)
-  })
-
-  function next (er) {
-    errState = errState || er
-    if (--n === 0)
-      cb(errState)
-  }
-
-  function afterGlob (er, results) {
-    if (er)
-      return cb(er)
-
-    n = results.length
-    if (n === 0)
-      return cb()
-
-    results.forEach(function (p) {
-      rimraf_(p, options, function CB (er) {
-        if (er) {
-          if ((er.code === "EBUSY" || er.code === "ENOTEMPTY" || er.code === "EPERM") &&
-              busyTries < options.maxBusyTries) {
-            busyTries ++
-            var time = busyTries * 100
-            // try again, with the same exact callback as this one.
-            return setTimeout(function () {
-              rimraf_(p, options, CB)
-            }, time)
-          }
-
-          // this one won't happen if graceful-fs is used.
-          if (er.code === "EMFILE" && timeout < options.emfileWait) {
-            return setTimeout(function () {
-              rimraf_(p, options, CB)
-            }, timeout ++)
-          }
-
-          // already gone
-          if (er.code === "ENOENT") er = null
-        }
-
-        timeout = 0
-        next(er)
-      })
-    })
-  }
-}
-
-// Two possible strategies.
-// 1. Assume it's a file.  unlink it, then do the dir stuff on EPERM or EISDIR
-// 2. Assume it's a directory.  readdir, then do the file stuff on ENOTDIR
-//
-// Both result in an extra syscall when you guess wrong.  However, there
-// are likely far more normal files in the world than directories.  This
-// is based on the assumption that a the average number of files per
-// directory is >= 1.
-//
-// If anyone ever complains about this, then I guess the strategy could
-// be made configurable somehow.  But until then, YAGNI.
-function rimraf_ (p, options, cb) {
-  assert(p)
-  assert(options)
-  assert(typeof cb === 'function')
-
-  // sunos lets the root user unlink directories, which is... weird.
-  // so we have to lstat here and make sure it's not a dir.
-  options.lstat(p, function (er, st) {
-    if (er && er.code === "ENOENT")
-      return cb(null)
-
-    // Windows can EPERM on stat.  Life is suffering.
-    if (er && er.code === "EPERM" && isWindows)
-      fixWinEPERM(p, options, er, cb)
-
-    if (st && st.isDirectory())
-      return rmdir(p, options, er, cb)
-
-    options.unlink(p, function (er) {
-      if (er) {
-        if (er.code === "ENOENT")
-          return cb(null)
-        if (er.code === "EPERM")
-          return (isWindows)
-            ? fixWinEPERM(p, options, er, cb)
-            : rmdir(p, options, er, cb)
-        if (er.code === "EISDIR")
-          return rmdir(p, options, er, cb)
-      }
-      return cb(er)
-    })
-  })
-}
-
-function fixWinEPERM (p, options, er, cb) {
-  assert(p)
-  assert(options)
-  assert(typeof cb === 'function')
-  if (er)
-    assert(er instanceof Error)
-
-  options.chmod(p, _0666, function (er2) {
-    if (er2)
-      cb(er2.code === "ENOENT" ? null : er)
-    else
-      options.stat(p, function(er3, stats) {
-        if (er3)
-          cb(er3.code === "ENOENT" ? null : er)
-        else if (stats.isDirectory())
-          rmdir(p, options, er, cb)
-        else
-          options.unlink(p, cb)
-      })
-  })
-}
-
-function fixWinEPERMSync (p, options, er) {
-  assert(p)
-  assert(options)
-  if (er)
-    assert(er instanceof Error)
-
-  try {
-    options.chmodSync(p, _0666)
-  } catch (er2) {
-    if (er2.code === "ENOENT")
-      return
-    else
-      throw er
-  }
-
-  try {
-    var stats = options.statSync(p)
-  } catch (er3) {
-    if (er3.code === "ENOENT")
-      return
-    else
-      throw er
-  }
-
-  if (stats.isDirectory())
-    rmdirSync(p, options, er)
-  else
-    options.unlinkSync(p)
-}
-
-function rmdir (p, options, originalEr, cb) {
-  assert(p)
-  assert(options)
-  if (originalEr)
-    assert(originalEr instanceof Error)
-  assert(typeof cb === 'function')
-
-  // try to rmdir first, and only readdir on ENOTEMPTY or EEXIST (SunOS)
-  // if we guessed wrong, and it's not a directory, then
-  // raise the original error.
-  options.rmdir(p, function (er) {
-    if (er && (er.code === "ENOTEMPTY" || er.code === "EEXIST" || er.code === "EPERM"))
-      rmkids(p, options, cb)
-    else if (er && er.code === "ENOTDIR")
-      cb(originalEr)
-    else
-      cb(er)
-  })
-}
-
-function rmkids(p, options, cb) {
-  assert(p)
-  assert(options)
-  assert(typeof cb === 'function')
-
-  options.readdir(p, function (er, files) {
-    if (er)
-      return cb(er)
-    var n = files.length
-    if (n === 0)
-      return options.rmdir(p, cb)
-    var errState
-    files.forEach(function (f) {
-      rimraf(path.join(p, f), options, function (er) {
-        if (errState)
-          return
-        if (er)
-          return cb(errState = er)
-        if (--n === 0)
-          options.rmdir(p, cb)
-      })
-    })
-  })
-}
-
-// this looks simpler, and is strictly *faster*, but will
-// tie up the JavaScript thread and fail on excessively
-// deep directory trees.
-function rimrafSync (p, options) {
-  options = options || {}
-  defaults(options)
-
-  assert(p, 'rimraf: missing path')
-  assert.equal(typeof p, 'string', 'rimraf: path should be a string')
-  assert(options, 'rimraf: missing options')
-  assert.equal(typeof options, 'object', 'rimraf: options should be object')
-
-  var results
-
-  if (options.disableGlob || !glob.hasMagic(p)) {
-    results = [p]
-  } else {
-    try {
-      options.lstatSync(p)
-      results = [p]
-    } catch (er) {
-      results = glob.sync(p, options.glob)
-    }
-  }
-
-  if (!results.length)
-    return
-
-  for (var i = 0; i < results.length; i++) {
-    var p = results[i]
-
-    try {
-      var st = options.lstatSync(p)
-    } catch (er) {
-      if (er.code === "ENOENT")
-        return
-
-      // Windows can EPERM on stat.  Life is suffering.
-      if (er.code === "EPERM" && isWindows)
-        fixWinEPERMSync(p, options, er)
-    }
-
-    try {
-      // sunos lets the root user unlink directories, which is... weird.
-      if (st && st.isDirectory())
-        rmdirSync(p, options, null)
-      else
-        options.unlinkSync(p)
-    } catch (er) {
-      if (er.code === "ENOENT")
-        return
-      if (er.code === "EPERM")
-        return isWindows ? fixWinEPERMSync(p, options, er) : rmdirSync(p, options, er)
-      if (er.code !== "EISDIR")
-        throw er
-
-      rmdirSync(p, options, er)
-    }
-  }
-}
-
-function rmdirSync (p, options, originalEr) {
-  assert(p)
-  assert(options)
-  if (originalEr)
-    assert(originalEr instanceof Error)
-
-  try {
-    options.rmdirSync(p)
-  } catch (er) {
-    if (er.code === "ENOENT")
-      return
-    if (er.code === "ENOTDIR")
-      throw originalEr
-    if (er.code === "ENOTEMPTY" || er.code === "EEXIST" || er.code === "EPERM")
-      rmkidsSync(p, options)
-  }
-}
-
-function rmkidsSync (p, options) {
-  assert(p)
-  assert(options)
-  options.readdirSync(p).forEach(function (f) {
-    rimrafSync(path.join(p, f), options)
-  })
-
-  // We only end up here once we got ENOTEMPTY at least once, and
-  // at this point, we are guaranteed to have removed all the kids.
-  // So, we know that it won't be ENOENT or ENOTDIR or anything else.
-  // try really hard to delete stuff on windows, because it has a
-  // PROFOUNDLY annoying habit of not closing handles promptly when
-  // files are deleted, resulting in spurious ENOTEMPTY errors.
-  var retries = isWindows ? 100 : 1
-  var i = 0
-  do {
-    var threw = true
-    try {
-      var ret = options.rmdirSync(p, options)
-      threw = false
-      return ret
-    } finally {
-      if (++i < retries && threw)
-        continue
-    }
-  } while (true)
-}
 
 
 /***/ }),

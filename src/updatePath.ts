@@ -1,7 +1,7 @@
 import {SemVer} from 'semver'
 import {getOs, OSType} from './platform'
+import * as path from 'path'
 import * as core from '@actions/core'
-import * as path from 'node:path'
 
 export async function updatePath(version: SemVer): Promise<void> {
   let cudaPath: string
