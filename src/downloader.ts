@@ -60,7 +60,10 @@ export async function download(version: SemVer): Promise<string> {
           )
         }
         // Set full executablepath to path + filename
-        fullExecutablePath = `${executablePath}/${data.toString()}`
+        fullExecutablePath = `${executablePath}/${data.toString()}`.replace(
+          /\r?\n|\r/g,
+          ''
+        ) // Remove all line breaks from stdout
       },
       stderr: (data: Buffer) => {
         core.debug(data.toString())
