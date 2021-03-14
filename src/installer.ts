@@ -10,10 +10,13 @@ export async function install(
   // Install arguments, see: https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#runfile-advanced
   // and https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/index.html
   let installArgs: string[]
+
   // Command string that is executed
   let command: string
+
   // Subset of subpackages to install instead of everything, see: https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/index.html#install-cuda-software
   const subPackages: string[] = subPackagesArray
+
   // Execution options which contain callback functions for stdout and stderr of install process
   const execOptions = {
     listeners: {
@@ -25,6 +28,8 @@ export async function install(
       }
     }
   }
+
+  // Configure OS dependent run command and args
   switch (await getOs()) {
     case OSType.linux:
       // Root permission needed on linux
@@ -39,8 +44,10 @@ export async function install(
       installArgs = ['-s']
       break
   }
-  // Add subpackages (if any)
+  // Add subpackages to command args (if any)
   installArgs = installArgs.concat(subPackages)
+
+  // Run installer
   try {
     core.debug(`Running install executable: ${executablePath}`)
     const exitCode = await exec(command, installArgs, execOptions)
