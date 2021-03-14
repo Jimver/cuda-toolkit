@@ -1,25 +1,12 @@
 import {exec} from '@actions/exec'
-import {SemVer} from 'semver'
-import {download} from './downloader'
 import * as core from '@actions/core'
 import {getOs, OSType} from './platform'
 import * as artifact from '@actions/artifact'
 
 export async function install(
-  version: SemVer,
+  executablePath: string,
   subPackagesArray: string[]
 ): Promise<void> {
-  const executablePath: string = await download(version)
-  const options = {
-    listeners: {
-      stdout: (data: Buffer) => {
-        core.debug(data.toString())
-      },
-      stderr: (data: Buffer) => {
-        core.debug(`Error: ${data.toString()}`)
-      }
-    }
-  }
   // Install arguments, see: https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#runfile-advanced
   // and https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/index.html
   let installArgs: string[]
@@ -45,6 +32,16 @@ export async function install(
   installArgs = installArgs.concat(subPackages)
   try {
     core.debug(`Running install executable: ${executablePath}`)
+    const options = {
+      listeners: {
+        stdout: (data: Buffer) => {
+          core.debug(data.toString())
+        },
+        stderr: (data: Buffer) => {
+          core.debug(`Error: ${data.toString()}`)
+        }
+      }
+    }
     const exitCode = await exec(command, installArgs, options)
     core.debug(`Installer exit code: ${exitCode}`)
   } catch (error) {

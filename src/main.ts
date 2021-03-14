@@ -1,5 +1,7 @@
 import * as core from '@actions/core'
+import {download} from './downloader'
 import {install} from './installer'
+import {Method, parseMethod} from './method'
 import {getVersion} from './version'
 
 async function run(): Promise<void> {
@@ -8,6 +10,8 @@ async function run(): Promise<void> {
     core.debug(`Desired cuda version: ${cuda}`)
     const subPackages: string = core.getInput('subPackages')
     core.debug(`Desired subPackes: ${subPackages}`)
+    const methodString: string = core.getInput('method')
+    core.debug(`Desired method: ${methodString}`)
 
     // Parse version string
     const version = await getVersion(cuda)
@@ -23,8 +27,15 @@ async function run(): Promise<void> {
       throw new Error(errString)
     }
 
+    // Parse method
+    const methodParsed: Method = parseMethod(methodString)
+    core.debug(`Parsed method: ${methodParsed}`)
+
+    // Download
+    const executablePath: string = await download(version)
+
     // Install
-    await install(version, subPackagesArray)
+    await install(executablePath, subPackagesArray)
 
     // TODO Add CUDA environment variables to GitHub environment variables
 
