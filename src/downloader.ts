@@ -1,4 +1,5 @@
 import * as core from '@actions/core'
+import {exec} from '@actions/exec'
 import * as tc from '@actions/tool-cache'
 import {SemVer} from 'semver'
 import {getLinks} from './links/getLinks'
@@ -10,10 +11,11 @@ export async function download(version: SemVer): Promise<string> {
   // First try to find tool with desired version in tool cache
   const toolName = 'cuda_installer'
   const toolPath = tc.find(toolName, `${version}`)
+  let executablePath: string
   if (toolPath) {
     // Tool is already in cache
     core.debug(`Found in cache ${toolPath}`)
-    return toolPath
+    executablePath = toolPath
   } else {
     core.debug(`Not found in cache, downloading...`)
     // Get download URL
@@ -41,6 +43,21 @@ export async function download(version: SemVer): Promise<string> {
       toolName,
       `${version}`
     )
-    return cachedPath
+    executablePath = cachedPath
   }
+  const options = {
+    listeners: {
+      stdout: (data: Buffer) => {
+        core.debug(data.toString())
+      },
+      stderr: (data: Buffer) => {
+        core.debug(data.toString())
+      }
+    }
+  }
+  core.debug(`List files in ${executablePath}:`)
+  await exec('ls', [executablePath], options)
+  core.debug(`Done list files in ${executablePath}`)
+  // Return full executable path
+  return executablePath
 }
