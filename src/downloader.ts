@@ -5,6 +5,10 @@ import {SemVer} from 'semver'
 import {getLinks} from './links/getLinks'
 import {AbstractLinks} from './links/links'
 import {getOs, OSType} from './platform'
+import {chmod} from 'fs'
+
+// Get async version of chmod
+const chmodAsync = chmod.__promisify__
 
 // Download helper which returns the installer executable and caches it for next runs
 export async function download(version: SemVer): Promise<string> {
@@ -71,6 +75,11 @@ export async function download(version: SemVer): Promise<string> {
   await exec('ls', [executablePath], options)
   if (!fullExecutablePath) {
     throw new Error(`No tool found in tool cache: ${executablePath}`)
+  }
+  // Make file executable on linux
+  if ((await getOs()) === OSType.linux) {
+    // 0755 octal notation permission is: owner(r,w,x), group(r,w,x), other(r,x) where r=read, w=write, x=execute
+    await chmodAsync(fullExecutablePath, '0755')
   }
   // Return full executable path
   return fullExecutablePath
