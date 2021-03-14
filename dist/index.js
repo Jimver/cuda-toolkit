@@ -727,7 +727,9 @@ function updatePath(version) {
                 : '';
             // Get CUDA lib path
             const cudaLibPath = path.join(cudaPath, 'lib64');
+            // Check if CUDA lib path is already in LD_LIBRARY_PATH
             if (!libPath.split(':').includes(cudaLibPath)) {
+                // CUDA lib is not in LD_LIBRARY_PATH, so add it
                 core.debug(`Adding to LD_LIBRARY_PATH: ${cudaLibPath}`);
                 core.exportVariable('LD_LIBRARY_PATH', cudaLibPath + path.delimiter + libPath);
             }
