@@ -1,4 +1,4 @@
-# cuda
+# cuda-toolkit
 
 This action installs the [NVIDIA® CUDA® Toolkit](https://developer.nvidia.com/cuda-toolkit) on the system. It adds the paths as `CUDA_PATH` to `GITHUB_ENV` so you can access the paths in subsequent steps. Right now both `windows-2019` and `ubuntu-20.04` runners have been tested to work successfully.
 
