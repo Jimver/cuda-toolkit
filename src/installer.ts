@@ -2,6 +2,7 @@ import {exec} from '@actions/exec'
 import * as core from '@actions/core'
 import {getOs, OSType} from './platform'
 import * as artifact from '@actions/artifact'
+import {stderr, stdout} from 'node:process'
 
 export async function install(
   executablePath: string,
@@ -14,12 +15,24 @@ export async function install(
   let command: string
   // Subset of subpackages to install instead of everything, see: https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/index.html#install-cuda-software
   const subPackages: string[] = subPackagesArray
+  const execOptions = {
+    listeners: {
+      stdout: (data: Buffer) => {
+        core.debug(data.toString())
+      },
+      stderr: (data: Buffer) => {
+        core.debug(`Error: ${data.toString()}`)
+      }
+    }
+  }
   switch (await getOs()) {
     case OSType.linux:
       // Root permission needed on linux
       command = `sudo ${executablePath}`
       // Install silently
       installArgs = ['--silent']
+      // Unload nouveau kernel module
+      await exec('sudo rmmod nouveau', [], execOptions)
       break
     case OSType.windows:
       // Windows handles permissions automatically
@@ -32,17 +45,7 @@ export async function install(
   installArgs = installArgs.concat(subPackages)
   try {
     core.debug(`Running install executable: ${executablePath}`)
-    const options = {
-      listeners: {
-        stdout: (data: Buffer) => {
-          core.debug(data.toString())
-        },
-        stderr: (data: Buffer) => {
-          core.debug(`Error: ${data.toString()}`)
-        }
-      }
-    }
-    const exitCode = await exec(command, installArgs, options)
+    const exitCode = await exec(command, installArgs, execOptions)
     core.debug(`Installer exit code: ${exitCode}`)
   } catch (error) {
     core.debug(`Error during installation: ${error}`)
