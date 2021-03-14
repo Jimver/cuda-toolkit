@@ -28,9 +28,9 @@ export async function install(
   switch (await getOs()) {
     case OSType.linux:
       // Root permission needed on linux
-      command = `sudo ${executablePath} --toolkit -- samples`
-      // Install silently
-      installArgs = ['--silent']
+      command = `sudo ${executablePath}`
+      // Install silently, and install toolkit and samples, no driver
+      installArgs = ['--silent', '--toolkit', '--samples']
       break
     case OSType.windows:
       // Windows handles permissions automatically
