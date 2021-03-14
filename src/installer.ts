@@ -2,6 +2,7 @@ import {exec} from '@actions/exec'
 import {SemVer} from 'semver'
 import {download} from './downloader'
 import * as core from '@actions/core'
+import {getOs, OSType} from './platform'
 
 export async function install(version: SemVer): Promise<void> {
   const executablePath: string = await download(version)
@@ -15,7 +16,18 @@ export async function install(version: SemVer): Promise<void> {
       }
     }
   }
+  // Install arguments, see: https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#runfile-advanced
+  // and https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/index.html
+  let installArgs: string[]
+  switch (await getOs()) {
+    case OSType.linux:
+      installArgs = ['--silent']
+      break
+    case OSType.windows:
+      installArgs = ['-s']
+      break
+  }
   core.debug(`Running install executable: ${executablePath}`)
-  const exitCode = await exec(executablePath, undefined, options)
+  const exitCode = await exec(executablePath, installArgs, options)
   core.debug(`Installer exit code: ${exitCode}`)
 }
