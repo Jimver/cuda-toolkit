@@ -3,11 +3,18 @@ import {getOs, OSType} from './platform'
 import * as path from 'path'
 import * as core from '@actions/core'
 
-export async function updatePath(version: SemVer): Promise<void> {
+export async function updatePath(
+  version: SemVer,
+  useApt: boolean
+): Promise<void> {
   let cudaPath: string
   switch (await getOs()) {
     case OSType.linux:
-      cudaPath = `/usr/local/cuda-${version.major}.${version.minor}`
+      if (useApt) {
+        cudaPath = `/usr/local/cuda`
+      } else {
+        cudaPath = `/usr/local/cuda-${version.major}.${version.minor}`
+      }
       break
     case OSType.windows:
       cudaPath = `C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v${version.major}.${version.minor}`

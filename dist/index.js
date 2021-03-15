@@ -2,6 +2,85 @@ require('./sourcemap-register.js');module.exports =
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ 9495:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.aptInstall = exports.aptSetup = exports.useApt = void 0;
+const core = __importStar(__webpack_require__(2186));
+const platform_1 = __webpack_require__(9238);
+function useApt(method) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return method === 'network' && (yield platform_1.getOs()) === platform_1.OSType.linux;
+    });
+}
+exports.useApt = useApt;
+function aptSetup(version) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const osType = yield platform_1.getOs();
+        if (osType !== platform_1.OSType.linux) {
+            throw new Error(`apt setup can only be run on linux runners! Current os type: ${osType}`);
+        }
+        core.debug(`Setup packages for ${version}`);
+        // UBUNTU_VERSION = $(lsb_release - sr)
+        // UBUNTU_VERSION = '${UBUNTU_VERSION//.}'
+        // const pinFilename = `cuda-ubuntu${UBUNTU_VERSION}.pin`
+        return 'cuda';
+    });
+}
+exports.aptSetup = aptSetup;
+function aptInstall(packageName, subPackages) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const osType = yield platform_1.getOs();
+        if (osType !== platform_1.OSType.linux) {
+            throw new Error(`apt install can only be run on linux runners! Current os type: ${osType}`);
+        }
+        if (subPackages.length === 0) {
+            // Install everything
+            core.debug(`Install package: ${packageName}`);
+        }
+        else {
+            // Only install specified packages
+            core.debug(`Only install subpackages: ${subPackages}`);
+        }
+        return 0;
+    });
+}
+exports.aptInstall = aptInstall;
+
+
+/***/ }),
+
 /***/ 5587:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -443,60 +522,6 @@ exports.WindowsLinks = WindowsLinks;
 
 /***/ }),
 
-/***/ 4493:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.aptInstall = exports.aptSetup = void 0;
-const core = __importStar(__webpack_require__(2186));
-function aptSetup(version) {
-    return __awaiter(this, void 0, void 0, function* () {
-        core.debug(`Setup packages for ${version}`);
-        return 'cuda';
-    });
-}
-exports.aptSetup = aptSetup;
-function aptInstall(packageName) {
-    return __awaiter(this, void 0, void 0, function* () {
-        core.debug(`Install package: ${packageName}`);
-        return 0;
-    });
-}
-exports.aptInstall = aptInstall;
-
-
-/***/ }),
-
 /***/ 3109:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -534,9 +559,8 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__webpack_require__(2186));
 const downloader_1 = __webpack_require__(5587);
 const installer_1 = __webpack_require__(1480);
-const linuxNetwork_1 = __webpack_require__(4493);
+const aptInstaller_1 = __webpack_require__(9495);
 const method_1 = __webpack_require__(3607);
-const platform_1 = __webpack_require__(9238);
 const updatePath_1 = __webpack_require__(2425);
 const version_1 = __webpack_require__(8217);
 function run() {
@@ -564,24 +588,23 @@ function run() {
             core.debug(`Parsed method: ${methodParsed}`);
             // Parse version string
             const version = yield version_1.getVersion(cuda, methodParsed);
-            // Check method local, TODO remove when network is implemented
-            if (methodParsed === 'network') {
-                core.debug(`'network' install mode is not yet implemented! Please use 'local' mode instead.`);
-            }
             // Linux network install (uses apt repository)
-            if ((yield platform_1.getOs()) === platform_1.OSType.linux && methodParsed === 'network') {
-                const packageName = yield linuxNetwork_1.aptSetup(version);
-                const installResult = yield linuxNetwork_1.aptInstall(packageName);
+            const useAptInstall = yield aptInstaller_1.useApt(methodParsed);
+            if (useAptInstall) {
+                // Setup aptitude repos
+                const packageName = yield aptInstaller_1.aptSetup(version);
+                // Install packages
+                const installResult = yield aptInstaller_1.aptInstall(packageName, subPackagesArray);
                 core.debug(`Install result: ${installResult}`);
-                core.setOutput('cuda', cuda);
-                return;
             }
-            // Download
-            const executablePath = yield downloader_1.download(version, methodParsed);
-            // Install
-            yield installer_1.install(executablePath, subPackagesArray);
+            else {
+                // Download
+                const executablePath = yield downloader_1.download(version, methodParsed);
+                // Install
+                yield installer_1.install(executablePath, subPackagesArray);
+            }
             // Add CUDA environment variables to GitHub environment variables
-            yield updatePath_1.updatePath(version);
+            yield updatePath_1.updatePath(version, useAptInstall);
             core.setOutput('cuda', cuda);
         }
         catch (error) {
@@ -699,12 +722,17 @@ exports.updatePath = void 0;
 const platform_1 = __webpack_require__(9238);
 const path = __importStar(__webpack_require__(5622));
 const core = __importStar(__webpack_require__(2186));
-function updatePath(version) {
+function updatePath(version, useApt) {
     return __awaiter(this, void 0, void 0, function* () {
         let cudaPath;
         switch (yield platform_1.getOs()) {
             case platform_1.OSType.linux:
-                cudaPath = `/usr/local/cuda-${version.major}.${version.minor}`;
+                if (useApt) {
+                    cudaPath = `/usr/local/cuda`;
+                }
+                else {
+                    cudaPath = `/usr/local/cuda-${version.major}.${version.minor}`;
+                }
                 break;
             case platform_1.OSType.windows:
                 cudaPath = `C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v${version.major}.${version.minor}`;

@@ -1,9 +1,8 @@
 import * as core from '@actions/core'
 import {download} from './downloader'
 import {install} from './installer'
-import {aptInstall, aptSetup} from './linuxNetwork'
+import {aptInstall, aptSetup, useApt} from './aptInstaller'
 import {Method, parseMethod} from './method'
-import {getOs, OSType} from './platform'
 import {updatePath} from './updatePath'
 import {getVersion} from './version'
 
@@ -34,30 +33,24 @@ async function run(): Promise<void> {
     // Parse version string
     const version = await getVersion(cuda, methodParsed)
 
-    // Check method local, TODO remove when network is implemented
-    if (methodParsed === 'network') {
-      core.debug(
-        `'network' install mode is not yet implemented! Please use 'local' mode instead.`
-      )
-    }
-
     // Linux network install (uses apt repository)
-    if ((await getOs()) === OSType.linux && methodParsed === 'network') {
+    const useAptInstall = await useApt(methodParsed)
+    if (useAptInstall) {
+      // Setup aptitude repos
       const packageName = await aptSetup(version)
-      const installResult = await aptInstall(packageName)
+      // Install packages
+      const installResult = await aptInstall(packageName, subPackagesArray)
       core.debug(`Install result: ${installResult}`)
-      core.setOutput('cuda', cuda)
-      return
+    } else {
+      // Download
+      const executablePath: string = await download(version, methodParsed)
+
+      // Install
+      await install(executablePath, subPackagesArray)
     }
-
-    // Download
-    const executablePath: string = await download(version, methodParsed)
-
-    // Install
-    await install(executablePath, subPackagesArray)
 
     // Add CUDA environment variables to GitHub environment variables
-    await updatePath(version)
+    await updatePath(version, useAptInstall)
 
     core.setOutput('cuda', cuda)
   } catch (error) {

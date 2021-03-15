@@ -1,6 +1,6 @@
 # cuda-toolkit
 
-This action installs the [NVIDIA® CUDA® Toolkit](https://developer.nvidia.com/cuda-toolkit) on the system. It adds the paths as `CUDA_PATH` to `GITHUB_ENV` so you can access the paths in subsequent steps. Right now both `windows-2019` and `ubuntu-20.04` runners have been tested to work successfully.
+This action installs the [NVIDIA® CUDA® Toolkit](https://developer.nvidia.com/cuda-toolkit) on the system. It adds the cuda install location as `CUDA_PATH` to `GITHUB_ENV` so you can access the CUDA install location in subsequent steps. `CUDA_PATH/bin` is added to `GITHUB_PATH` so you can use commands such as `nvcc` directly in subsequent steps. Right now both `windows-2019` and `ubuntu-20.04` runners have been tested to work successfully.
 
 ## Inputs
 
@@ -29,12 +29,18 @@ Default: `'local'`.
 
 ### `cuda`
 
-The cuda version installed.
+The cuda version installed (same as `cuda` from input).
 
 ## Example usage
 
 ```yaml
-uses: Jimver/cuda-toolkit@v0.1.0
-with:
-  cuda: '11.2.2'
+steps:
+- uses: Jimver/cuda-toolkit@v0.1.0
+  id: cuda-toolkit
+  with:
+    cuda: '11.2.2'
+
+- run: echo "Installed cuda version is: ${{steps.cuda-toolkit.outputs.cuda}}"
+
+- run: nvcc -V
 ```
