@@ -44,6 +44,10 @@ Default: `'["--toolkit", "--samples"]'`.
 
 The cuda version installed (same as `cuda` from input).
 
+### `CUDA_PATH`
+
+The path where cuda is installed (same as `CUDA_PATH` in `GITHUB_ENV`).
+
 ## Example usage
 
 ```yaml
@@ -54,6 +58,8 @@ steps:
     cuda: '11.2.2'
 
 - run: echo "Installed cuda version is: ${{steps.cuda-toolkit.outputs.cuda}}"
+
+- run: echo "Cuda install location: ${{steps.cuda-toolkit.outputs.CUDA_PATH}}"
 
 - run: nvcc -V
 ```

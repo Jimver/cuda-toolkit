@@ -3,7 +3,7 @@ import {getOs, OSType} from './platform'
 import * as path from 'path'
 import * as core from '@actions/core'
 
-export async function updatePath(version: SemVer): Promise<void> {
+export async function updatePath(version: SemVer): Promise<string> {
   let cudaPath: string
   switch (await getOs()) {
     case OSType.linux:
@@ -44,4 +44,6 @@ export async function updatePath(version: SemVer): Promise<void> {
       )
     }
   }
+  // Return cuda path
+  return cudaPath
 }
