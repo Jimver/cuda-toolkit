@@ -56,7 +56,7 @@ export async function aptInstall(
   } else {
     // Only install specified packages
     const versionedSubPackages = subPackages.map(
-      subPackage => `${subPackage}-${version.major}-${version.minor}`
+      subPackage => `cuda-${subPackage}-${version.major}-${version.minor}`
     )
     core.debug(`Only install subpackages: ${versionedSubPackages}`)
     return await exec(`sudo apt-get -y install`, versionedSubPackages)

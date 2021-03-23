@@ -2,9 +2,11 @@ import {exec} from '@actions/exec'
 import * as core from '@actions/core'
 import {getOs, OSType} from './platform'
 import * as artifact from '@actions/artifact'
+import {SemVer} from 'semver'
 
 export async function install(
   executablePath: string,
+  version: SemVer,
   subPackagesArray: string[],
   linuxLocalArgsArray: string[]
 ): Promise<void> {
@@ -43,10 +45,14 @@ export async function install(
       command = executablePath
       // Install silently
       installArgs = ['-s']
+      // Add subpackages to command args (if any)
+      installArgs = installArgs.concat(
+        subPackages.map(
+          subPackage => `${subPackage}_${version.major}.${version.minor}`
+        )
+      )
       break
   }
-  // Add subpackages to command args (if any)
-  installArgs = installArgs.concat(subPackages)
 
   // Run installer
   try {

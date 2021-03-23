@@ -71,7 +71,12 @@ async function run(): Promise<void> {
       const executablePath: string = await download(version, methodParsed)
 
       // Install
-      await install(executablePath, subPackagesArray, linuxLocalArgsArray)
+      await install(
+        executablePath,
+        version,
+        subPackagesArray,
+        linuxLocalArgsArray
+      )
     }
 
     // Add CUDA environment variables to GitHub environment variables
