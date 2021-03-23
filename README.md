@@ -24,7 +24,8 @@ Default: `'[]'`.
 
 **Optional**
 Installation method, can be either `'local'` or `'network'`.
-- `'local'` downloads the entire installer with all packages and runs that (you can still only install certain packages with subPackages on Windows). 
+
+- `'local'` downloads the entire installer with all packages and runs that (you can still only install certain packages with `sub-packages` on Windows).
 - `'network'` downloads a smaller executable which only downloads necessary packages which you can define in subPackages.
 
 Default: `'local'`.
