@@ -32,9 +32,9 @@ Default: `'local'`.
 ### `linux-local-args`
 
 **Optional**
-(For Linux and 'local' method only) override arguments for the Linux `.run` installer. For example if you don't want samples use `'["--driver", "--toolkit"]'` (double quotes required)
+(For Linux and 'local' method only) override arguments for the Linux `.run` installer. For example if you don't want samples use `'["--toolkit"]'` (double quotes required)
 
-Default: `'["--driver", "--toolkit", "--samples"]'`.
+Default: `'["--toolkit", "--samples"]'`.
 
 ## Outputs
 

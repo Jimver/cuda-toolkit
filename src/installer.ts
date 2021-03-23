@@ -35,8 +35,8 @@ export async function install(
     case OSType.linux:
       // Root permission needed on linux
       command = `sudo ${executablePath}`
-      // Install silently, and install toolkit and samples, no driver
-      installArgs = linuxLocalArgsArray
+      // Install silently, and add additional arguments
+      installArgs = ['--silent'].concat(linuxLocalArgsArray)
       break
     case OSType.windows:
       // Windows handles permissions automatically

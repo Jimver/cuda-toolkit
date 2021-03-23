@@ -15,9 +15,9 @@ inputs:
     required: false
     default: 'local'
   linux-local-args:
-    description: '(Linux and ''local'' method only) override arguments for the linux .run installer. For example if you don''t want samples use ["--driver", "--toolkit"] double quotes required!'
+    description: '(Linux and ''local'' method only) override arguments for the linux .run installer. For example if you don''t want samples use ["--toolkit"] double quotes required!'
     required: false
-    default: '["--driver", "--toolkit", "--samples"]'
+    default: '["--toolkit", "--samples"]'
 runs:
   using: 'node12'
   main: dist/index.js
