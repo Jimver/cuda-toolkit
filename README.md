@@ -10,13 +10,13 @@ This action installs the [NVIDIA® CUDA® Toolkit](https://developer.nvidia.com/
 
 Default: `'11.2.2'`.
 
-### `subPackages`
+### `sub-packages`
 
 **NOTE: On Linux this only works with the 'network' method [view details](#method)**
 
 **Optional**
 If set, only the specified CUDA subpackages will be installed.
-Only installs specified subpackages, must be in the form of a JSON array. For example, if you only want to install nvcc and visual studio integration: `"['nvcc', 'visual_studio_integration']"`
+Only installs specified subpackages, must be in the form of a JSON array. For example, if you only want to install nvcc and visual studio integration: `'["nvcc", "visual_studio_integration"]'` (double quotes required)
 
 Default: `'[]'`.
 
@@ -32,9 +32,10 @@ Default: `'local'`.
 ### `linux-local-args`
 
 **Optional**
-(For Linux and 'local' method only) override arguments for the Linux `.run` installer. For example if you don't want samples use ['--driver', '--toolkit']
+(For Linux and 'local' method only) override arguments for the Linux `.run` installer. For example if you don't want samples use `'["--toolkit"]'` (double quotes required)
+See the [Nvidia Docs](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#runfile-advanced) for available options. Note that the `--silent` option is already always added by the action itself.
 
-Default: `"['--driver', '--toolkit', '--samples']"`.
+Default: `'["--toolkit", "--samples"]'`.
 
 ## Outputs
 
