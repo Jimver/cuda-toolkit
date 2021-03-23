@@ -33,6 +33,7 @@ Default: `'local'`.
 
 **Optional**
 (For Linux and 'local' method only) override arguments for the Linux `.run` installer. For example if you don't want samples use `'["--toolkit"]'` (double quotes required)
+See the [Nvidia Docs](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#runfile-advanced) for available options. Note that the `--silent` option is already always added by the action itself.
 
 Default: `'["--toolkit", "--samples"]'`.
 
