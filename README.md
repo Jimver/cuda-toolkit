@@ -10,7 +10,7 @@ This action installs the [NVIDIA® CUDA® Toolkit](https://developer.nvidia.com/
 
 Default: `'11.2.2'`.
 
-### `subPackages`
+### `sub-packages`
 
 **NOTE: For now this ONLY works on Windows platforms**
 
