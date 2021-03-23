@@ -10,7 +10,7 @@ async function run(): Promise<void> {
   try {
     const cuda: string = core.getInput('cuda')
     core.debug(`Desired cuda version: ${cuda}`)
-    const subPackages: string = core.getInput('subPackages')
+    const subPackages: string = core.getInput('sub-packages')
     core.debug(`Desired subPackes: ${subPackages}`)
     const methodString: string = core.getInput('method')
     core.debug(`Desired method: ${methodString}`)
@@ -23,7 +23,7 @@ async function run(): Promise<void> {
       subPackagesArray = JSON.parse(subPackages)
       // TODO verify that elements are valid package names (nvcc, etc.)
     } catch (error) {
-      const errString = `Error parsing input 'subPackages' to a JSON string array: ${subPackages}`
+      const errString = `Error parsing input 'sub-packages' to a JSON string array: ${subPackages}`
       core.debug(errString)
       throw new Error(errString)
     }
