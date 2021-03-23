@@ -16,7 +16,7 @@ Default: `'11.2.2'`.
 
 **Optional**
 If set, only the specified CUDA subpackages will be installed.
-Only installs specified subpackages, must be in the form of a JSON array. For example, if you only want to install nvcc and visual studio integration: `"['nvcc', 'visual_studio_integration']"`
+Only installs specified subpackages, must be in the form of a JSON array. For example, if you only want to install nvcc and visual studio integration: `'["nvcc", "visual_studio_integration"]'` (double quotes required)
 
 Default: `'[]'`.
 
@@ -32,9 +32,9 @@ Default: `'local'`.
 ### `linux-local-args`
 
 **Optional**
-(For Linux and 'local' method only) override arguments for the Linux `.run` installer. For example if you don't want samples use ['--driver', '--toolkit']
+(For Linux and 'local' method only) override arguments for the Linux `.run` installer. For example if you don't want samples use `'["--driver", "--toolkit"]'` (double quotes required)
 
-Default: `"['--driver', '--toolkit', '--samples']"`.
+Default: `'["--driver", "--toolkit", "--samples"]'`.
 
 ## Outputs
 
