@@ -6,7 +6,7 @@ import * as core from '@actions/core'
 export async function updatePath(
   version: SemVer,
   useApt: boolean
-): Promise<void> {
+): Promise<string> {
   let cudaPath: string
   switch (await getOs()) {
     case OSType.linux:
@@ -51,4 +51,6 @@ export async function updatePath(
       )
     }
   }
+  // Return cuda path
+  return cudaPath
 }

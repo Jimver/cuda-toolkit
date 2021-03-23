@@ -63,9 +63,11 @@ async function run(): Promise<void> {
     }
 
     // Add CUDA environment variables to GitHub environment variables
-    await updatePath(version, useAptInstall)
+    const cudaPath: string = await updatePath(version, useAptInstall)
 
+    // Set output variables
     core.setOutput('cuda', cuda)
+    core.setOutput('CUDA_PATH', cudaPath)
   } catch (error) {
     core.setFailed(error.message)
   }
