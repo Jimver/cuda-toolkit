@@ -5,6 +5,7 @@ import {aptInstall, aptSetup, useApt} from './aptInstaller'
 import {Method, parseMethod} from './method'
 import {updatePath} from './updatePath'
 import {getVersion} from './version'
+import {getOs, OSType} from './platform'
 
 async function run(): Promise<void> {
   try {
@@ -46,24 +47,40 @@ async function run(): Promise<void> {
       throw new Error(errString)
     }
 
+    // Check if subPackages are specified in 'local' method on Linux
+    if (
+      methodParsed === 'local' &&
+      subPackagesArray.length > 0 &&
+      (await getOs()) === OSType.linux
+    ) {
+      throw new Error(
+        `Subpackages on 'local' method is not supported on Linux, use 'network' instead`
+      )
+    }
+
     // Linux network install (uses apt repository)
     const useAptInstall = await useApt(methodParsed)
     if (useAptInstall) {
       // Setup aptitude repos
-      const packageName = await aptSetup(version)
+      await aptSetup(version)
       // Install packages
-      const installResult = await aptInstall(packageName, subPackagesArray)
+      const installResult = await aptInstall(version, subPackagesArray)
       core.debug(`Install result: ${installResult}`)
     } else {
       // Download
       const executablePath: string = await download(version, methodParsed)
 
       // Install
-      await install(executablePath, subPackagesArray, linuxLocalArgsArray)
+      await install(
+        executablePath,
+        version,
+        subPackagesArray,
+        linuxLocalArgsArray
+      )
     }
 
     // Add CUDA environment variables to GitHub environment variables
-    const cudaPath: string = await updatePath(version, useAptInstall)
+    const cudaPath: string = await updatePath(version)
 
     // Set output variables
     core.setOutput('cuda', cuda)

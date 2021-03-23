@@ -7,11 +7,11 @@ inputs:
     required: false
     default: '11.2.2'
   sub-packages:
-    description: '(Windows only for now) Only installs specified subpackages, must be in the form of a JSON array. For example, if you only want to install nvcc and visual studio integration: ["nvcc", "visual_studio_integration"] double quotes required!'
+    description: 'Only installs specified subpackages, must be in the form of a JSON array. For example, if you only want to install nvcc and visual studio integration: ["nvcc", "visual_studio_integration"] double quotes required! Note that if you want to use this on Linux, ''network'' method MUST be used.'
     required: false
     default: '[]'
   method:
-    description: "('network' is not yet implemented on Linux). Installation method, can be either 'local' or 'network'. 'local' downloads the entire installer with all packages and runs that (you can still only install certain packages with subPackages). 'network' downloads a smaller executable which only downloads necessary packages which you can define in subPackages"
+    description: "('network' is not yet implemented on Linux). Installation method, can be either 'local' or 'network'. 'local' downloads the entire installer with all packages and runs that (you can still only install certain packages with sub-packages on Windows). 'network' downloads a smaller executable which only downloads necessary packages which you can define in subPackages"
     required: false
     default: 'local'
   linux-local-args:

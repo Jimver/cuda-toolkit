@@ -6,13 +6,13 @@ This action installs the [NVIDIA® CUDA® Toolkit](https://developer.nvidia.com/
 
 ### `cuda`
 
-**Optional** The CUDA version to install.
+**Optional** The CUDA version to install. View `src/link/windowsLinks.ts` and `src/link/linuxLinks.ts` for available versions.
 
 Default: `'11.2.2'`.
 
 ### `sub-packages`
 
-**NOTE: For now this ONLY works on Windows platforms**
+**NOTE: On Linux this only works with the 'network' method [view details](#method)**
 
 **Optional**
 If set, only the specified CUDA subpackages will be installed.
@@ -22,10 +22,11 @@ Default: `'[]'`.
 
 ### `method`
 
-**NOTE: Right now 'network' is not implemented on Linux runners**
-
 **Optional**
-Installation method, can be either 'local' or 'network'. 'local' downloads the entire installer with all packages and runs that (you can still only install certain packages with subPackages). 'network' downloads a smaller executable which only downloads necessary packages which you can define in subPackages.
+Installation method, can be either `'local'` or `'network'`.
+
+- `'local'` downloads the entire installer with all packages and runs that (you can still only install certain packages with `sub-packages` on Windows).
+- `'network'` downloads a smaller executable which only downloads necessary packages which you can define in subPackages.
 
 Default: `'local'`.
 
