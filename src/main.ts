@@ -50,9 +50,9 @@ async function run(): Promise<void> {
     const useAptInstall = await useApt(methodParsed)
     if (useAptInstall) {
       // Setup aptitude repos
-      const packageName = await aptSetup(version)
+      await aptSetup(version)
       // Install packages
-      const installResult = await aptInstall(packageName, subPackagesArray)
+      const installResult = await aptInstall(version, subPackagesArray)
       core.debug(`Install result: ${installResult}`)
     } else {
       // Download
@@ -63,7 +63,7 @@ async function run(): Promise<void> {
     }
 
     // Add CUDA environment variables to GitHub environment variables
-    await updatePath(version, useAptInstall)
+    await updatePath(version)
 
     core.setOutput('cuda', cuda)
   } catch (error) {
