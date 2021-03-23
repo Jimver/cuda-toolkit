@@ -55,7 +55,10 @@ export async function aptInstall(
     return await exec(`sudo apt-get -y install`, [packageName])
   } else {
     // Only install specified packages
-    core.debug(`Only install subpackages: ${subPackages}`)
-    return await exec(`sudo apt-get -y install`, subPackages)
+    const versionedSubPackages = subPackages.map(
+      subPackage => `${subPackage}-${version.major}-${version.minor}`
+    )
+    core.debug(`Only install subpackages: ${versionedSubPackages}`)
+    return await exec(`sudo apt-get -y install`, versionedSubPackages)
   }
 }

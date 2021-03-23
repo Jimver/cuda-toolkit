@@ -5,6 +5,7 @@ import {aptInstall, aptSetup, useApt} from './aptInstaller'
 import {Method, parseMethod} from './method'
 import {updatePath} from './updatePath'
 import {getVersion} from './version'
+import {getOs, OSType} from './platform'
 
 async function run(): Promise<void> {
   try {
@@ -44,6 +45,17 @@ async function run(): Promise<void> {
       const errString = `Error parsing input 'linux-local-args' to a JSON string array: ${linuxLocalArgs}`
       core.debug(errString)
       throw new Error(errString)
+    }
+
+    // Check if subPackages are specified in 'local' method on Linux
+    if (
+      methodParsed === 'local' &&
+      subPackagesArray.length > 0 &&
+      (await getOs()) === OSType.linux
+    ) {
+      throw new Error(
+        `Subpackages on 'local' method is not supported on Linux, use 'network' instead`
+      )
     }
 
     // Linux network install (uses apt repository)
