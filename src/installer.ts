@@ -47,9 +47,13 @@ export async function install(
       installArgs = ['-s']
       // Add subpackages to command args (if any)
       installArgs = installArgs.concat(
-        subPackages.map(
-          subPackage => `${subPackage}_${version.major}.${version.minor}`
-        )
+        subPackages.map(subPackage => {
+          // Display driver sub package name is not dependent on version
+          if (subPackage === 'Display.Driver') {
+            return subPackage
+          }
+          return `${subPackage}_${version.major}.${version.minor}`
+        })
       )
       break
   }
