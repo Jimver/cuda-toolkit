@@ -17,10 +17,7 @@ export async function aptSetup(version: SemVer): Promise<void> {
     )
   }
   core.debug(`Setup packages for ${version}`)
-  const ubuntuVersion: string = await execReturnOutput('lsb_release', [
-    '-',
-    'sr'
-  ])
+  const ubuntuVersion: string = await execReturnOutput('lsb_release', ['-sr'])
   const ubuntuVersionNoDot = ubuntuVersion.replace('.', '')
   const pinFilename = `cuda-ubuntu${ubuntuVersionNoDot}.pin`
   const pinUrl = `https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${ubuntuVersionNoDot}/x86_64/${pinFilename}`
