@@ -5,7 +5,8 @@ import * as artifact from '@actions/artifact'
 
 export async function install(
   executablePath: string,
-  subPackagesArray: string[]
+  subPackagesArray: string[],
+  linuxLocalArgsArray: string[]
 ): Promise<void> {
   // Install arguments, see: https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#runfile-advanced
   // and https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/index.html
@@ -34,8 +35,8 @@ export async function install(
     case OSType.linux:
       // Root permission needed on linux
       command = `sudo ${executablePath}`
-      // Install silently, and install toolkit and samples, no driver
-      installArgs = ['--silent', '--toolkit', '--samples']
+      // Install silently, and add additional arguments
+      installArgs = ['--silent'].concat(linuxLocalArgsArray)
       break
     case OSType.windows:
       // Windows handles permissions automatically
