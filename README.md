@@ -29,6 +29,13 @@ Installation method, can be either 'local' or 'network'. 'local' downloads the e
 
 Default: `'local'`.
 
+### `linux-local-args`
+
+**Optional**
+(For Linux and 'local' method only) override arguments for the Linux `.run` installer. For example if you don't want samples use ['--driver', '--toolkit']
+
+Default: `"['--driver', '--toolkit', '--samples']"`.
+
 ## Outputs
 
 ### `cuda`

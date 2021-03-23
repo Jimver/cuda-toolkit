@@ -14,6 +14,8 @@ async function run(): Promise<void> {
     core.debug(`Desired subPackes: ${subPackages}`)
     const methodString: string = core.getInput('method')
     core.debug(`Desired method: ${methodString}`)
+    const linuxLocalArgs: string = core.getInput('linux-local-args')
+    core.debug(`Desired local linux args: ${linuxLocalArgs}`)
 
     // Parse subPackages array
     let subPackagesArray: string[] = []
@@ -33,6 +35,17 @@ async function run(): Promise<void> {
     // Parse version string
     const version = await getVersion(cuda, methodParsed)
 
+    // Parse linuxLocalArgs array
+    let linuxLocalArgsArray: string[] = []
+    try {
+      linuxLocalArgsArray = JSON.parse(linuxLocalArgs)
+      // TODO verify that elements are valid package names (--samples, --driver, --toolkit, etc.)
+    } catch (error) {
+      const errString = `Error parsing input 'linux-local-args' to a JSON string array: ${linuxLocalArgs}`
+      core.debug(errString)
+      throw new Error(errString)
+    }
+
     // Linux network install (uses apt repository)
     const useAptInstall = await useApt(methodParsed)
     if (useAptInstall) {
@@ -46,7 +59,7 @@ async function run(): Promise<void> {
       const executablePath: string = await download(version, methodParsed)
 
       // Install
-      await install(executablePath, subPackagesArray)
+      await install(executablePath, subPackagesArray, linuxLocalArgsArray)
     }
 
     // Add CUDA environment variables to GitHub environment variables
