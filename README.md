@@ -26,7 +26,7 @@ Default: `'[]'`.
 Installation method, can be either `'local'` or `'network'`.
 
 - `'local'` downloads the entire installer with all packages and runs that (you can still only install certain packages with `sub-packages` on Windows).
-- `'network'` downloads a smaller executable which only downloads necessary packages which you can define in subPackages.
+- `'network'` downloads a smaller executable which only downloads necessary packages which you can define in `sub-packages`.
 
 Default: `'local'`.
 
@@ -52,7 +52,7 @@ The path where cuda is installed (same as `CUDA_PATH` in `GITHUB_ENV`).
 
 ```yaml
 steps:
-- uses: Jimver/cuda-toolkit@v0.1.0
+- uses: Jimver/cuda-toolkit@v0.2.1
   id: cuda-toolkit
   with:
     cuda: '11.2.2'

@@ -11,7 +11,7 @@ inputs:
     required: false
     default: '[]'
   method:
-    description: "('network' is not yet implemented on Linux). Installation method, can be either 'local' or 'network'. 'local' downloads the entire installer with all packages and runs that (you can still only install certain packages with sub-packages on Windows). 'network' downloads a smaller executable which only downloads necessary packages which you can define in subPackages"
+    description: "Installation method, can be either 'local' or 'network'. 'local' downloads the entire installer with all packages and runs that (you can still only install certain packages with sub-packages on Windows). 'network' downloads a smaller executable which only downloads necessary packages which you can define in subPackages"
     required: false
     default: 'local'
   linux-local-args:
