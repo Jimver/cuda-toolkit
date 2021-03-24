@@ -39,6 +39,8 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.aptInstall = exports.aptSetup = exports.useApt = void 0;
 const core = __importStar(__webpack_require__(2186));
 const platform_1 = __webpack_require__(9238);
+const runCommand_1 = __webpack_require__(854);
+const exec_1 = __webpack_require__(1514);
 function useApt(method) {
     return __awaiter(this, void 0, void 0, function* () {
         return method === 'network' && (yield platform_1.getOs()) === platform_1.OSType.linux;
@@ -52,14 +54,25 @@ function aptSetup(version) {
             throw new Error(`apt setup can only be run on linux runners! Current os type: ${osType}`);
         }
         core.debug(`Setup packages for ${version}`);
-        // UBUNTU_VERSION = $(lsb_release - sr)
-        // UBUNTU_VERSION = '${UBUNTU_VERSION//.}'
-        // const pinFilename = `cuda-ubuntu${UBUNTU_VERSION}.pin`
-        return 'cuda';
+        const ubuntuVersion = yield runCommand_1.execReturnOutput('lsb_release', ['-sr']);
+        const ubuntuVersionNoDot = ubuntuVersion.replace('.', '');
+        const pinFilename = `cuda-ubuntu${ubuntuVersionNoDot}.pin`;
+        const pinUrl = `https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${ubuntuVersionNoDot}/x86_64/${pinFilename}`;
+        const aptKeyUrl = `"http://developer.download.nvidia.com/compute/cuda/repos/ubuntu${ubuntuVersionNoDot}/x86_64/7fa2af80.pub`;
+        const repoUrl = `http://developer.download.nvidia.com/compute/cuda/repos/ubuntu${ubuntuVersionNoDot}/x86_64/`;
+        core.debug(`Pin filename: ${pinFilename}`);
+        core.debug(`Pin url: ${pinUrl}`);
+        core.debug(`Apt key url: ${aptKeyUrl}`);
+        core.debug('Adding CUDA Repository');
+        yield exec_1.exec(`wget ${pinUrl}`);
+        yield exec_1.exec(`sudo mv ${pinFilename} /etc/apt/preferences.d/cuda-repository-pin-600`);
+        yield exec_1.exec(`sudo apt-key adv --fetch-keys ${aptKeyUrl}`);
+        yield exec_1.exec(`sudo add-apt-repository "deb ${repoUrl} /"`);
+        yield exec_1.exec(`sudo apt-get update`);
     });
 }
 exports.aptSetup = aptSetup;
-function aptInstall(packageName, subPackages) {
+function aptInstall(version, subPackages) {
     return __awaiter(this, void 0, void 0, function* () {
         const osType = yield platform_1.getOs();
         if (osType !== platform_1.OSType.linux) {
@@ -67,13 +80,16 @@ function aptInstall(packageName, subPackages) {
         }
         if (subPackages.length === 0) {
             // Install everything
+            const packageName = `cuda-${version.major}-${version.minor}`;
             core.debug(`Install package: ${packageName}`);
+            return yield exec_1.exec(`sudo apt-get -y install`, [packageName]);
         }
         else {
             // Only install specified packages
-            core.debug(`Only install subpackages: ${subPackages}`);
+            const versionedSubPackages = subPackages.map(subPackage => `cuda-${subPackage}-${version.major}-${version.minor}`);
+            core.debug(`Only install subpackages: ${versionedSubPackages}`);
+            return yield exec_1.exec(`sudo apt-get -y install`, versionedSubPackages);
         }
-        return 0;
     });
 }
 exports.aptInstall = aptInstall;
@@ -244,7 +260,7 @@ const exec_1 = __webpack_require__(1514);
 const core = __importStar(__webpack_require__(2186));
 const platform_1 = __webpack_require__(9238);
 const artifact = __importStar(__webpack_require__(2605));
-function install(executablePath, subPackagesArray) {
+function install(executablePath, version, subPackagesArray, linuxLocalArgsArray) {
     return __awaiter(this, void 0, void 0, function* () {
         // Install arguments, see: https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#runfile-advanced
         // and https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/index.html
@@ -269,18 +285,24 @@ function install(executablePath, subPackagesArray) {
             case platform_1.OSType.linux:
                 // Root permission needed on linux
                 command = `sudo ${executablePath}`;
-                // Install silently, and install toolkit and samples, no driver
-                installArgs = ['--silent', '--toolkit', '--samples'];
+                // Install silently, and add additional arguments
+                installArgs = ['--silent'].concat(linuxLocalArgsArray);
                 break;
             case platform_1.OSType.windows:
                 // Windows handles permissions automatically
                 command = executablePath;
                 // Install silently
                 installArgs = ['-s'];
+                // Add subpackages to command args (if any)
+                installArgs = installArgs.concat(subPackages.map(subPackage => {
+                    // Display driver sub package name is not dependent on version
+                    if (subPackage === 'Display.Driver') {
+                        return subPackage;
+                    }
+                    return `${subPackage}_${version.major}.${version.minor}`;
+                }));
                 break;
         }
-        // Add subpackages to command args (if any)
-        installArgs = installArgs.concat(subPackages);
         // Run installer
         try {
             core.debug(`Running install executable: ${executablePath}`);
@@ -563,15 +585,18 @@ const aptInstaller_1 = __webpack_require__(9495);
 const method_1 = __webpack_require__(3607);
 const updatePath_1 = __webpack_require__(2425);
 const version_1 = __webpack_require__(8217);
+const platform_1 = __webpack_require__(9238);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const cuda = core.getInput('cuda');
             core.debug(`Desired cuda version: ${cuda}`);
-            const subPackages = core.getInput('subPackages');
+            const subPackages = core.getInput('sub-packages');
             core.debug(`Desired subPackes: ${subPackages}`);
             const methodString = core.getInput('method');
             core.debug(`Desired method: ${methodString}`);
+            const linuxLocalArgs = core.getInput('linux-local-args');
+            core.debug(`Desired local linux args: ${linuxLocalArgs}`);
             // Parse subPackages array
             let subPackagesArray = [];
             try {
@@ -579,7 +604,7 @@ function run() {
                 // TODO verify that elements are valid package names (nvcc, etc.)
             }
             catch (error) {
-                const errString = `Error parsing input 'subPackages' to a JSON string array: ${subPackages}`;
+                const errString = `Error parsing input 'sub-packages' to a JSON string array: ${subPackages}`;
                 core.debug(errString);
                 throw new Error(errString);
             }
@@ -588,24 +613,43 @@ function run() {
             core.debug(`Parsed method: ${methodParsed}`);
             // Parse version string
             const version = yield version_1.getVersion(cuda, methodParsed);
+            // Parse linuxLocalArgs array
+            let linuxLocalArgsArray = [];
+            try {
+                linuxLocalArgsArray = JSON.parse(linuxLocalArgs);
+                // TODO verify that elements are valid package names (--samples, --driver, --toolkit, etc.)
+            }
+            catch (error) {
+                const errString = `Error parsing input 'linux-local-args' to a JSON string array: ${linuxLocalArgs}`;
+                core.debug(errString);
+                throw new Error(errString);
+            }
+            // Check if subPackages are specified in 'local' method on Linux
+            if (methodParsed === 'local' &&
+                subPackagesArray.length > 0 &&
+                (yield platform_1.getOs()) === platform_1.OSType.linux) {
+                throw new Error(`Subpackages on 'local' method is not supported on Linux, use 'network' instead`);
+            }
             // Linux network install (uses apt repository)
             const useAptInstall = yield aptInstaller_1.useApt(methodParsed);
             if (useAptInstall) {
                 // Setup aptitude repos
-                const packageName = yield aptInstaller_1.aptSetup(version);
+                yield aptInstaller_1.aptSetup(version);
                 // Install packages
-                const installResult = yield aptInstaller_1.aptInstall(packageName, subPackagesArray);
+                const installResult = yield aptInstaller_1.aptInstall(version, subPackagesArray);
                 core.debug(`Install result: ${installResult}`);
             }
             else {
                 // Download
                 const executablePath = yield downloader_1.download(version, methodParsed);
                 // Install
-                yield installer_1.install(executablePath, subPackagesArray);
+                yield installer_1.install(executablePath, version, subPackagesArray, linuxLocalArgsArray);
             }
             // Add CUDA environment variables to GitHub environment variables
-            yield updatePath_1.updatePath(version, useAptInstall);
+            const cudaPath = yield updatePath_1.updatePath(version);
+            // Set output variables
             core.setOutput('cuda', cuda);
+            core.setOutput('CUDA_PATH', cudaPath);
         }
         catch (error) {
             core.setFailed(error.message);
@@ -684,6 +728,68 @@ exports.getOs = getOs;
 
 /***/ }),
 
+/***/ 854:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.execReturnOutput = void 0;
+const exec_1 = __webpack_require__(1514);
+const core = __importStar(__webpack_require__(2186));
+function execReturnOutput(command, args = []) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let result = '';
+        const execOptions = {
+            listeners: {
+                stdout: (data) => {
+                    result += data.toString();
+                },
+                stderr: (data) => {
+                    core.debug(`Error: ${data.toString()}`);
+                }
+            }
+        };
+        const exitCode = yield exec_1.exec(command, args, execOptions);
+        if (exitCode) {
+            core.debug(`Error executing: ${command}. Exit code: ${exitCode}`);
+        }
+        return result.trim();
+    });
+}
+exports.execReturnOutput = execReturnOutput;
+
+
+/***/ }),
+
 /***/ 2425:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -722,17 +828,12 @@ exports.updatePath = void 0;
 const platform_1 = __webpack_require__(9238);
 const path = __importStar(__webpack_require__(5622));
 const core = __importStar(__webpack_require__(2186));
-function updatePath(version, useApt) {
+function updatePath(version) {
     return __awaiter(this, void 0, void 0, function* () {
         let cudaPath;
         switch (yield platform_1.getOs()) {
             case platform_1.OSType.linux:
-                if (useApt) {
-                    cudaPath = `/usr/local/cuda`;
-                }
-                else {
-                    cudaPath = `/usr/local/cuda-${version.major}.${version.minor}`;
-                }
+                cudaPath = `/usr/local/cuda-${version.major}.${version.minor}`;
                 break;
             case platform_1.OSType.windows:
                 cudaPath = `C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v${version.major}.${version.minor}`;
@@ -762,6 +863,8 @@ function updatePath(version, useApt) {
                 core.exportVariable('LD_LIBRARY_PATH', cudaLibPath + path.delimiter + libPath);
             }
         }
+        // Return cuda path
+        return cudaPath;
     });
 }
 exports.updatePath = updatePath;
