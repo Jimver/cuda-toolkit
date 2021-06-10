@@ -17,6 +17,7 @@ export async function updatePath(version: SemVer): Promise<string> {
   core.exportVariable('CUDA_PATH', cudaPath)
   core.debug(`Cuda path vx_y: ${cudaPath}`)
   // Export $CUDA_PATH_VX_Y
+  core.exportVariable(`CUDA_PATH_V${version.major}_${version.minor}`, cudaPath)
   core.exportVariable(
     'CUDA_PATH_VX_Y',
     `CUDA_PATH_V${version.major}_${version.minor}`
