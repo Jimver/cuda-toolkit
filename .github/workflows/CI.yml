@@ -70,14 +70,14 @@ jobs:
         uses: ./
         with:
           method: ${{matrix.method}}
-          subPackages: '["nvcc"]'
+          sub-packages: '["nvcc"]'
 
       - name: Run the action on this runner with nvcc subpackage only (Windows)
         if: runner.os == 'Windows'
         uses: ./
         with:
           method: ${{matrix.method}}
-          subPackages: '["nvcc"]'
+          sub-packages: '["nvcc"]'
 
       - name: Test if nvcc is available
         run: nvcc -V
