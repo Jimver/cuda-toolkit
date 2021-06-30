@@ -429,8 +429,24 @@ class LinuxLinks extends links_1.AbstractLinks {
                 'https://developer.download.nvidia.com/compute/cuda/11.2.1/local_installers/cuda_11.2.1_460.32.03_linux.run'
             ],
             [
+                '11.1.1',
+                'https://developer.download.nvidia.com/compute/cuda/11.1.1/local_installers/cuda_11.1.1_455.32.00_linux.run'
+            ],
+            [
+                '11.0.3',
+                'https://developer.download.nvidia.com/compute/cuda/11.0.3/local_installers/cuda_11.0.3_450.51.06_linux.run'
+            ],
+            [
                 '10.2.89',
                 'https://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_440.33.01_linux.run'
+            ],
+            [
+                '10.1.243',
+                'https://developer.download.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda_10.1.243_418.87.00_linux.run'
+            ],
+            [
+                '10.0.130',
+                'https://developer.nvidia.com/compute/cuda/10.0/Prod/local_installers/cuda_10.0.130_410.48_linux'
             ],
             [
                 '9.2.148',
@@ -496,8 +512,24 @@ class WindowsLinks extends links_1.AbstractLinks {
                 'https://developer.download.nvidia.com/compute/cuda/11.2.1/network_installers/cuda_11.2.1_win10_network.exe'
             ],
             [
+                '11.1.1',
+                'https://developer.download.nvidia.com/compute/cuda/11.1.1/network_installers/cuda_11.1.1_win10_network.exe'
+            ],
+            [
+                '11.0.3',
+                'https://developer.download.nvidia.com/compute/cuda/11.0.3/network_installers/cuda_11.0.3_win10_network.exe'
+            ],
+            [
                 '10.2.89',
                 'https://developer.download.nvidia.com/compute/cuda/10.2/Prod/network_installers/cuda_10.2.89_win10_network.exe'
+            ],
+            [
+                '10.1.243',
+                'https://developer.download.nvidia.com/compute/cuda/10.1/Prod/network_installers/cuda_10.1.243_win10_network.exe'
+            ],
+            [
+                '10.0.130',
+                'https://developer.nvidia.com/compute/cuda/10.0/Prod/network_installers/cuda_10.0.130_win10_network'
             ],
             [
                 '9.2.148',
