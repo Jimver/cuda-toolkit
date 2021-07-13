@@ -25,6 +25,10 @@ export class WindowsLinks extends AbstractLinks {
 
   private cudaVersionToNetworkUrl: Map<string, string> = new Map([
     [
+      '11.4.0',
+      'https://developer.download.nvidia.com/compute/cuda/11.4.0/network_installers/cuda_11.4.0_win10_network.exe'
+    ],
+    [
       '11.3.1',
       'https://developer.download.nvidia.com/compute/cuda/11.3.1/network_installers/cuda_11.3.1_win10_network.exe'
     ],
@@ -71,6 +75,10 @@ export class WindowsLinks extends AbstractLinks {
     super()
     // Map of cuda SemVer version to download URL
     this.cudaVersionToURL = new Map([
+      [
+        '11.4.0',
+        'https://developer.download.nvidia.com/compute/cuda/11.4.0/local_installers/cuda_11.4.0_471.11_win10.exe'
+      ],
       [
         '11.3.1',
         'https://developer.download.nvidia.com/compute/cuda/11.3.1/local_installers/cuda_11.3.1_465.89_win10.exe'
