@@ -85,11 +85,11 @@ export class WindowsLinks extends AbstractLinks {
     this.cudaVersionToURL = new Map([
       [
         '11.5.0',
-        'https://developer.download.nvidia.com/compute/cuda/11.5.0/local_installers/cuda_11.5.0_496.13_win10.exe',
+        'https://developer.download.nvidia.com/compute/cuda/11.5.0/local_installers/cuda_11.5.0_496.13_win10.exe'
       ],
       [
         '11.4.3',
-        'https://developer.download.nvidia.com/compute/cuda/11.4.3/local_installers/cuda_11.4.3_472.50_win10.exe',
+        'https://developer.download.nvidia.com/compute/cuda/11.4.3/local_installers/cuda_11.4.3_472.50_win10.exe'
       ],
       [
         '11.4.0',
@@ -109,7 +109,7 @@ export class WindowsLinks extends AbstractLinks {
       ],
       [
         '11.0.3',
-        'https://developer.download.nvidia.com/compute/cuda/11.0.3/local_installers/cuda_11.0.3_451.82_win10.exe',
+        'https://developer.download.nvidia.com/compute/cuda/11.0.3/local_installers/cuda_11.0.3_451.82_win10.exe'
       ],
       [
         '10.2.89',
