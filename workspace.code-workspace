@@ -8,6 +8,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
     "eslint.alwaysShowStatus": true,
-    "eslint.lintTask.enable": true
+    "eslint.lintTask.enable": true,
+    "files.insertFinalNewline": true
   }
 }
