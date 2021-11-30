@@ -1,11 +1,11 @@
 import * as core from '@actions/core'
-import {download} from './downloader'
-import {install} from './installer'
-import {aptInstall, aptSetup, useApt} from './aptInstaller'
 import {Method, parseMethod} from './method'
-import {updatePath} from './updatePath'
+import {OSType, getOs} from './platform'
+import {aptInstall, aptSetup, useApt} from './apt-installer'
+import {download} from './downloader'
 import {getVersion} from './version'
-import {getOs, OSType} from './platform'
+import {install} from './installer'
+import {updatePath} from './update-path'
 
 async function run(): Promise<void> {
   try {
@@ -86,7 +86,11 @@ async function run(): Promise<void> {
     core.setOutput('cuda', cuda)
     core.setOutput('CUDA_PATH', cudaPath)
   } catch (error) {
-    core.setFailed(error.message)
+    if (error instanceof Error) {
+      core.setFailed(error)
+    } else {
+      core.setFailed('Unknown error')
+    }
   }
 }
 

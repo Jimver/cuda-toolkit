@@ -1,6 +1,6 @@
-import {SemVer} from 'semver'
 import {AbstractLinks} from '../../src/links/links'
-import {LinuxLinks} from '../../src/links/linuxLinks'
+import {LinuxLinks} from '../../src/links/linux-links'
+import {SemVer} from 'semver'
 
 test.concurrent('Linux Cuda versions in descending order', async () => {
   const wLinks: AbstractLinks = LinuxLinks.Instance

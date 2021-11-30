@@ -1,5 +1,5 @@
-import os from 'os'
 import {debug} from '@actions/core'
+import os from 'os'
 
 export enum OSType {
   windows = 'windows',

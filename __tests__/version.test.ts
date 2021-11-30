@@ -1,5 +1,5 @@
-import {SemVer} from 'semver'
 import {Method} from '../src/method'
+import {SemVer} from 'semver'
 import {getVersion} from '../src/version'
 
 test.concurrent.each<Method>(['local', 'network'])(
