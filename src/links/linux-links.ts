@@ -13,6 +13,26 @@ export class LinuxLinks extends AbstractLinks {
     // Map of cuda SemVer version to download URL
     this.cudaVersionToURL = new Map([
       [
+        '11.5.1',
+        'https://developer.download.nvidia.com/compute/cuda/11.5.1/local_installers/cuda_11.5.1_495.29.05_linux.run'
+      ],
+      [
+        '11.5.0',
+        'https://developer.download.nvidia.com/compute/cuda/11.5.0/local_installers/cuda_11.5.0_495.29.05_linux.run'
+      ],
+      [
+        '11.4.3',
+        'https://developer.download.nvidia.com/compute/cuda/11.4.3/local_installers/cuda_11.4.3_470.82.01_linux.run'
+      ],
+      [
+        '11.4.2',
+        'https://developer.download.nvidia.com/compute/cuda/11.4.2/local_installers/cuda_11.4.2_470.57.02_linux.run'
+      ],
+      [
+        '11.4.1',
+        'https://developer.download.nvidia.com/compute/cuda/11.4.1/local_installers/cuda_11.4.1_470.57.02_linux.run'
+      ],
+      [
         '11.4.0',
         'https://developer.download.nvidia.com/compute/cuda/11.4.0/local_installers/cuda_11.4.0_470.42.01_linux.run'
       ],
@@ -21,12 +41,20 @@ export class LinuxLinks extends AbstractLinks {
         'https://developer.download.nvidia.com/compute/cuda/11.3.1/local_installers/cuda_11.3.1_465.19.01_linux.run'
       ],
       [
+        '11.3.0',
+        'https://developer.download.nvidia.com/compute/cuda/11.3.0/local_installers/cuda_11.3.0_465.19.01_linux.run'
+      ],
+      [
         '11.2.2',
         'https://developer.download.nvidia.com/compute/cuda/11.2.2/local_installers/cuda_11.2.2_460.32.03_linux.run'
       ],
       [
         '11.2.1',
         'https://developer.download.nvidia.com/compute/cuda/11.2.1/local_installers/cuda_11.2.1_460.32.03_linux.run'
+      ],
+      [
+        '11.2.0',
+        'https://developer.download.nvidia.com/compute/cuda/11.2.0/local_installers/cuda_11.2.0_460.27.04_linux.run'
       ],
       [
         '11.1.1',
@@ -60,7 +88,6 @@ export class LinuxLinks extends AbstractLinks {
   }
 
   static get Instance(): LinuxLinks {
-    // Do you need arguments? Make it a regular static method instead.
     return this._instance || (this._instance = new this())
   }
 }

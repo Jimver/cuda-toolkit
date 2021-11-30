@@ -8,3 +8,15 @@ test.concurrent('getLinks gives a valid ILinks class', async () => {
     links instanceof LinuxLinks || links instanceof WindowsLinks
   ).toBeTruthy()
 })
+
+test.concurrent('getLinks return same versions in same order', async () => {
+  const linuxLinks = LinuxLinks.Instance.getAvailableLocalCudaVersions()
+  const windowsLinks = WindowsLinks.Instance.getAvailableLocalCudaVersions()
+  const windowsNetworkLinks =
+    WindowsLinks.Instance.getAvailableNetworkCudaVersions()
+
+  expect(linuxLinks.length).toBe(windowsLinks.length)
+  expect(windowsLinks.length).toBe(windowsNetworkLinks.length)
+  expect(linuxLinks).toEqual(windowsLinks)
+  expect(windowsLinks).toEqual(windowsNetworkLinks)
+})
