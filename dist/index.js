@@ -417,14 +417,6 @@ class LinuxLinks extends links_1.AbstractLinks {
         // Map of cuda SemVer version to download URL
         this.cudaVersionToURL = new Map([
             [
-                '11.5.0',
-                'https://developer.download.nvidia.com/compute/cuda/11.5.0/local_installers/cuda_11.5.0_495.29.05_linux.run'
-            ],
-            [
-                '11.4.3',
-                'https://developer.download.nvidia.com/compute/cuda/11.4.3/local_installers/cuda_11.4.3_470.82.01_linux.run',
-            ],
-            [
                 '11.4.0',
                 'https://developer.download.nvidia.com/compute/cuda/11.4.0/local_installers/cuda_11.4.0_470.42.01_linux.run'
             ],
@@ -512,14 +504,6 @@ class WindowsLinks extends links_1.AbstractLinks {
         super();
         this.cudaVersionToNetworkUrl = new Map([
             [
-                '11.5.0',
-                'https://developer.download.nvidia.com/compute/cuda/11.5.0/network_installers/cuda_11.5.0_win10_network.exe'
-            ],
-            [
-                '11.4.3',
-                'https://developer.download.nvidia.com/compute/cuda/11.4.3/network_installers/cuda_11.4.3_win10_network.exe'
-            ],
-            [
                 '11.4.0',
                 'https://developer.download.nvidia.com/compute/cuda/11.4.0/network_installers/cuda_11.4.0_win10_network.exe'
             ],
@@ -567,14 +551,6 @@ class WindowsLinks extends links_1.AbstractLinks {
         // Map of cuda SemVer version to download URL
         this.cudaVersionToURL = new Map([
             [
-                '11.5.0',
-                'https://developer.download.nvidia.com/compute/cuda/11.5.0/local_installers/cuda_11.5.0_496.13_win10.exe',
-            ],
-            [
-                '11.4.3',
-                'https://developer.download.nvidia.com/compute/cuda/11.4.3/local_installers/cuda_11.4.3_472.50_win10.exe',
-            ],
-            [
                 '11.4.0',
                 'https://developer.download.nvidia.com/compute/cuda/11.4.0/local_installers/cuda_11.4.0_471.11_win10.exe'
             ],
@@ -589,10 +565,6 @@ class WindowsLinks extends links_1.AbstractLinks {
             [
                 '11.2.1',
                 'https://developer.download.nvidia.com/compute/cuda/11.2.1/local_installers/cuda_11.2.1_461.09_win10.exe'
-            ],
-            [
-                '11.0.3',
-                'https://developer.download.nvidia.com/compute/cuda/11.0.3/local_installers/cuda_11.0.3_451.82_win10.exe',
             ],
             [
                 '10.2.89',
