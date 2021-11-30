@@ -1,10 +1,10 @@
-import {SemVer} from 'semver'
-import {AbstractLinks} from './links/links'
 import * as core from '@actions/core'
-import {getLinks} from './links/getLinks'
+import {OSType, getOs} from './platform'
+import {AbstractLinks} from './links/links'
 import {Method} from './method'
-import {getOs, OSType} from './platform'
-import {WindowsLinks} from './links/windowsLinks'
+import {SemVer} from 'semver'
+import {WindowsLinks} from './links/windows-links'
+import {getLinks} from './links/get-links'
 
 // Helper for converting string to SemVer and verifying it exists in the links
 export async function getVersion(

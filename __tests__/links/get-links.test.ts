@@ -1,6 +1,6 @@
-import {getLinks} from '../../src/links/getLinks'
-import {LinuxLinks} from '../../src/links/linuxLinks'
-import {WindowsLinks} from '../../src/links/windowsLinks'
+import {LinuxLinks} from '../../src/links/linux-links'
+import {WindowsLinks} from '../../src/links/windows-links'
+import {getLinks} from '../../src/links/get-links'
 
 test.concurrent('getLinks gives a valid ILinks class', async () => {
   const links = await getLinks()

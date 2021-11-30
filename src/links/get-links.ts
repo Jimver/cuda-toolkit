@@ -1,7 +1,7 @@
-import {getOs, OSType} from '../platform'
+import {OSType, getOs} from '../platform'
 import {AbstractLinks} from './links'
-import {LinuxLinks} from './linuxLinks'
-import {WindowsLinks} from './windowsLinks'
+import {LinuxLinks} from './linux-links'
+import {WindowsLinks} from './windows-links'
 
 // Platform independent getter for ILinks interface
 export async function getLinks(): Promise<AbstractLinks> {

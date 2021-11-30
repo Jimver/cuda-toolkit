@@ -1,13 +1,13 @@
 import * as core from '@actions/core'
-import * as tc from '@actions/tool-cache'
-import {SemVer} from 'semver'
-import {getLinks} from './links/getLinks'
-import {AbstractLinks} from './links/links'
-import {getOs, OSType} from './platform'
-import fs from 'fs'
 import * as glob from '@actions/glob'
+import * as tc from '@actions/tool-cache'
+import {OSType, getOs} from './platform'
+import {AbstractLinks} from './links/links'
 import {Method} from './method'
-import {WindowsLinks} from './links/windowsLinks'
+import {SemVer} from 'semver'
+import {WindowsLinks} from './links/windows-links'
+import fs from 'fs'
+import {getLinks} from './links/get-links'
 
 // Download helper which returns the installer executable and caches it for next runs
 export async function download(

@@ -1,9 +1,9 @@
-import {SemVer} from 'semver'
 import * as core from '@actions/core'
+import {OSType, getOs} from './platform'
 import {Method} from './method'
-import {getOs, OSType} from './platform'
-import {execReturnOutput} from './runCommand'
+import {SemVer} from 'semver'
 import {exec} from '@actions/exec'
+import {execReturnOutput} from './run-command'
 
 export async function useApt(method: Method): Promise<boolean> {
   return method === 'network' && (await getOs()) === OSType.linux
