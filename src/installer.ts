@@ -1,8 +1,8 @@
-import {exec} from '@actions/exec'
-import * as core from '@actions/core'
-import {getOs, OSType} from './platform'
 import * as artifact from '@actions/artifact'
+import * as core from '@actions/core'
+import {OSType, getOs} from './platform'
 import {SemVer} from 'semver'
+import {exec} from '@actions/exec'
 
 export async function install(
   executablePath: string,

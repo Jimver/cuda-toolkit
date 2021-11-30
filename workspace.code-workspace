@@ -6,6 +6,8 @@
   ],
   "settings": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "eslint.alwaysShowStatus": true,
+    "eslint.lintTask.enable": true
   }
 }
