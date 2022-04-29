@@ -21,7 +21,7 @@ export async function aptSetup(version: SemVer): Promise<void> {
   const ubuntuVersionNoDot = ubuntuVersion.replace('.', '')
   const pinFilename = `cuda-ubuntu${ubuntuVersionNoDot}.pin`
   const pinUrl = `https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${ubuntuVersionNoDot}/x86_64/${pinFilename}`
-  const aptKeyUrl = `"http://developer.download.nvidia.com/compute/cuda/repos/ubuntu${ubuntuVersionNoDot}/x86_64/7fa2af80.pub`
+  const aptKeyUrl = `"http://developer.download.nvidia.com/compute/cuda/repos/ubuntu${ubuntuVersionNoDot}/x86_64/3bf863cc.pub`
   const repoUrl = `http://developer.download.nvidia.com/compute/cuda/repos/ubuntu${ubuntuVersionNoDot}/x86_64/`
 
   core.debug(`Pin filename: ${pinFilename}`)
