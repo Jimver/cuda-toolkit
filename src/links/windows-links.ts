@@ -25,6 +25,26 @@ export class WindowsLinks extends AbstractLinks {
 
   private cudaVersionToNetworkUrl: Map<string, string> = new Map([
     [
+      '11.7.0',
+      'https://developer.download.nvidia.com/compute/cuda/11.7.0/network_installers/cuda_11.7.0_windows_network.exe'
+    ],
+    [
+      '11.6.2',
+      'https://developer.download.nvidia.com/compute/cuda/11.6.2/network_installers/cuda_11.6.2_windows_network.exe'
+    ],
+    [
+      '11.6.1',
+      'https://developer.download.nvidia.com/compute/cuda/11.6.1/network_installers/cuda_11.6.1_windows_network.exe'
+    ],
+    [
+      '11.6.0',
+      'https://developer.download.nvidia.com/compute/cuda/11.6.0/network_installers/cuda_11.6.0_windows_network.exe'
+    ],
+    [
+      '11.5.2',
+      'https://developer.download.nvidia.com/compute/cuda/11.5.2/network_installers/cuda_11.5.2_windows_network.exe'
+    ],
+    [
       '11.5.1',
       'https://developer.download.nvidia.com/compute/cuda/11.5.1/network_installers/cuda_11.5.1_windows_network.exe'
     ],
@@ -103,6 +123,26 @@ export class WindowsLinks extends AbstractLinks {
     super()
     // Map of cuda SemVer version to download URL
     this.cudaVersionToURL = new Map([
+      [
+        '11.7.0',
+        'https://developer.download.nvidia.com/compute/cuda/11.7.0/local_installers/cuda_11.7.0_516.01_windows.exe'
+      ],
+      [
+        '11.6.2',
+        'https://developer.download.nvidia.com/compute/cuda/11.6.2/local_installers/cuda_11.6.2_511.65_windows.exe'
+      ],
+      [
+        '11.6.1',
+        'https://developer.download.nvidia.com/compute/cuda/11.6.1/local_installers/cuda_11.6.1_511.65_windows.exe'
+      ],
+      [
+        '11.6.0',
+        'https://developer.download.nvidia.com/compute/cuda/11.6.0/local_installers/cuda_11.6.0_511.23_windows.exe'
+      ],
+      [
+        '11.5.2',
+        'https://developer.download.nvidia.com/compute/cuda/11.5.2/local_installers/cuda_11.5.2_496.13_windows.exe'
+      ],
       [
         '11.5.1',
         'https://developer.download.nvidia.com/compute/cuda/11.5.1/local_installers/cuda_11.5.1_496.13_windows.exe'
