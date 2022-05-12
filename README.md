@@ -55,7 +55,7 @@ steps:
 - uses: Jimver/cuda-toolkit@v0.2.5
   id: cuda-toolkit
   with:
-    cuda: '11.5.1'
+    cuda: '11.7.0'
 
 - run: echo "Installed cuda version is: ${{steps.cuda-toolkit.outputs.cuda}}"
 
