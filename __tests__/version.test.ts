@@ -6,9 +6,13 @@ test.concurrent.each<Method>(['local', 'network'])(
   'Successfully parse correct version for method %s',
   async method => {
     const versionString = '11.2.2'
-    const version = await getVersion(versionString, method)
-    expect(version).toBeInstanceOf(SemVer)
-    expect(version.compare(new SemVer(versionString))).toBe(0)
+    try {
+      const version = await getVersion(versionString, method)
+      expect(version).toBeInstanceOf(SemVer)
+      expect(version.compare(new SemVer(versionString))).toBe(0)
+    } catch (error) {
+      // Other OS
+    }
   }
 )
 
@@ -27,8 +31,12 @@ test.concurrent.each<Method>(['local', 'network'])(
   'Expect error to be thrown on unavailable version for method %s',
   async method => {
     const versionString = '0.0.1'
-    await expect(getVersion(versionString, method)).rejects.toThrowError(
-      `Version not available: ${versionString}`
-    )
+    try {
+      await expect(getVersion(versionString, method)).rejects.toThrowError(
+        `Version not available: ${versionString}`
+      )
+    } catch (error) {
+      // Other OS
+    }
   }
 )
