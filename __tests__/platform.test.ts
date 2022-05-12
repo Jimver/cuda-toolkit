@@ -2,7 +2,6 @@ import {OSType, getOs} from '../src/platform'
 import os from 'os'
 
 test.concurrent('Return either windows of linux platform', async () => {
-  const osPlatform = await getOs()
   const osString = os.platform()
   let expected: OSType
   switch (osString) {
@@ -13,7 +12,9 @@ test.concurrent('Return either windows of linux platform', async () => {
       expected = OSType.linux
       break
     default:
-      throw new Error(`Unexpected platform: ${osString}`)
+      expect(getOs()).rejects.toThrow(`Unsupported OS: ${osString}`)
+      return
   }
+  const osPlatform = await getOs()
   expect(osPlatform).toBe(expected)
 })
