@@ -36,7 +36,7 @@
     "semver": "^7.3.7"
   },
   "devDependencies": {
-    "@types/jest": "^28.1.0",
+    "@types/jest": "^28.1.1",
     "@types/node": "^17.0.38",
     "@typescript-eslint/parser": "^5.27.0",
     "@vercel/ncc": "^0.34.0",
