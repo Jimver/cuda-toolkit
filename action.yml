@@ -18,6 +18,10 @@ inputs:
     description: '(Linux and ''local'' method only) override arguments for the linux .run installer. For example if you don''t want samples use ["--toolkit"] double quotes required!'
     required: false
     default: '["--toolkit", "--samples"]'
+  use-github-cache:
+    description: 'Use GitHub cache to cache downloaded installer on GitHub servers'
+    required: false
+    default: 'true'
 runs:
   using: 'node12'
   main: dist/index.js

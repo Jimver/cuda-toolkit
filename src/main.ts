@@ -17,6 +17,8 @@ async function run(): Promise<void> {
     core.debug(`Desired method: ${methodString}`)
     const linuxLocalArgs: string = core.getInput('linux-local-args')
     core.debug(`Desired local linux args: ${linuxLocalArgs}`)
+    const useGitHubCache: boolean = core.getBooleanInput('use-github-cache')
+    core.debug(`Desired GitHub cache usage: ${useGitHubCache}`)
 
     // Parse subPackages array
     let subPackagesArray: string[] = []
@@ -68,7 +70,11 @@ async function run(): Promise<void> {
       core.debug(`Install result: ${installResult}`)
     } else {
       // Download
-      const executablePath: string = await download(version, methodParsed)
+      const executablePath: string = await download(
+        version,
+        methodParsed,
+        useGitHubCache
+      )
 
       // Install
       await install(

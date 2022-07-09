@@ -18,3 +18,7 @@ export async function getOs(): Promise<OSType> {
       throw new Error(`Unsupported OS: ${osPlatform}`)
   }
 }
+
+export async function getRelease(): Promise<string> {
+  return os.release()
+}
