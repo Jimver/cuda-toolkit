@@ -1,7 +1,9 @@
+import * as cache from '@actions/cache'
 import * as core from '@actions/core'
 import * as glob from '@actions/glob'
 import * as tc from '@actions/tool-cache'
-import {OSType, getOs} from './platform'
+import * as io from '@actions/io'
+import {OSType, getOs, getRelease} from './platform'
 import {AbstractLinks} from './links/links'
 import {Method} from './method'
 import {SemVer} from 'semver'
@@ -12,58 +14,68 @@ import {getLinks} from './links/get-links'
 // Download helper which returns the installer executable and caches it for next runs
 export async function download(
   version: SemVer,
-  method: Method
+  method: Method,
+  useGitHubCache: boolean
 ): Promise<string> {
-  // First try to find tool with desired version in tool cache
+  // First try to find tool with desired version in tool cache (local to machine)
   const toolName = 'cuda_installer'
   const osType = await getOs()
-  const toolPath = tc.find(`${toolName}-${osType}`, `${version}`)
+  const osRelease = await getRelease()
+  const toolId = `${toolName}-${osType}-${osRelease}`
+  const toolPath = tc.find(toolId, `${version}`)
   // Path that contains the executable file
   let executablePath: string
   if (toolPath) {
     // Tool is already in cache
-    core.debug(`Found in cache ${toolPath}`)
+    core.debug(`Found in local machine cache ${toolPath}`)
     executablePath = toolPath
   } else {
-    core.debug(`Not found in cache, downloading...`)
-    // Get download URL
-    const links: AbstractLinks = await getLinks()
-    let url: URL
-    switch (method) {
-      case 'local':
-        url = links.getLocalURLFromCudaVersion(version)
-        break
-      case 'network':
-        if (!(links instanceof WindowsLinks)) {
-          core.debug(`Tried to get windows links but got linux links instance`)
-          throw new Error(
-            `Network mode is not supported by linux, shouldn't even get here`
-          )
+    // Second option, get tool from GitHub cache if enabled
+    const cacheKey = `${toolId}-${version}`
+    const cachePath = cacheKey
+    let cacheResult: string | undefined
+    if (useGitHubCache) {
+      cacheResult = await cache.restoreCache([cachePath], cacheKey)
+    }
+    if (cacheResult !== undefined) {
+      core.debug(`Found in GitHub cache ${cachePath}`)
+      executablePath = cachePath
+    } else {
+      // Final option, download tool from NVIDIA servers
+      core.debug(`Not found in local/GitHub cache, downloading...`)
+      // Get download URL
+      const url: URL = await getDownloadURL(method, version)
+      // Get intsaller filename extension depending on OS
+      const fileExtension: string = getFileExtension(osType)
+      const destFileName = `${toolId}_${version}.${fileExtension}`
+      // Download executable
+      const downloadPath: string = await tc.downloadTool(
+        url.toString(),
+        destFileName
+      )
+      // Copy file to GitHub cachePath
+      core.debug(`Copying ${destFileName} to ${cachePath}`)
+      await io.mkdirP(cachePath)
+      await io.cp(destFileName, cachePath)
+      // Cache download to local machine cache
+      const localCachePath = await tc.cacheFile(
+        downloadPath,
+        destFileName,
+        `${toolName}-${osType}`,
+        `${version}`
+      )
+      core.debug(`Cached download to local machine cache at ${localCachePath}`)
+      // Cache download to GitHub cache if enabled
+      if (useGitHubCache) {
+        const cacheId = await cache.saveCache([cachePath], cacheKey)
+        if (cacheId !== -1) {
+          core.debug(`Cached download to GitHub cache with cache id ${cacheId}`)
+        } else {
+          core.debug(`Did not cache, cache possibly already exists`)
         }
-        url = links.getNetworkURLFromCudaVersion(version)
+      }
+      executablePath = localCachePath
     }
-    // Get intsaller filename extension depending on OS
-    let fileExtension: string
-    switch (osType) {
-      case OSType.windows:
-        fileExtension = 'exe'
-        break
-      case OSType.linux:
-        fileExtension = 'run'
-        break
-    }
-    // Pathname for destination
-    const destFileName = `${toolName}_${version}.${fileExtension}`
-    // Download executable
-    const path: string = await tc.downloadTool(url.toString(), destFileName)
-    // Cache download
-    const cachedPath = await tc.cacheFile(
-      path,
-      destFileName,
-      `${toolName}-${osType}`,
-      `${version}`
-    )
-    executablePath = cachedPath
   }
   // String with full executable path
   let fullExecutablePath: string
@@ -89,4 +101,33 @@ export async function download(
   }
   // Return full executable path
   return fullExecutablePath
+}
+
+function getFileExtension(osType: OSType): string {
+  switch (osType) {
+    case OSType.windows:
+      return 'exe'
+    case OSType.linux:
+      return 'run'
+  }
+}
+
+async function getDownloadURL(method: string, version: SemVer): Promise<URL> {
+  const links: AbstractLinks = await getLinks()
+  switch (method) {
+    case 'local':
+      return links.getLocalURLFromCudaVersion(version)
+    case 'network':
+      if (!(links instanceof WindowsLinks)) {
+        core.debug(`Tried to get windows links but got linux links instance`)
+        throw new Error(
+          `Network mode is not supported by linux, shouldn't even get here`
+        )
+      }
+      return links.getNetworkURLFromCudaVersion(version)
+    default:
+      throw new Error(
+        `Invalid method: expected either 'local' or 'network', got '${method}'`
+      )
+  }
 }
