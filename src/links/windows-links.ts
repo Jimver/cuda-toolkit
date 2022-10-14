@@ -93,6 +93,10 @@ export class WindowsLinks extends AbstractLinks {
       'https://developer.download.nvidia.com/compute/cuda/11.1.1/network_installers/cuda_11.1.1_win10_network.exe'
     ],
     [
+      '11.1.0',
+      'https://developer.download.nvidia.com/compute/cuda/11.1.0/network_installers/cuda_11.1.0_win10_network.exe'
+    ],
+    [
       '11.0.3',
       'https://developer.download.nvidia.com/compute/cuda/11.0.3/network_installers/cuda_11.0.3_win10_network.exe'
     ],
@@ -190,6 +194,10 @@ export class WindowsLinks extends AbstractLinks {
       [
         '11.1.1',
         'https://developer.download.nvidia.com/compute/cuda/11.1.1/local_installers/cuda_11.1.1_456.81_win10.exe'
+      ],
+      [
+        '11.1.0',
+        'https://developer.download.nvidia.com/compute/cuda/11.1.0/local_installers/cuda_11.1.0_456.43_win10.exe'
       ],
       [
         '11.0.3',
