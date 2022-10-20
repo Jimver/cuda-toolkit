@@ -5,6 +5,10 @@
 # We need to make sure the checked-in `index.js` actually matches what we expect it to be.
 name: Check dist/
 
+permissions:
+  pull-requests: write
+  contents: write
+  repository-projects: write
 on:
   push:
     branches:
@@ -15,6 +19,7 @@ on:
     paths-ignore:
       - '**.md'
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   check-dist:
@@ -22,7 +27,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
+        if: github.event_name == 'pull_request'
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          persist-credentials: false
+      - uses: actions/checkout@v3
+        if: github.event_name != 'pull_request'  
       - name: Set Node.js 16.x
         uses: actions/setup-node@v3.4.1
         with:
@@ -50,3 +61,19 @@ jobs:
         with:
           name: dist
           path: dist/
+
+      # If index.js was different push a commit to the PR to fix it
+      - name: setup-git
+        if: ${{ failure() && steps.diff.conclusion == 'failure' && github.actor == 'dependabot[bot]' }}  
+        run: |    
+            echo ${{ secrets.CUDA }} | gh auth login --with-token;
+            gh auth setup-git        
+      - name: Commit dist/ changes
+        if: ${{ failure() && steps.diff.conclusion == 'failure' && github.actor == 'dependabot[bot]' }}
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: GitHub Actions[bot]
+          author_email: github-actions[bot]@users.noreply.github.com
+          message: 'Rebuild dist/'
+          add: dist/
+          push: true
