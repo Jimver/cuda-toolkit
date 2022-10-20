@@ -3,7 +3,8 @@
     "jest",
     "@typescript-eslint",
     "prettier",
-    "github"
+    "github",
+    "escompat"
   ],
   "extends": [
     "plugin:github/recommended",
