@@ -74,6 +74,6 @@ jobs:
         with:
           author_name: GitHub Actions[bot]
           author_email: github-actions[bot]@users.noreply.github.com
-          message: 'Rebuild dist/'
+          message: '[skip dependabot] auto update Rebuild dist/'
           add: dist/
           push: true
