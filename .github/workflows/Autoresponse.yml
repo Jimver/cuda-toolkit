@@ -6,6 +6,7 @@ on:
 
 jobs:
   auto-response:
+    if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -15,4 +16,4 @@ jobs:
       with:
         respondableId: ${{ github.event.pull_request.node_id }}
         response: "@dependabot squash and merge"
-        author: dependabot[bot]
+        author: ${{ github.event.pull_request.user.login }}
