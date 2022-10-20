@@ -1,0 +1,18 @@
+name: pull_request Autoresponse
+
+on:
+  pull_request_target:
+    types: [opened]
+
+jobs:
+  auto-response:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: derekprior/add-autoresponse@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.CUDA }}
+      with:
+        respondableId: ${{ github.event.pull_request.node_id }}
+        response: "@dependabot squash and merge"
+        author: dependabot[bot]
