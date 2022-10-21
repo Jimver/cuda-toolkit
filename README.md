@@ -52,10 +52,10 @@ The path where cuda is installed (same as `CUDA_PATH` in `GITHUB_ENV`).
 
 ```yaml
 steps:
-- uses: Jimver/cuda-toolkit@v0.2.8
+- uses: okazunori2013/cuda-toolkit@v0.3.1
   id: cuda-toolkit
   with:
-    cuda: '11.7.0'
+    cuda: '11.8.0'
 
 - run: echo "Installed cuda version is: ${{steps.cuda-toolkit.outputs.cuda}}"
 
