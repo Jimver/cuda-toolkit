@@ -52,7 +52,7 @@ The path where cuda is installed (same as `CUDA_PATH` in `GITHUB_ENV`).
 
 ```yaml
 steps:
-- uses: okazunori2013/cuda-toolkit@v0.3.1
+- uses: okazunori2013/cuda-toolkit@v0.3.2
   id: cuda-toolkit
   with:
     cuda: '11.8.0'
