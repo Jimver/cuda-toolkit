@@ -1,6 +1,6 @@
 {
   "name": "cuda-toolkit",
-  "version": "0.2.8",
+  "version": "0.3.2",
   "description": "GitHub Action to install the NVIDIA CUDA Toolkit",
   "main": "lib/main.js",
   "scripts": {
@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Jimver/cuda-toolkit.git"
+    "url": "git+https://github.com/okazunori2013/cuda-toolkit.git"
   },
   "keywords": [],
-  "author": "Jim Verheijde",
+  "author": "okazunori2013",
   "bugs": {
-    "url": "https://github.com/Jimver/cuda-toolkit/issues"
+    "url": "https://github.com/okazunori2013/cuda-toolkit/issues"
   },
-  "homepage": "https://github.com/Jimver/cuda-toolkit#readme",
+  "homepage": "https://github.com/okazunori2013/cuda-toolkit#readme",
   "volta": {
     "node": "12.22.7"
   },
