@@ -13,8 +13,28 @@ export class LinuxLinks extends AbstractLinks {
     // Map of cuda SemVer version to download URL
     this.cudaVersionToURL = new Map([
       [
+        '11.8', // Latest version of 11.8.x
+        'https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run'
+      ], 
+      [
+        '11.8.0',
+        'https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run'
+      ], 
+      [
+        '11.7', // Latest version of 11.7.x
+        'https://developer.download.nvidia.com/compute/cuda/11.7.1/local_installers/cuda_11.7.1_515.65.01_linux.run'
+      ],
+      [
+        '11.7.1',
+        'https://developer.download.nvidia.com/compute/cuda/11.7.1/local_installers/cuda_11.7.1_515.65.01_linux.run'
+      ],
+      [
         '11.7.0',
         'https://developer.download.nvidia.com/compute/cuda/11.7.0/local_installers/cuda_11.7.0_515.43.04_linux.run'
+      ],
+      [
+        '11.6', // Latest version of 11.6.x
+        'https://developer.download.nvidia.com/compute/cuda/11.6.2/local_installers/cuda_11.6.2_510.47.03_linux.run'
       ],
       [
         '11.6.2',
@@ -29,6 +49,10 @@ export class LinuxLinks extends AbstractLinks {
         'https://developer.download.nvidia.com/compute/cuda/11.6.0/local_installers/cuda_11.6.0_510.39.01_linux.run'
       ],
       [
+        '11.5', // Latest version of 11.5.x
+        'https://developer.download.nvidia.com/compute/cuda/11.5.2/local_installers/cuda_11.5.2_495.29.05_linux.run'
+      ],
+      [
         '11.5.2',
         'https://developer.download.nvidia.com/compute/cuda/11.5.2/local_installers/cuda_11.5.2_495.29.05_linux.run'
       ],
@@ -39,6 +63,14 @@ export class LinuxLinks extends AbstractLinks {
       [
         '11.5.0',
         'https://developer.download.nvidia.com/compute/cuda/11.5.0/local_installers/cuda_11.5.0_495.29.05_linux.run'
+      ],
+      [
+        '11.4', // Latest version of 11.4.x
+        'https://developer.download.nvidia.com/compute/cuda/11.4.4/local_installers/cuda_11.4.4_470.82.01_linux.run'
+      ],
+      [
+        '11.4.4',
+        'https://developer.download.nvidia.com/compute/cuda/11.4.4/local_installers/cuda_11.4.4_470.82.01_linux.run'
       ],
       [
         '11.4.3',
@@ -57,12 +89,20 @@ export class LinuxLinks extends AbstractLinks {
         'https://developer.download.nvidia.com/compute/cuda/11.4.0/local_installers/cuda_11.4.0_470.42.01_linux.run'
       ],
       [
+        '11.3', // Latest version of 11.3.x
+        'https://developer.download.nvidia.com/compute/cuda/11.3.1/local_installers/cuda_11.3.1_465.19.01_linux.run'
+      ],
+      [
         '11.3.1',
         'https://developer.download.nvidia.com/compute/cuda/11.3.1/local_installers/cuda_11.3.1_465.19.01_linux.run'
       ],
       [
         '11.3.0',
         'https://developer.download.nvidia.com/compute/cuda/11.3.0/local_installers/cuda_11.3.0_465.19.01_linux.run'
+      ],
+      [
+        '11.2', // Latest version of 11.2.x
+        'https://developer.download.nvidia.com/compute/cuda/11.2.2/local_installers/cuda_11.2.2_460.32.03_linux.run'
       ],
       [
         '11.2.2',
@@ -77,12 +117,36 @@ export class LinuxLinks extends AbstractLinks {
         'https://developer.download.nvidia.com/compute/cuda/11.2.0/local_installers/cuda_11.2.0_460.27.04_linux.run'
       ],
       [
+        '11.1', // Latest version of 11.1.x
+        'https://developer.download.nvidia.com/compute/cuda/11.1.1/local_installers/cuda_11.1.1_455.32.00_linux.run'
+      ],
+      [
         '11.1.1',
         'https://developer.download.nvidia.com/compute/cuda/11.1.1/local_installers/cuda_11.1.1_455.32.00_linux.run'
       ],
       [
+        '11.1.0',
+        'https://developer.download.nvidia.com/compute/cuda/11.1.0/local_installers/cuda_11.1.0_455.23.05_linux.run'
+      ],
+      [
+        '11.0', // Latest version of 11.0.x
+        'https://developer.download.nvidia.com/compute/cuda/11.0.3/local_installers/cuda_11.0.3_450.51.06_linux.run'
+      ],
+      [
         '11.0.3',
         'https://developer.download.nvidia.com/compute/cuda/11.0.3/local_installers/cuda_11.0.3_450.51.06_linux.run'
+      ],
+      [
+        '11.0.2',
+        'http://developer.download.nvidia.com/compute/cuda/11.0.2/local_installers/cuda_11.0.2_450.51.05_linux.run'
+      ],
+      [
+        '11.0.1',
+        'https://developer.download.nvidia.com/compute/cuda/11.0.1/local_installers/cuda_11.0.1_450.36.06_linux.run'
+      ],
+      [
+        '11.0.0',
+        'http://developer.download.nvidia.com/compute/cuda/11.0.2/local_installers/cuda_11.0.2_450.51.05_linux.run'
       ],
       [
         '10.2.89',
