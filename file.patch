@@ -1,0 +1,292 @@
+From 392cb3f722464cfead60e7f4807ccb0e92daa7ca Mon Sep 17 00:00:00 2001
+From: Cocoa <i@uwucocoa.moe>
+Date: Wed, 25 Jan 2023 07:11:22 +0700
+Subject: add support for CUDA 12.0.0
+
+---
+ __tests__/links/get-links.test.ts |  12 --------
+ dist/index.js                     | Bin 3089653 -> 3087356 bytes
+ dist/index.js.map                 | Bin 3012997 -> 3010358 bytes
+ src/downloader.ts                 |  10 -------
+ src/links/links.ts                |  44 ------------------------------
+ src/links/linux-links.ts          |  13 +++------
+ src/links/windows-links.ts        |  17 ++++++------
+ src/version.ts                    |   6 ----
+ 8 files changed, 12 insertions(+), 90 deletions(-)
+
+diff --git a/__tests__/links/get-links.test.ts b/__tests__/links/get-links.test.ts
+index 8f3d687..0839801 100644
+--- a/__tests__/links/get-links.test.ts
++++ b/__tests__/links/get-links.test.ts
+@@ -24,15 +24,3 @@ test.concurrent('getLinks return same versions in same order', async () => {
+   expect(linuxLinks).toEqual(windowsLinks)
+   expect(windowsLinks).toEqual(windowsNetworkLinks)
+ })
+-
+-test.concurrent(
+-  'getLinks return compatible cudnn version given cuda version',
+-  async () => {
+-    const linuxLinks =
+-      LinuxLinks.Instance.getAvailableLocalCudnnVersions('11.0.0')
+-    const windowsLinks =
+-      WindowsLinks.Instance.getAvailableLocalCudnnVersions('11.0.0')
+-
+-    expect(linuxLinks.length).toBe(windowsLinks.length)
+-  }
+-)
+diff --git a/dist/index.js b/dist/index.js
+index f31afb2d82962e33043e5412300615da31c04db6..5df7de5d92713471058514755f3e52924388f2ed 100644
+GIT binary patch
+delta 411
+zcmZwBJxjxI5C(AmMr#sln`*UbTCMMI)tCmWU@>;p%`eb8I+g06qIB+}2)RnejuD}v
+zW(Yzjm*NLd9E4WrtdpCAPZS5i;dgfr9LIe;)Y+$7XV>?umQ-N8Q_Ebj?}=)euvIOv
+zD7Bg)>%FP)&WZ7qqSN9THTHs(TodSJw@sxx(Rn_2WYjo1<aAXdW^exV3nhT8YWcLD
+zR+lw3MTwGO+C}H)xF!EteXYd3Y@TnJ_LkGGl%@Z!`G2pis7oozUasHTZ#j~3vb*hL
+zI=<#v)hiKmN3^p0oWE=c3_5^=PUr$3bOR3ph|mMxelG+d2oi*#5Bebt126~?kRb{R
+m#2^ksFboM8fl(NPahQNfn1X4TfmxV?B+SDCsIDO_y0I_3Dtp`j
+
+delta 1676
+zcmcgsUuauZ80RL<pC)aWu1(UWNp`Yz?Tt%r6De($wcCorKQQ5&^$#*@8*lH{tjWFQ
+z-ZZt-StcBZVx@Ax4+W_$^Fi<-8dQW?*1d@M;9h)?;VAeZgFST2JqTs><kqxhG~ko>
+z;cz+U_kG{*_xrwcHom(iJoxFFP`Z)ElOGFq_Q#=K92>27qzEZ!T5d91kmTucRUMty
+zb7YX@vg)KEomUE{H93=e;knaK>RSGZ3gAUWH?o>4;#XOJYaQVq8|w6;^RG}Nu4MfV
+zD<M(y3~xMbX=if--tz7AC&K?)wLCWvdK`baCDiXXMg7b9RHl$2gD9yXA6r)6WuL3f
+zt=obOkwY`1MJ^AAUg`4TTi<rt*;vWlspY3Kh3soNWw-uaaPCHwT`r~A5p9EYYCemq
+zvSV6=<ds5Z+$>276Io-+-(6JLC5<?%AYAJ6hjIPB-GQExcOQ=Z-qD1m?=22oXcp?`
+zcn8EP^lV}zddyXE{*t-M|AioV!^BpiWKA^+e67kdHFFUL@B5IhXJ(~yyxHPz&cy6_
+z#Xo6MnKi^{RMM64X;~4)j4a1UktLsL!P1h&LAZ&-N}kK)*;HkQ7)qXdI+~QWc15=G
+zV+WG^g1xJ%hXZ%l+9}1yPb^~Omb+!grVkY_x9J_1>+o4VsWBo?>!W)}8R1DQ`SJLb
+zHXmE-cf_{k@{<}t(z$G|py;BEOKkxXmWwqcaKQx~n}e=)EZw!)0!1mGxuEGJGFVAn
+z)nD1f)u*gJEG-KzEdA^V;?4JjI`llS`S7MCQ16s^WLDL5yzCVMTd=jX&5qYMn;LN;
+zZ5d)~&pLt}Wh&Gab40g%jGEPwc<=qTXhT%WDeC#c1UXI;xcar=b5<?EGgqwvH}8>T
+zRLqPKT=4Vi>wgQukCt6di!9@>7s3&|d&=iT&+x&zCUeraN1}XS>Q4a|W?eSVqc@42
+z(PKi2-JAEL^s<GUywJjW-gftoYcpz2%ZwX6ax$5Un_+SOo=m?UPxbZn##8-?RBy$m
+zWHO%7<%w*O_esCVA}{&fXS<V0DIq1gM_ia#Z4R@CpMJnjEb8T}##$Ty87|MyU-5YN
+z9G4n=QhV~5$*O$csLAMJcB&?!@`=UuR}lrFk@ancT{|xbyR#8uZ$8hB{KC<~Zl?)`
+z+g(of%V?ZIs-AuJ@HaEc$}bwO9<{Wa<G|9Jfk$#+Y)SA`lKAoZQLBvy`q-iv!l_co
+z#uA%Bc4xDvR{ibR2%gMX8*pI7;-(-_uu!m4sH0$`V5i`q;G|Gb!9{@s8YnbUXri!>
+zf`>vgh5Zy-D6~@WQt(mmQ)r{mP9Z>{gF=u(h(egc0Sbgdgu+1zhbVMXI8337LN^7G
+WLX^T|6pm1cQHWEJzJZ=EJN^MBT~>|&
+
+diff --git a/dist/index.js.map b/dist/index.js.map
+index eeeb22c7848cf3029011e4bdbcb02091dac8a678..0b7b2b1eebdfd7a816393900c1fecef2de464809 100644
+GIT binary patch
+delta 554
+zcmZ|KO-mb56b4}KWado1tfLuY)iiOmwYJ7_j7}p$z}8)@5CwNODF`ka5iN}%(h?NW
+zU2R<)#8tECu6{7$-MaJ#6uN4`jekH~xDb6i!G()1p3AxCzURVOzmVeiuM`I^ab-~r
+zOXpIYs(!gW8oBlh?`%&|zUHU=i&*l`-v1I_`{=b&YkZWJqNNbnucfoiS6c05o*Q!7
+z@OGsyBxifHWkhbc(xishOl!lm1Sk*y6*OsDRE@FmTi5yZ5XE_GGpWfFmv)8UlxUVR
+z?0OXAw~CI#BZspk%E{Cm1qA;&qKKUSK&yhw-)SX~u^pcHNn?KTvP!M>=-5ut&A9dp
+z$L=5Cy(JovpUbq<azC8^Mv2<g7QJBvCS~ahog4r8H+uJP)*kHV!yokO-^`+%snVwc
+z8>(*lyD)Z1$OWOdVWEOyadDc`d?2DheizWkHxPs%gdhwNh(aAafO;^X0U99&CNx1D
+qn&Ba|Kr6IC0v<sUQqT?-bU-IOh9}SkPoW#0!E@+=v^3P-^5rdt-k8e(
+
+delta 1852
+zcmchXZA@EL7{}Ano_jBCq0kp7FYRpsX*YV;GG1yBGexINjZIwkLB_gzd!=`@x2$hC
+zrWt5tMn6bL>|^E|%Mw4JSujMe8jaJ$XiS`bSmqbwASQfMx0uxtLh!jQFEeA}C!74z
+zd(V09bN<i&Jm-A$i>!L_PgynBNpit<7%yma^Ar88np|*3c`2W+(yiu#pA?_xXKG(o
+z<$_Da7ggu{_3tjL=EomYmlX%p+2H)S<KL@Gp`3MDn+uxPXC8vZ%c}e3{$1J=>RfPb
+zI@rp*P;i_sI8=xlDMK`fRxUWmc@tbS83^3dKssTefl!q!n@%KR!(y7_GZ9IG{=LLe
+zE=h-kWJ*j(Zunr*V6n3J`$t$Pi}Ucss>1^BoN;Jjaf~v-D{G_zRzrk_eJ7nX9O)z$
+zSPM}^{%kKftNPy-mT}=@?eOyziZK>zTCe4Sa5@Yh4v}|(n<Y%mqX|A7>r-l8pHI0l
+zIt-^S7%Z@m@KO+(B~{Id_((V{J{1#g4=tL2CV6CMl=Q0LV3b(ZXyI^_xY)Rm4o7fB
+zwwFyu#Z<}NTa{dh5+}V81?LP6^}y;48d&(1rr^iN7&G{0T{`f6uA^Y?JwkVF#18ld
+zJw1mdWlx?f{qg@IvQ*FSvxHc-!Zwtr*xr1Un432}P(0#>g%c^a$HOIsNQM{O?l8}{
+zu~|?RDzNGLnkWWsdP0a}F)&;p^`QBh)aH8(RLc$}b3;PforOiF+Pqcx@wlrAMye^&
+zGLT8e+E_l53~eKH5Peh(fYAH)nqvI!ttgzk!)M&nVl0h1=O#?JsUI6F>i8^1OTs9d
+z65?4Q8S-<bQrtY)Pf=C~cF_77KFh_!#}Y}_*{h`9EO*bP<{FrKgx(J`-|EY?7$r)O
+zyVPt`22F5uqQL}H4#RzU53RLflA^?<P;9KyG9F9`;d+BL{}!bM<EKWG-owQNX(%0K
+z?`3^Zwd}A_>n#V@`{+77y3eH)<J#B^j8xJn@nOae7YALmn&;ulzLq9f9mk%jJmAq*
+z6kBz3d%@>nEV3w)=T)#UZr9#^9^RnnI{4!(F_#6nZg9qk6$alVCNNG?8o2lxv3Exj
+zqf#spj->YRet*D=Zb*_hCQ6xSyn(K+4sW2_7wAwt^83BvBp(&CxJ}71`0`0o%M7&o
+z{hW{UwSxbK#RLmWmP&Z_Cz}ptfV>1(UneO!7b9+)@_11GW|Ax!E!!WL9fbzA6*?+P
+zIG(zr)G=}7KPZ(^-nAppzd{T!{TH!sU63i5C=ffm{gs){AHXxK+;@QYT|FGV+epLX
+zeS}l`j)9<)w8O$7hJt5rlJlihKb&c5EIEDkCaK#tDNM~WG|WYewWUC#3oq{C<}^wc
+z3QjJQ{X59ICByh(qRan=lo9>um1TlZ2#qjEIif?9IRjFGR3b*C3aLg+h#9dUR-^{0
+sMQlhNQjatsjffp_AS~iUTu2krjI<zkA+3lT@gTd9-SWzEThEQZ0ZJdo(f|Me
+
+diff --git a/src/downloader.ts b/src/downloader.ts
+index d2810a8..37a4474 100644
+--- a/src/downloader.ts
++++ b/src/downloader.ts
+@@ -214,11 +214,6 @@ async function getDownloadURL(
+   switch (method) {
+     case 'local':
+       toolkit.cuda_url = links.getLocalURLFromCudaVersion(toolkit.cuda_version)
+-      // if (toolkit.cudnn_version !== undefined) {
+-      //   toolkit.cudnn_url = links.getLocalURLFromCudnnVersion(
+-      //     toolkit.cudnn_version
+-      //   )
+-      // }
+       return toolkit
+     case 'network':
+       if (!(links instanceof WindowsLinks)) {
+@@ -230,11 +225,6 @@ async function getDownloadURL(
+       toolkit.cuda_url = links.getNetworkURLFromCudaVersion(
+         toolkit.cuda_version
+       )
+-      // if (toolkit.cudnn_version !== undefined) {
+-      //   toolkit.cudnn_url = links.getLocalURLFromCudnnVersion(
+-      //     toolkit.cudnn_version
+-      //   )
+-      // }
+       return toolkit
+     default:
+       throw new Error(
+diff --git a/src/links/links.ts b/src/links/links.ts
+index febc8f2..04df797 100644
+--- a/src/links/links.ts
++++ b/src/links/links.ts
+@@ -3,18 +3,11 @@ import {SemVer} from 'semver'
+ // Interface for getting cuda versions and corresponding download URLs
+ export abstract class AbstractLinks {
+   protected cudaVersionToURL: Map<string, string> = new Map()
+-  protected cudnnVersionData: Map<string, [string, string[]]> = new Map()
+ 
+   getAvailableLocalCudaVersions(): SemVer[] {
+     return Array.from(this.cudaVersionToURL.keys()).map(s => new SemVer(s))
+   }
+ 
+-  getAvailableLocalCudnnVersions(cuda_version: string): SemVer[] {
+-    return Array.from(this.compatibleCudnnVersions(cuda_version).keys()).map(
+-      s => new SemVer(s)
+-    )
+-  }
+-
+   getLocalURLFromCudaVersion(version: SemVer): URL {
+     const urlString = this.cudaVersionToURL.get(`${version}`)
+     if (urlString === undefined) {
+@@ -22,41 +15,4 @@ export abstract class AbstractLinks {
+     }
+     return new URL(urlString)
+   }
+-
+-  getLocalURLFromCudnnVersion(version: SemVer): URL | undefined {
+-    const metadata = this.cudnnVersionData.get(`${version}`)
+-    if (metadata === undefined) {
+-      return undefined
+-    }
+-    return new URL(metadata[0])
+-  }
+-
+-  compatibleCudnnVersions(cuda_version: string): Map<string, string> {
+-    const compatible_versions = Array.from(this.cudnnVersionData.keys()).reduce<
+-      Map<string, string>
+-    >((acc, v) => {
+-      const cudaSemVer = new SemVer(cuda_version)
+-      const metadata = this.cudnnVersionData.get(v)
+-      if (metadata !== undefined) {
+-        const [url, cur_compatible_versions] = metadata
+-        const compatible =
+-          cur_compatible_versions.filter(c => {
+-            const cv = new SemVer(c, true)
+-
+-            if (cv.major !== cudaSemVer.major) {
+-              return false
+-            } else if (cv.minor === 0) {
+-              return true
+-            } else {
+-              return cv.compare(cudaSemVer) !== 1
+-            }
+-          }).length > 0
+-        if (compatible) {
+-          acc.set(v, url)
+-        }
+-      }
+-      return acc
+-    }, new Map())
+-    return compatible_versions
+-  }
+ }
+diff --git a/src/links/linux-links.ts b/src/links/linux-links.ts
+index a0f843c..f8623a8 100644
+--- a/src/links/linux-links.ts
++++ b/src/links/linux-links.ts
+@@ -10,17 +10,12 @@ export class LinuxLinks extends AbstractLinks {
+   // Private constructor to prevent instantiation
+   private constructor() {
+     super()
+-    this.cudnnVersionData = new Map([
+-      [
+-        '8.7.0',
+-        [
+-          'https://developer.nvidia.com/downloads/c118-cudnn-linux-8664-87084cuda11-archivetarz',
+-          ['11.0.0']
+-        ]
+-      ]
+-    ])
+     // Map of cuda SemVer version to download URL
+     this.cudaVersionToURL = new Map([
++      [
++        '12.0.0',
++        'https://developer.download.nvidia.com/compute/cuda/12.0.0/local_installers/cuda_12.0.0_525.60.13_linux.run'
++      ],
+       [
+         '11.8.0',
+         'https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run'
+diff --git a/src/links/windows-links.ts b/src/links/windows-links.ts
+index a76e7f3..948db02 100644
+--- a/src/links/windows-links.ts
++++ b/src/links/windows-links.ts
+@@ -24,6 +24,10 @@ export class WindowsLinks extends AbstractLinks {
+   private static _instance: WindowsLinks
+ 
+   private cudaVersionToNetworkUrl: Map<string, string> = new Map([
++    [
++      '12.0.0',
++      'https://developer.download.nvidia.com/compute/cuda/12.0.0/network_installers/cuda_12.0.0_windows_network.exe'
++    ],
+     [
+       '11.8.0',
+       'https://developer.download.nvidia.com/compute/cuda/11.8.0/network_installers/cuda_11.8.0_windows_network.exe'
+@@ -125,17 +129,12 @@ export class WindowsLinks extends AbstractLinks {
+   // Private constructor to prevent instantiation
+   private constructor() {
+     super()
+-    this.cudnnVersionData = new Map([
+-      [
+-        '8.7.0',
+-        [
+-          'https://developer.nvidia.com/downloads/c118-cudnn-windows-8664-87084cuda11-archivezip',
+-          ['11.0.0']
+-        ]
+-      ]
+-    ])
+     // Map of cuda SemVer version to download URL
+     this.cudaVersionToURL = new Map([
++      [
++        '12.0.0',
++        'https://developer.download.nvidia.com/compute/cuda/12.0.0/local_installers/cuda_12.0.0_527.41_windows.exe'
++      ],
+       [
+         '11.8.0',
+         'https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_522.06_windows.exe'
+diff --git a/src/version.ts b/src/version.ts
+index 7015329..1bebcb5 100644
+--- a/src/version.ts
++++ b/src/version.ts
+@@ -22,21 +22,15 @@ export async function getVersion(
+   switch (method) {
+     case 'local':
+       versions = links.getAvailableLocalCudaVersions()
+-      cudnn_versions = links.getAvailableLocalCudnnVersions(cudaVersionString)
+       break
+     case 'network':
+       switch (await getOs()) {
+         case OSType.linux:
+           // TODO adapt this to actual available network versions for linux
+           versions = links.getAvailableLocalCudaVersions()
+-          cudnn_versions =
+-            links.getAvailableLocalCudnnVersions(cudaVersionString)
+           break
+         case OSType.windows:
+           versions = (links as WindowsLinks).getAvailableNetworkCudaVersions()
+-          cudnn_versions = (
+-            links as WindowsLinks
+-          ).getAvailableLocalCudnnVersions(cudaVersionString)
+           break
+       }
+   }
+-- 
+2.25.1
+

@@ -1,0 +1,23 @@
+diff a/src/version.ts b/src/version.ts	(rejected hunks)
+@@ -22,21 +22,15 @@ export async function getVersion(
+   switch (method) {
+     case 'local':
+       versions = links.getAvailableLocalCudaVersions()
+-      cudnn_versions = links.getAvailableLocalCudnnVersions(cudaVersionString)
+       break
+     case 'network':
+       switch (await getOs()) {
+         case OSType.linux:
+           // TODO adapt this to actual available network versions for linux
+           versions = links.getAvailableLocalCudaVersions()
+-          cudnn_versions =
+-            links.getAvailableLocalCudnnVersions(cudaVersionString)
+           break
+         case OSType.windows:
+           versions = (links as WindowsLinks).getAvailableNetworkCudaVersions()
+-          cudnn_versions = (
+-            links as WindowsLinks
+-          ).getAvailableLocalCudnnVersions(cudaVersionString)
+           break
+       }
+   }

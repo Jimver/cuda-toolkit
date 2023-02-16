@@ -1,0 +1,25 @@
+diff a/src/downloader.ts b/src/downloader.ts	(rejected hunks)
+@@ -214,11 +214,6 @@ async function getDownloadURL(
+   switch (method) {
+     case 'local':
+       toolkit.cuda_url = links.getLocalURLFromCudaVersion(toolkit.cuda_version)
+-      // if (toolkit.cudnn_version !== undefined) {
+-      //   toolkit.cudnn_url = links.getLocalURLFromCudnnVersion(
+-      //     toolkit.cudnn_version
+-      //   )
+-      // }
+       return toolkit
+     case 'network':
+       if (!(links instanceof WindowsLinks)) {
+@@ -230,11 +225,6 @@ async function getDownloadURL(
+       toolkit.cuda_url = links.getNetworkURLFromCudaVersion(
+         toolkit.cuda_version
+       )
+-      // if (toolkit.cudnn_version !== undefined) {
+-      //   toolkit.cudnn_url = links.getLocalURLFromCudnnVersion(
+-      //     toolkit.cudnn_version
+-      //   )
+-      // }
+       return toolkit
+     default:
+       throw new Error(

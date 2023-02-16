@@ -1,0 +1,17 @@
+diff a/__tests__/links/get-links.test.ts b/__tests__/links/get-links.test.ts	(rejected hunks)
+@@ -24,15 +24,3 @@ test.concurrent('getLinks return same versions in same order', async () => {
+   expect(linuxLinks).toEqual(windowsLinks)
+   expect(windowsLinks).toEqual(windowsNetworkLinks)
+ })
+-
+-test.concurrent(
+-  'getLinks return compatible cudnn version given cuda version',
+-  async () => {
+-    const linuxLinks =
+-      LinuxLinks.Instance.getAvailableLocalCudnnVersions('11.0.0')
+-    const windowsLinks =
+-      WindowsLinks.Instance.getAvailableLocalCudnnVersions('11.0.0')
+-
+-    expect(linuxLinks.length).toBe(windowsLinks.length)
+-  }
+-)
