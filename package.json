@@ -4,7 +4,7 @@
   "description": "GitHub Action to install the NVIDIA CUDA Toolkit",
   "main": "lib/main.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --newLine lf",
     "format": "prettier --write **/*.ts jest.config.js",
     "format-check": "prettier --check **/*.ts jest.config.js",
     "lint": "eslint src/**/*.ts __tests__/**/*.ts",
