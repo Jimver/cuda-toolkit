@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/Jimver/cuda-toolkit#readme",
   "volta": {
-    "node": "12.22.7"
+    "node": "16.19.1"
   },
   "license": "MIT",
   "dependencies": {
