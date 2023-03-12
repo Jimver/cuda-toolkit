@@ -34,8 +34,8 @@
     "@actions/tool-cache": "^2.0.1",
     "@actions/cache": "^3.2.1",
     "@actions/io": "^1.1.2",
-    "@types/semver": "^7.3.12",
-    "semver": "^7.3.7"
+    "@types/semver": "^7.3.13",
+    "semver": "^7.3.8"
   },
   "devDependencies": {
     "@types/jest": "^28.1.6",
