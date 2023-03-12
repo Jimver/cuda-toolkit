@@ -35,6 +35,12 @@ jobs:
         run: |
           npm run build
           npm run package
+
+      - name: correct vercel/ncc crlf output
+        run: |
+          # See https://github.com/vercel/ncc/issues/638
+          sed -i 's/\x0D$//' ./dist/*
+
       - name: Compare the expected and actual dist/ directories
         run: |
           if [ "$(git diff --ignore-space-at-eol dist/ | wc -l)" -gt "0" ]; then
