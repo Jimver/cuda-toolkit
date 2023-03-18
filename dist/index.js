@@ -311,6 +311,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.install = void 0;
 const artifact = __importStar(__nccwpck_require__(2605));
 const core = __importStar(__nccwpck_require__(2186));
+const glob = __importStar(__nccwpck_require__(8090));
 const platform_1 = __nccwpck_require__(9238);
 const exec_1 = __nccwpck_require__(1514);
 function install(executablePath, version, subPackagesArray, linuxLocalArgsArray) {
@@ -363,7 +364,7 @@ function install(executablePath, version, subPackagesArray, linuxLocalArgsArray)
             core.debug(`Installer exit code: ${exitCode}`);
         }
         catch (error) {
-            core.debug(`Error during installation: ${error}`);
+            core.warning(`Error during installation: ${error}`);
             throw error;
         }
         finally {
@@ -371,13 +372,20 @@ function install(executablePath, version, subPackagesArray, linuxLocalArgsArray)
             if ((yield (0, platform_1.getOs)()) === platform_1.OSType.linux) {
                 const artifactClient = artifact.create();
                 const artifactName = 'install-log';
-                const files = ['/var/log/cuda-installer.log'];
-                const rootDirectory = '/var/log';
-                const artifactOptions = {
-                    continueOnError: true
-                };
-                const uploadResult = yield artifactClient.uploadArtifact(artifactName, files, rootDirectory, artifactOptions);
-                core.debug(`Upload result: ${uploadResult}`);
+                const patterns = ['/var/log/cuda-installer.log'];
+                const globber = yield glob.create(patterns.join('\n'));
+                const files = yield globber.glob();
+                if (files.length > 0) {
+                    const rootDirectory = '/var/log';
+                    const artifactOptions = {
+                        continueOnError: true
+                    };
+                    const uploadResult = yield artifactClient.uploadArtifact(artifactName, files, rootDirectory, artifactOptions);
+                    core.debug(`Upload result: ${uploadResult}`);
+                }
+                else {
+                    core.debug(`No log file to upload`);
+                }
             }
         }
     });
