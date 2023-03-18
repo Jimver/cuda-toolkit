@@ -37,6 +37,14 @@ export class WindowsLinks extends AbstractLinks {
       'https://developer.download.nvidia.com/compute/cuda/12.0.0/network_installers/cuda_12.0.0_windows_network.exe'
     ],
     [
+      '11.8.0',
+      'https://developer.download.nvidia.com/compute/cuda/11.8.0/network_installers/cuda_11.8.0_windows_network.exe'
+    ],
+    [
+      '11.7.1',
+      'https://developer.download.nvidia.com/compute/cuda/11.7.1/network_installers/cuda_11.7.1_windows_network.exe'
+    ],
+    [
       '11.7.0',
       'https://developer.download.nvidia.com/compute/cuda/11.7.0/network_installers/cuda_11.7.0_windows_network.exe'
     ],
@@ -63,6 +71,10 @@ export class WindowsLinks extends AbstractLinks {
     [
       '11.5.0',
       'https://developer.download.nvidia.com/compute/cuda/11.5.0/network_installers/cuda_11.5.0_win10_network.exe'
+    ],
+    [
+      '11.4.4',
+      'https://developer.download.nvidia.com/compute/cuda/11.4.4/network_installers/cuda_11.4.4_windows_network.exe'
     ],
     [
       '11.4.3',
@@ -109,6 +121,14 @@ export class WindowsLinks extends AbstractLinks {
       'https://developer.download.nvidia.com/compute/cuda/11.0.3/network_installers/cuda_11.0.3_win10_network.exe'
     ],
     [
+      '11.0.2',
+      'https://developer.download.nvidia.com/compute/cuda/11.0.2/network_installers/cuda_11.0.2_win10_network.exe'
+    ],
+    [
+      '11.0.1',
+      'https://developer.download.nvidia.com/compute/cuda/11.0.1/network_installers/cuda_11.0.1_win10_network.exe'
+    ],
+    [
       '10.2.89',
       'https://developer.download.nvidia.com/compute/cuda/10.2/Prod/network_installers/cuda_10.2.89_win10_network.exe'
     ],
@@ -148,6 +168,14 @@ export class WindowsLinks extends AbstractLinks {
         'https://developer.download.nvidia.com/compute/cuda/12.0.0/local_installers/cuda_12.0.0_527.41_windows.exe'
       ],
       [
+        '11.8.0',
+        'https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_522.06_windows.exe'
+      ],
+      [
+        '11.7.1',
+        'https://developer.download.nvidia.com/compute/cuda/11.7.1/local_installers/cuda_11.7.1_516.94_windows.exe'
+      ],
+      [
         '11.7.0',
         'https://developer.download.nvidia.com/compute/cuda/11.7.0/local_installers/cuda_11.7.0_516.01_windows.exe'
       ],
@@ -174,6 +202,10 @@ export class WindowsLinks extends AbstractLinks {
       [
         '11.5.0',
         'https://developer.download.nvidia.com/compute/cuda/11.5.0/local_installers/cuda_11.5.0_496.13_win10.exe'
+      ],
+      [
+        '11.4.4',
+        'https://developer.download.nvidia.com/compute/cuda/11.4.4/local_installers/cuda_11.4.4_472.50_windows.exe'
       ],
       [
         '11.4.3',
@@ -218,6 +250,14 @@ export class WindowsLinks extends AbstractLinks {
       [
         '11.0.3',
         'https://developer.download.nvidia.com/compute/cuda/11.0.3/local_installers/cuda_11.0.3_451.82_win10.exe'
+      ],
+      [
+        '11.0.2',
+        'https://developer.download.nvidia.com/compute/cuda/11.0.2/local_installers/cuda_11.0.2_451.48_win10.exe'
+      ],
+      [
+        '11.0.1',
+        'https://developer.download.nvidia.com/compute/cuda/11.0.1/local_installers/cuda_11.0.1_451.22_win10.exe'
       ],
       [
         '10.2.89',
