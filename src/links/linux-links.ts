@@ -13,6 +13,10 @@ export class LinuxLinks extends AbstractLinks {
     // Map of cuda SemVer version to download URL
     this.cudaVersionToURL = new Map([
       [
+        '12.2.0',
+        'https://developer.download.nvidia.com/compute/cuda/12.2.0/local_installers/cuda_12.2.0_535.54.03_linux.run'
+      ],
+      [
         '12.1.0',
         'https://developer.download.nvidia.com/compute/cuda/12.1.0/local_installers/cuda_12.1.0_530.30.02_linux.run'
       ],
