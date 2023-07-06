@@ -5,7 +5,7 @@ inputs:
   cuda:
     description: 'Cuda version'
     required: false
-    default: '12.1.0'
+    default: '12.2.0'
   sub-packages:
     description: 'Only installs specified subpackages, must be in the form of a JSON array. For example, if you only want to install nvcc and visual studio integration: ["nvcc", "visual_studio_integration"] double quotes required! Note that if you want to use this on Linux, ''network'' method MUST be used.'
     required: false

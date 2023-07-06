@@ -1,6 +1,6 @@
 {
   "name": "cuda-toolkit",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "description": "GitHub Action to install the NVIDIA CUDA Toolkit",
   "main": "lib/main.js",
   "scripts": {
