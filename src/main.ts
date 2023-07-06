@@ -6,13 +6,18 @@ import {download} from './downloader'
 import {getVersion} from './version'
 import {install} from './installer'
 import {updatePath} from './update-path'
+import {parsePackages} from './parser'
 
 async function run(): Promise<void> {
   try {
     const cuda: string = core.getInput('cuda')
     core.debug(`Desired cuda version: ${cuda}`)
-    const subPackages: string = core.getInput('sub-packages')
-    core.debug(`Desired subPackes: ${subPackages}`)
+    const subPackagesArgName = 'sub-packages'
+    const subPackages: string = core.getInput(subPackagesArgName)
+    core.debug(`Desired subPackages: ${subPackages}`)
+    const nonCudaSubPackagesArgName = 'non-cuda-sub-packages'
+    const nonCudaSubPackages: string = core.getInput(nonCudaSubPackagesArgName)
+    core.debug(`Desired nonCudasubPackages: ${nonCudaSubPackages}`)
     const methodString: string = core.getInput('method')
     core.debug(`Desired method: ${methodString}`)
     const linuxLocalArgs: string = core.getInput('linux-local-args')
@@ -21,15 +26,16 @@ async function run(): Promise<void> {
     core.debug(`Desired GitHub cache usage: ${useGitHubCache}`)
 
     // Parse subPackages array
-    let subPackagesArray: string[] = []
-    try {
-      subPackagesArray = JSON.parse(subPackages)
-      // TODO verify that elements are valid package names (nvcc, etc.)
-    } catch (error) {
-      const errString = `Error parsing input 'sub-packages' to a JSON string array: ${subPackages}`
-      core.debug(errString)
-      throw new Error(errString)
-    }
+    const subPackagesArray: string[] = await parsePackages(
+      subPackages,
+      subPackagesArgName
+    )
+
+    // Parse nonCudaSubPackages array
+    const nonCudaSubPackagesArray: string[] = await parsePackages(
+      nonCudaSubPackages,
+      nonCudaSubPackagesArgName
+    )
 
     // Parse method
     const methodParsed: Method = parseMethod(methodString)
@@ -66,7 +72,11 @@ async function run(): Promise<void> {
       // Setup aptitude repos
       await aptSetup(version)
       // Install packages
-      const installResult = await aptInstall(version, subPackagesArray)
+      const installResult = await aptInstall(
+        version,
+        subPackagesArray,
+        nonCudaSubPackagesArray
+      )
       core.debug(`Install result: ${installResult}`)
     } else {
       // Download

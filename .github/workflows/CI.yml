@@ -20,7 +20,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2022, windows-2019, ubuntu-22.04, ubuntu-20.04, ubuntu-18.04]
+        os:
+          [windows-2022, windows-2019, ubuntu-22.04, ubuntu-20.04, ubuntu-18.04]
         method: [local, network]
     runs-on: ${{ matrix.os }}
 
@@ -66,12 +67,13 @@ jobs:
         with:
           method: ${{matrix.method}}
 
-      - name: Run the action on this runner with nvcc subpackage only (Linux)
+      - name: Run the action on this runner with nvcc and libcublas subpackages (Linux)
         if: runner.os == 'Linux' && matrix.method == 'network'
         uses: ./
         with:
           method: ${{matrix.method}}
           sub-packages: '["nvcc"]'
+          non-cuda-sub-packages: '["libcublas"]'
 
       - name: Run the action on this runner with nvcc subpackage only (Windows)
         if: runner.os == 'Windows'
