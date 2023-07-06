@@ -80,7 +80,7 @@ function aptSetup(version) {
     });
 }
 exports.aptSetup = aptSetup;
-function aptInstall(version, subPackages) {
+function aptInstall(version, subPackages, nonCudaSubPackages) {
     return __awaiter(this, void 0, void 0, function* () {
         const osType = yield (0, platform_1.getOs)();
         if (osType !== platform_1.OSType.linux) {
@@ -94,7 +94,10 @@ function aptInstall(version, subPackages) {
         }
         else {
             // Only install specified packages
-            const versionedSubPackages = subPackages.map(subPackage => `cuda-${subPackage}-${version.major}-${version.minor}`);
+            const prefixedSubPackages = subPackages.map(subPackage => `cuda-${subPackage}`);
+            const versionedSubPackages = prefixedSubPackages
+                .concat(nonCudaSubPackages)
+                .map(nonCudaSubPackage => `${nonCudaSubPackage}-${version.major}-${version.minor}`);
             core.debug(`Only install subpackages: ${versionedSubPackages}`);
             return yield (0, exec_1.exec)(`sudo apt-get -y install`, versionedSubPackages);
         }
@@ -961,13 +964,18 @@ const downloader_1 = __nccwpck_require__(5587);
 const version_1 = __nccwpck_require__(8217);
 const installer_1 = __nccwpck_require__(1480);
 const update_path_1 = __nccwpck_require__(4985);
+const parser_1 = __nccwpck_require__(267);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const cuda = core.getInput('cuda');
             core.debug(`Desired cuda version: ${cuda}`);
-            const subPackages = core.getInput('sub-packages');
-            core.debug(`Desired subPackes: ${subPackages}`);
+            const subPackagesArgName = 'sub-packages';
+            const subPackages = core.getInput(subPackagesArgName);
+            core.debug(`Desired subPackages: ${subPackages}`);
+            const nonCudaSubPackagesArgName = 'non-cuda-sub-packages';
+            const nonCudaSubPackages = core.getInput(nonCudaSubPackagesArgName);
+            core.debug(`Desired nonCudasubPackages: ${nonCudaSubPackages}`);
             const methodString = core.getInput('method');
             core.debug(`Desired method: ${methodString}`);
             const linuxLocalArgs = core.getInput('linux-local-args');
@@ -975,16 +983,9 @@ function run() {
             const useGitHubCache = core.getBooleanInput('use-github-cache');
             core.debug(`Desired GitHub cache usage: ${useGitHubCache}`);
             // Parse subPackages array
-            let subPackagesArray = [];
-            try {
-                subPackagesArray = JSON.parse(subPackages);
-                // TODO verify that elements are valid package names (nvcc, etc.)
-            }
-            catch (error) {
-                const errString = `Error parsing input 'sub-packages' to a JSON string array: ${subPackages}`;
-                core.debug(errString);
-                throw new Error(errString);
-            }
+            const subPackagesArray = yield (0, parser_1.parsePackages)(subPackages, subPackagesArgName);
+            // Parse nonCudaSubPackages array
+            const nonCudaSubPackagesArray = yield (0, parser_1.parsePackages)(nonCudaSubPackages, nonCudaSubPackagesArgName);
             // Parse method
             const methodParsed = (0, method_1.parseMethod)(methodString);
             core.debug(`Parsed method: ${methodParsed}`);
@@ -1013,7 +1014,7 @@ function run() {
                 // Setup aptitude repos
                 yield (0, apt_installer_1.aptSetup)(version);
                 // Install packages
-                const installResult = yield (0, apt_installer_1.aptInstall)(version, subPackagesArray);
+                const installResult = yield (0, apt_installer_1.aptInstall)(version, subPackagesArray, nonCudaSubPackagesArray);
                 core.debug(`Install result: ${installResult}`);
             }
             else {
@@ -1061,6 +1062,65 @@ function parseMethod(methodString) {
     }
 }
 exports.parseMethod = parseMethod;
+
+
+/***/ }),
+
+/***/ 267:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.parsePackages = void 0;
+const core = __importStar(__nccwpck_require__(2186));
+function parsePackages(subPackages, parameterName) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let subPackagesArray = [];
+        try {
+            subPackagesArray = JSON.parse(subPackages);
+        }
+        catch (error) {
+            const errString = `Error parsing input '${parameterName}' to a JSON string array: ${subPackages}`;
+            core.debug(errString);
+            throw new Error(errString);
+        }
+        return subPackagesArray;
+    });
+}
+exports.parsePackages = parsePackages;
 
 
 /***/ }),
