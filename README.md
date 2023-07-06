@@ -20,6 +20,16 @@ Only installs specified subpackages, must be in the form of a JSON array. For ex
 
 Default: `'[]'`.
 
+### `non-cuda-sub-packages`
+
+**NOTE: This only works on Linux with the 'network' method [view details](#method)**
+
+**Optional**
+If set, only the specified CUDA subpackages will be installed without prepending the "cuda-" prefix.
+Only installs specified subpackages without prepending the "cuda-" prefix, must be in the form of a JSON array. For example, if you only want to install libcublas and libcufft: `'["libcublas", "libcufft"]'` (double quotes required)
+
+Default: `'[]'`.
+
 ### `method`
 
 **Optional**
