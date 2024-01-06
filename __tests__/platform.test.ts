@@ -1,4 +1,4 @@
-import {OSType, getOs} from '../src/platform'
+import {OSType, getOs, getRelease} from '../src/platform'
 import os from 'os'
 
 test.concurrent('Return either windows of linux platform', async () => {
@@ -17,4 +17,9 @@ test.concurrent('Return either windows of linux platform', async () => {
   }
   const osPlatform = await getOs()
   expect(osPlatform).toBe(expected)
+})
+
+test.concurrent('Return version', async () => {
+  const version = await getRelease()
+  expect(version).toBeDefined()
 })
