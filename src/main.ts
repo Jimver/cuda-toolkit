@@ -24,6 +24,8 @@ async function run(): Promise<void> {
     core.debug(`Desired local linux args: ${linuxLocalArgs}`)
     const useGitHubCache: boolean = core.getBooleanInput('use-github-cache')
     core.debug(`Desired GitHub cache usage: ${useGitHubCache}`)
+    const useLocalCache: boolean = core.getBooleanInput('use-local-cache')
+    core.debug(`Desired local cache usage: ${useLocalCache}`)
 
     // Parse subPackages array
     const subPackagesArray: string[] = await parsePackages(
@@ -83,6 +85,7 @@ async function run(): Promise<void> {
       const executablePath: string = await download(
         version,
         methodParsed,
+        useLocalCache,
         useGitHubCache
       )
 

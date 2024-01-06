@@ -15,6 +15,7 @@ import {getLinks} from './links/get-links'
 export async function download(
   version: SemVer,
   method: Method,
+  useLocalCache: boolean,
   useGitHubCache: boolean
 ): Promise<string> {
   // First try to find tool with desired version in tool cache (local to machine)
@@ -22,66 +23,81 @@ export async function download(
   const osType = await getOs()
   const osRelease = await getRelease()
   const toolId = `${toolName}-${osType}-${osRelease}`
-  const toolPath = tc.find(toolId, `${version}`)
   // Path that contains the executable file
-  let executablePath: string
-  if (toolPath) {
-    // Tool is already in cache
-    core.debug(`Found in local machine cache ${toolPath}`)
-    executablePath = toolPath
-  } else {
-    // Second option, get tool from GitHub cache if enabled
-    const cacheKey = `${toolId}-${version}`
-    const cachePath = cacheKey
-    let cacheResult: string | undefined
-    if (useGitHubCache) {
-      cacheResult = await cache.restoreCache([cachePath], cacheKey)
-    }
-    if (cacheResult !== undefined) {
-      core.debug(`Found in GitHub cache ${cachePath}`)
-      executablePath = cachePath
+  let executableDirectory: string | undefined
+  const cacheKey = `${toolId}-${version}`
+  const cacheDirectory = cacheKey
+  if (useLocalCache) {
+    const toolPath = tc.find(toolId, `${version}`)
+    if (toolPath) {
+      // Tool is already in cache
+      core.debug(`Found in local machine cache ${toolPath}`)
+      executableDirectory = toolPath
     } else {
-      // Final option, download tool from NVIDIA servers
-      core.debug(`Not found in local/GitHub cache, downloading...`)
-      // Get download URL
-      const url: URL = await getDownloadURL(method, version)
-      // Get intsaller filename extension depending on OS
-      const fileExtension: string = getFileExtension(osType)
-      const destFileName = `${toolId}_${version}.${fileExtension}`
-      // Download executable
-      const downloadPath: string = await tc.downloadTool(
-        url.toString(),
-        destFileName
-      )
-      // Copy file to GitHub cachePath
-      core.debug(`Copying ${destFileName} to ${cachePath}`)
-      await io.mkdirP(cachePath)
-      await io.cp(destFileName, cachePath)
+      core.debug(`Not found in local cache`)
+    }
+  }
+  if (executableDirectory === undefined && useGitHubCache) {
+    // Second option, get tool from GitHub cache if enabled
+    const cacheResult: string | undefined = await cache.restoreCache(
+      [cacheDirectory],
+      cacheKey
+    )
+    if (cacheResult !== undefined) {
+      core.debug(`Found in GitHub cache ${cacheDirectory}`)
+      executableDirectory = cacheDirectory
+    } else {
+      core.debug(`Not found in GitHub cache`)
+    }
+  }
+  if (executableDirectory === undefined) {
+    // Final option, download tool from NVIDIA servers
+    core.debug(`Not found in local/GitHub cache, downloading...`)
+    // Get download URL
+    const url: URL = await getDownloadURL(method, version)
+    // Get intsaller filename extension depending on OS
+    const fileExtension: string = getFileExtension(osType)
+    const destFileName = `${toolId}_${version}.${fileExtension}`
+    // Download executable
+    const downloadPath: string = await tc.downloadTool(
+      url.toString(),
+      destFileName
+    )
+    if (useLocalCache) {
       // Cache download to local machine cache
-      const localCachePath = await tc.cacheFile(
+      const localCacheDirectory = await tc.cacheFile(
         downloadPath,
         destFileName,
         `${toolName}-${osType}`,
         `${version}`
       )
-      core.debug(`Cached download to local machine cache at ${localCachePath}`)
-      // Cache download to GitHub cache if enabled
-      if (useGitHubCache) {
-        const cacheId = await cache.saveCache([cachePath], cacheKey)
-        if (cacheId !== -1) {
-          core.debug(`Cached download to GitHub cache with cache id ${cacheId}`)
-        } else {
-          core.debug(`Did not cache, cache possibly already exists`)
-        }
+      core.debug(
+        `Cached download to local machine cache at ${localCacheDirectory}`
+      )
+      executableDirectory = localCacheDirectory
+    }
+    if (useGitHubCache) {
+      // Move file to GitHub cache directory
+      core.debug(`Copying ${destFileName} to ${cacheDirectory}`)
+      await io.mkdirP(cacheDirectory)
+      await io.mv(destFileName, cacheDirectory)
+      // Save cache directory to GitHub cache
+      const cacheId = await cache.saveCache([cacheDirectory], cacheKey)
+      if (cacheId !== -1) {
+        core.debug(`Cached download to GitHub cache with cache id ${cacheId}`)
+      } else {
+        core.debug(`Did not cache, cache possibly already exists`)
       }
-      executablePath = localCachePath
+      core.debug(`Tool was moved to cache directory ${cacheDirectory}`)
+      executableDirectory = cacheDirectory
     }
   }
+  core.debug(`Executable path ${executableDirectory}`)
   // String with full executable path
   let fullExecutablePath: string
   // Get list of files in tool cache
   const filesInCache = await (
-    await glob.create(`${executablePath}/**.*`)
+    await glob.create(`${executableDirectory}/**.*`)
   ).glob()
   core.debug(`Files in tool cache:`)
   for (const f of filesInCache) {

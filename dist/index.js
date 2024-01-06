@@ -160,67 +160,77 @@ const windows_links_1 = __nccwpck_require__(5986);
 const fs_1 = __importDefault(__nccwpck_require__(7147));
 const get_links_1 = __nccwpck_require__(1451);
 // Download helper which returns the installer executable and caches it for next runs
-function download(version, method, useGitHubCache) {
+function download(version, method, useLocalCache, useGitHubCache) {
     return __awaiter(this, void 0, void 0, function* () {
         // First try to find tool with desired version in tool cache (local to machine)
         const toolName = 'cuda_installer';
         const osType = yield (0, platform_1.getOs)();
         const osRelease = yield (0, platform_1.getRelease)();
         const toolId = `${toolName}-${osType}-${osRelease}`;
-        const toolPath = tc.find(toolId, `${version}`);
         // Path that contains the executable file
-        let executablePath;
-        if (toolPath) {
-            // Tool is already in cache
-            core.debug(`Found in local machine cache ${toolPath}`);
-            executablePath = toolPath;
-        }
-        else {
-            // Second option, get tool from GitHub cache if enabled
-            const cacheKey = `${toolId}-${version}`;
-            const cachePath = cacheKey;
-            let cacheResult;
-            if (useGitHubCache) {
-                cacheResult = yield cache.restoreCache([cachePath], cacheKey);
-            }
-            if (cacheResult !== undefined) {
-                core.debug(`Found in GitHub cache ${cachePath}`);
-                executablePath = cachePath;
+        let executableDirectory;
+        const cacheKey = `${toolId}-${version}`;
+        const cacheDirectory = cacheKey;
+        if (useLocalCache) {
+            const toolPath = tc.find(toolId, `${version}`);
+            if (toolPath) {
+                // Tool is already in cache
+                core.debug(`Found in local machine cache ${toolPath}`);
+                executableDirectory = toolPath;
             }
             else {
-                // Final option, download tool from NVIDIA servers
-                core.debug(`Not found in local/GitHub cache, downloading...`);
-                // Get download URL
-                const url = yield getDownloadURL(method, version);
-                // Get intsaller filename extension depending on OS
-                const fileExtension = getFileExtension(osType);
-                const destFileName = `${toolId}_${version}.${fileExtension}`;
-                // Download executable
-                const downloadPath = yield tc.downloadTool(url.toString(), destFileName);
-                // Copy file to GitHub cachePath
-                core.debug(`Copying ${destFileName} to ${cachePath}`);
-                yield io.mkdirP(cachePath);
-                yield io.cp(destFileName, cachePath);
-                // Cache download to local machine cache
-                const localCachePath = yield tc.cacheFile(downloadPath, destFileName, `${toolName}-${osType}`, `${version}`);
-                core.debug(`Cached download to local machine cache at ${localCachePath}`);
-                // Cache download to GitHub cache if enabled
-                if (useGitHubCache) {
-                    const cacheId = yield cache.saveCache([cachePath], cacheKey);
-                    if (cacheId !== -1) {
-                        core.debug(`Cached download to GitHub cache with cache id ${cacheId}`);
-                    }
-                    else {
-                        core.debug(`Did not cache, cache possibly already exists`);
-                    }
-                }
-                executablePath = localCachePath;
+                core.debug(`Not found in local cache`);
             }
         }
+        if (executableDirectory === undefined && useGitHubCache) {
+            // Second option, get tool from GitHub cache if enabled
+            const cacheResult = yield cache.restoreCache([cacheDirectory], cacheKey);
+            if (cacheResult !== undefined) {
+                core.debug(`Found in GitHub cache ${cacheDirectory}`);
+                executableDirectory = cacheDirectory;
+            }
+            else {
+                core.debug(`Not found in GitHub cache`);
+            }
+        }
+        if (executableDirectory === undefined) {
+            // Final option, download tool from NVIDIA servers
+            core.debug(`Not found in local/GitHub cache, downloading...`);
+            // Get download URL
+            const url = yield getDownloadURL(method, version);
+            // Get intsaller filename extension depending on OS
+            const fileExtension = getFileExtension(osType);
+            const destFileName = `${toolId}_${version}.${fileExtension}`;
+            // Download executable
+            const downloadPath = yield tc.downloadTool(url.toString(), destFileName);
+            if (useLocalCache) {
+                // Cache download to local machine cache
+                const localCacheDirectory = yield tc.cacheFile(downloadPath, destFileName, `${toolName}-${osType}`, `${version}`);
+                core.debug(`Cached download to local machine cache at ${localCacheDirectory}`);
+                executableDirectory = localCacheDirectory;
+            }
+            if (useGitHubCache) {
+                // Move file to GitHub cache directory
+                core.debug(`Copying ${destFileName} to ${cacheDirectory}`);
+                yield io.mkdirP(cacheDirectory);
+                yield io.mv(destFileName, cacheDirectory);
+                // Save cache directory to GitHub cache
+                const cacheId = yield cache.saveCache([cacheDirectory], cacheKey);
+                if (cacheId !== -1) {
+                    core.debug(`Cached download to GitHub cache with cache id ${cacheId}`);
+                }
+                else {
+                    core.debug(`Did not cache, cache possibly already exists`);
+                }
+                core.debug(`Tool was moved to cache directory ${cacheDirectory}`);
+                executableDirectory = cacheDirectory;
+            }
+        }
+        core.debug(`Executable path ${executableDirectory}`);
         // String with full executable path
         let fullExecutablePath;
         // Get list of files in tool cache
-        const filesInCache = yield (yield glob.create(`${executablePath}/**.*`)).glob();
+        const filesInCache = yield (yield glob.create(`${executableDirectory}/**.*`)).glob();
         core.debug(`Files in tool cache:`);
         for (const f of filesInCache) {
             core.debug(f);
@@ -1066,6 +1076,8 @@ function run() {
             core.debug(`Desired local linux args: ${linuxLocalArgs}`);
             const useGitHubCache = core.getBooleanInput('use-github-cache');
             core.debug(`Desired GitHub cache usage: ${useGitHubCache}`);
+            const useLocalCache = core.getBooleanInput('use-local-cache');
+            core.debug(`Desired local cache usage: ${useLocalCache}`);
             // Parse subPackages array
             const subPackagesArray = yield (0, parser_1.parsePackages)(subPackages, subPackagesArgName);
             // Parse nonCudaSubPackages array
@@ -1103,7 +1115,7 @@ function run() {
             }
             else {
                 // Download
-                const executablePath = yield (0, downloader_1.download)(version, methodParsed, useGitHubCache);
+                const executablePath = yield (0, downloader_1.download)(version, methodParsed, useLocalCache, useGitHubCache);
                 // Install
                 yield (0, installer_1.install)(executablePath, version, subPackagesArray, linuxLocalArgsArray);
             }

@@ -26,6 +26,10 @@ inputs:
     description: 'Use GitHub cache to cache downloaded installer on GitHub servers'
     required: false
     default: 'true'
+  use-local-cache:
+    description: 'Use local cache to cache downloaded installer on the local runner'
+    required: false
+    default: 'true'
 runs:
   using: 'node16'
   main: dist/index.js
