@@ -73,6 +73,7 @@ jobs:
           method: ${{matrix.method}}
           sub-packages: '["nvcc"]'
           non-cuda-sub-packages: '["libcublas"]'
+          log-file-suffix: 'nvcc-libcublas'
 
       - name: Run the action on this runner with nvcc subpackage only (Windows)
         if: runner.os == 'Windows'
@@ -80,6 +81,7 @@ jobs:
         with:
           method: ${{matrix.method}}
           sub-packages: '["nvcc"]'
+          log-file-suffix: 'nvcc'
 
       - name: Test if nvcc is available
         run: nvcc -V

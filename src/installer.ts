@@ -1,7 +1,7 @@
-import * as artifact from '@actions/artifact'
+import artifact from '@actions/artifact'
 import * as core from '@actions/core'
 import * as glob from '@actions/glob'
-import {OSType, getOs} from './platform'
+import {OSType, getOs, getRelease} from './platform'
 import {SemVer} from 'semver'
 import {exec} from '@actions/exec'
 
@@ -9,7 +9,9 @@ export async function install(
   executablePath: string,
   version: SemVer,
   subPackagesArray: string[],
-  linuxLocalArgsArray: string[]
+  linuxLocalArgsArray: string[],
+  method: string,
+  logFileSuffix: string
 ): Promise<void> {
   // Install arguments, see: https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#runfile-advanced
   // and https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/index.html
@@ -69,22 +71,19 @@ export async function install(
     throw error
   } finally {
     // Always upload installation log regardless of error
-    if ((await getOs()) === OSType.linux) {
-      const artifactClient = artifact.create()
-      const artifactName = 'install-log'
+    const osType = await getOs()
+    const osRelease = await getRelease()
+    if (osType === OSType.linux) {
+      const artifactName = `cuda-install-${osType}-${osRelease}-${method}-${logFileSuffix}`
       const patterns = ['/var/log/cuda-installer.log']
       const globber = await glob.create(patterns.join('\n'))
       const files = await globber.glob()
       if (files.length > 0) {
         const rootDirectory = '/var/log'
-        const artifactOptions = {
-          continueOnError: true
-        }
-        const uploadResult = await artifactClient.uploadArtifact(
+        const uploadResult = await artifact.uploadArtifact(
           artifactName,
           files,
-          rootDirectory,
-          artifactOptions
+          rootDirectory
         )
         core.debug(`Upload result: ${uploadResult}`)
       } else {

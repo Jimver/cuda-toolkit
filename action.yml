@@ -30,6 +30,10 @@ inputs:
     description: 'Use local cache to cache downloaded installer on the local runner'
     required: false
     default: 'true'
+  log-file-suffix:
+    description: 'Suffix of log file name in artifact'
+    required: false
+    default: 'log.txt'
 runs:
   using: 'node16'
   main: dist/index.js
