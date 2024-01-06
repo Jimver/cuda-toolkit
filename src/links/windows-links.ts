@@ -25,8 +25,32 @@ export class WindowsLinks extends AbstractLinks {
 
   private cudaVersionToNetworkUrl: Map<string, string> = new Map([
     [
+      '12.3.2',
+      'https://developer.download.nvidia.com/compute/cuda/12.3.2/network_installers/cuda_12.3.2_windows_network.exe'
+    ],
+    [
+      '12.3.1',
+      'https://developer.download.nvidia.com/compute/cuda/12.3.1/network_installers/cuda_12.3.1_windows_network.exe'
+    ],
+    [
+      '12.3.0',
+      'https://developer.download.nvidia.com/compute/cuda/12.3.0/network_installers/cuda_12.3.0_windows_network.exe'
+    ],
+    [
+      '12.2.2',
+      'https://developer.download.nvidia.com/compute/cuda/12.2.2/network_installers/cuda_12.2.2_windows_network.exe'
+    ],
+    [
+      '12.2.1',
+      'https://developer.download.nvidia.com/compute/cuda/12.2.1/network_installers/cuda_12.2.1_windows_network.exe'
+    ],
+    [
       '12.2.0',
       'https://developer.download.nvidia.com/compute/cuda/12.2.0/network_installers/cuda_12.2.0_windows_network.exe'
+    ],
+    [
+      '12.1.1',
+      'https://developer.download.nvidia.com/compute/cuda/12.1.1/network_installers/cuda_12.1.1_windows_network.exe'
     ],
     [
       '12.1.0',
@@ -160,8 +184,32 @@ export class WindowsLinks extends AbstractLinks {
     // Map of cuda SemVer version to download URL
     this.cudaVersionToURL = new Map([
       [
+        '12.3.2',
+        'https://developer.download.nvidia.com/compute/cuda/12.3.2/local_installers/cuda_12.3.2_546.12_windows.exe'
+      ],
+      [
+        '12.3.1',
+        'https://developer.download.nvidia.com/compute/cuda/12.3.1/local_installers/cuda_12.3.1_546.12_windows.exe'
+      ],
+      [
+        '12.3.0',
+        'https://developer.download.nvidia.com/compute/cuda/12.3.0/local_installers/cuda_12.3.0_545.84_windows.exe'
+      ],
+      [
+        '12.2.2',
+        'https://developer.download.nvidia.com/compute/cuda/12.2.2/local_installers/cuda_12.2.2_537.13_windows.exe'
+      ],
+      [
+        '12.2.1',
+        'https://developer.download.nvidia.com/compute/cuda/12.2.1/local_installers/cuda_12.2.1_536.67_windows.exe'
+      ],
+      [
         '12.2.0',
         'https://developer.download.nvidia.com/compute/cuda/12.2.0/local_installers/cuda_12.2.0_536.25_windows.exe'
+      ],
+      [
+        '12.1.1',
+        'https://developer.download.nvidia.com/compute/cuda/12.1.1/local_installers/cuda_12.1.1_531.14_windows.exe'
       ],
       [
         '12.1.0',
