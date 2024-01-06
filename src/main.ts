@@ -26,6 +26,8 @@ async function run(): Promise<void> {
     core.debug(`Desired GitHub cache usage: ${useGitHubCache}`)
     const useLocalCache: boolean = core.getBooleanInput('use-local-cache')
     core.debug(`Desired local cache usage: ${useLocalCache}`)
+    const logFileSuffix: string = core.getInput('log-file-suffix')
+    core.debug(`Desired log file suffix: ${logFileSuffix}`)
 
     // Parse subPackages array
     const subPackagesArray: string[] = await parsePackages(
@@ -94,7 +96,9 @@ async function run(): Promise<void> {
         executablePath,
         version,
         subPackagesArray,
-        linuxLocalArgsArray
+        linuxLocalArgsArray,
+        methodString,
+        logFileSuffix
       )
     }
 
