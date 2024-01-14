@@ -57,16 +57,21 @@ export async function download(
     const url: URL = await getDownloadURL(method, version)
     // Get intsaller filename extension depending on OS
     const fileExtension: string = getFileExtension(osType)
+    const downloadDirectory = `cuda_download`
     const destFileName = `${toolId}_${version}.${fileExtension}`
-    // Download executable
-    const downloadPath: string = await tc.downloadTool(
-      url.toString(),
-      destFileName
-    )
+    const destFilePath = `${downloadDirectory}/${destFileName}`
+    // Check if file already exists
+    if (!(await fileExists(destFilePath))) {
+      core.debug(`File at ${destFilePath} does not exist, downloading`)
+      // Download executable
+      await tc.downloadTool(url.toString(), destFilePath)
+    } else {
+      core.debug(`File at ${destFilePath} already exists, skipping download`)
+    }
     if (useLocalCache) {
       // Cache download to local machine cache
       const localCacheDirectory = await tc.cacheFile(
-        downloadPath,
+        destFilePath,
         destFileName,
         `${toolName}-${osType}`,
         `${version}`
@@ -78,9 +83,9 @@ export async function download(
     }
     if (useGitHubCache) {
       // Move file to GitHub cache directory
-      core.debug(`Copying ${destFileName} to ${cacheDirectory}`)
+      core.debug(`Copying ${destFilePath} to ${cacheDirectory}`)
       await io.mkdirP(cacheDirectory)
-      await io.mv(destFileName, cacheDirectory)
+      await io.mv(destFilePath, cacheDirectory)
       // Save cache directory to GitHub cache
       const cacheId = await cache.saveCache([cacheDirectory], cacheKey)
       if (cacheId !== -1) {
@@ -91,6 +96,7 @@ export async function download(
       core.debug(`Tool was moved to cache directory ${cacheDirectory}`)
       executableDirectory = cacheDirectory
     }
+    executableDirectory = downloadDirectory
   }
   core.debug(`Executable path ${executableDirectory}`)
   // String with full executable path
@@ -125,6 +131,17 @@ function getFileExtension(osType: OSType): string {
       return 'exe'
     case OSType.linux:
       return 'run'
+  }
+}
+
+async function fileExists(filePath: string): Promise<boolean> {
+  try {
+    const stats = await fs.promises.stat(filePath)
+    core.debug(`Got the following stats for ${filePath}: ${stats}`)
+    return !!stats
+  } catch (e) {
+    core.debug(`Got error while checking if ${filePath} exists: ${e}`)
+    return false
   }
 }
 
