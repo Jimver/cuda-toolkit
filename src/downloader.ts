@@ -112,7 +112,7 @@ export async function download(
   if (filesInCache.length > 1) {
     throw new Error(`Got multiple file in tool cache: ${filesInCache.length}`)
   } else if (filesInCache.length === 0) {
-    throw new Error(`Got no files in tool cahce`)
+    throw new Error(`Got no files in tool cache`)
   } else {
     fullExecutablePath = filesInCache[0]
   }
