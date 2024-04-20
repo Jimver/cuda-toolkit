@@ -96,7 +96,9 @@ export async function download(
       core.debug(`Tool was moved to cache directory ${cacheDirectory}`)
       executableDirectory = cacheDirectory
     }
-    executableDirectory = downloadDirectory
+    if (executableDirectory === undefined) {
+      executableDirectory = downloadDirectory
+    }
   }
   core.debug(`Executable path ${executableDirectory}`)
   // String with full executable path
