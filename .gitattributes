@@ -2,3 +2,5 @@
 * text eol=lf
 # Ignore diffs in dist as it is generated code
 dist/** -diff linguist-generated=true
+
+*.jpg binary
