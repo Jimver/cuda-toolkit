@@ -65,6 +65,7 @@ jobs:
         uses: ./
         with:
           method: ${{matrix.method}}
+          log-file-suffix: '${{matrix.method}}-${{matrix.os}}'
 
       - name: Run the action on this runner with nvcc and libcublas subpackages (Linux)
         if: runner.os == 'Linux' && matrix.method == 'network'
@@ -73,7 +74,7 @@ jobs:
           method: ${{matrix.method}}
           sub-packages: '["nvcc"]'
           non-cuda-sub-packages: '["libcublas"]'
-          log-file-suffix: 'nvcc-libcublas'
+          log-file-suffix: 'nvcc-libcublas-${{matrix.method}}-${{matrix.os}}'
 
       - name: Run the action on this runner with nvcc subpackage only (Windows)
         if: runner.os == 'Windows'
@@ -81,7 +82,7 @@ jobs:
         with:
           method: ${{matrix.method}}
           sub-packages: '["nvcc"]'
-          log-file-suffix: 'nvcc'
+          log-file-suffix: 'nvcc-${{matrix.method}}-${{matrix.os}}'
 
       - name: Test if nvcc is available
         run: nvcc -V
