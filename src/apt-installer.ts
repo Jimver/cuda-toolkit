@@ -23,7 +23,7 @@ export async function aptSetup(version: SemVer): Promise<void> {
   const arch = `x86_64`
   const pinUrl = `https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${ubuntuVersionNoDot}/${arch}/${pinFilename}`
   const repoUrl = `http://developer.download.nvidia.com/compute/cuda/repos/ubuntu${ubuntuVersionNoDot}/${arch}/`
-  const keyRingVersion = `1.0-1`
+  const keyRingVersion = `1.1-1`
   const keyRingUrl = `https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${ubuntuVersionNoDot}/${arch}/cuda-keyring_${keyRingVersion}_all.deb`
   const keyRingFilename = `cuda_keyring.deb`
 
