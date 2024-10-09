@@ -56,6 +56,7 @@ Add suffix to the log file name which gets uploaded as an artifact. This **has**
 The log file already contains the OS type (Linux/Windows) and install method (local/network) but it is not aware of other matrix variables, so add those here.
 
 For example if you use multiple linux distros:
+
 ```
 jobs:
   CI:
@@ -87,7 +88,7 @@ The path where cuda is installed (same as `CUDA_PATH` in `GITHUB_ENV`).
 
 ```yaml
 steps:
-- uses: Jimver/cuda-toolkit@v0.2.17
+- uses: Jimver/cuda-toolkit@v0.2.18
   id: cuda-toolkit
   with:
     cuda: '12.5.0'
