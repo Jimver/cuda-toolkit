@@ -4,6 +4,7 @@ import * as glob from '@actions/glob'
 import {OSType, getOs, getRelease} from './platform'
 import {SemVer} from 'semver'
 import {exec} from '@actions/exec'
+import * as os from 'os'
 
 export async function install(
   executablePath: string,
@@ -78,12 +79,13 @@ export async function install(
       const patterns = ['/var/log/cuda-installer.log']
       const globber = await glob.create(patterns.join('\n'))
       const files = await globber.glob()
+      const username = os.userInfo().username
       if (files.length > 0) {
         // If any of the files is not readable without root permissions, the upload will fail, so we need to
         // fix the permissions first
         for (const file of files) {
           await exec(`sudo chmod 644 ${file}`)
-          await exec(`sudo chown \`whoami\` ${file}`)
+          await exec(`sudo chown ${username} ${file}`)
         }
         const rootDirectory = '/var/log'
         const uploadResult = await artifact.uploadArtifact(
