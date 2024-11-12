@@ -79,6 +79,12 @@ export async function install(
       const globber = await glob.create(patterns.join('\n'))
       const files = await globber.glob()
       if (files.length > 0) {
+        // If any of the files is not readable without root permissions, the upload will fail, so we need to
+        // fix the permissions first
+        for (const file of files) {
+          await exec(`sudo chmod 644 ${file}`)
+          await exec(`sudo chown $(whoami) ${file}`)
+        }
         const rootDirectory = '/var/log'
         const uploadResult = await artifact.uploadArtifact(
           artifactName,
