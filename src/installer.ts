@@ -83,7 +83,7 @@ export async function install(
         // fix the permissions first
         for (const file of files) {
           await exec(`sudo chmod 644 ${file}`)
-          await exec(`sudo chown $(whoami) ${file}`)
+          await exec(`sudo chown \`whoami\` ${file}`)
         }
         const rootDirectory = '/var/log'
         const uploadResult = await artifact.uploadArtifact(
