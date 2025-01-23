@@ -25,6 +25,10 @@ export class WindowsLinks extends AbstractLinks {
 
   private cudaVersionToNetworkUrl: Map<string, string> = new Map([
     [
+      '12.8.0',
+      'https://developer.download.nvidia.com/compute/cuda/12.8.0/network_installers/cuda_12.8.0_windows_network.exe'
+    ],
+    [
       '12.6.3',
       'https://developer.download.nvidia.com/compute/cuda/12.6.3/network_installers/cuda_12.6.3_windows_network.exe'
     ],
