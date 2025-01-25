@@ -1,5 +1,5 @@
 import {OSType, getOs} from '../platform'
-import {CPUArch, getArch} from '../arch'
+import {getArch} from '../arch'
 import {AbstractLinks} from './links'
 import {LinuxLinks} from './linux-links'
 import {LinuxArmLinks} from './linux-arm-links'
