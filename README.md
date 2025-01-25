@@ -88,7 +88,7 @@ The path where cuda is installed (same as `CUDA_PATH` in `GITHUB_ENV`).
 
 ```yaml
 steps:
-- uses: Jimver/cuda-toolkit@v0.2.20
+- uses: Jimver/cuda-toolkit@v0.2.21
   id: cuda-toolkit
   with:
     cuda: '12.5.0'
