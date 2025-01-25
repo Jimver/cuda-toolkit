@@ -19,9 +19,9 @@ import {SemVer} from 'semver'
 /**
  * Singleton class for windows links.
  */
-export class WindowsLinks extends AbstractLinks {
+export class WindowsArmLinks extends AbstractLinks {
   // Singleton instance
-  private static _instance: WindowsLinks
+  private static _instance: WindowsArmLinks
 
   private cudaVersionToNetworkUrl: Map<string, string> = new Map([
     [
@@ -42,7 +42,7 @@ export class WindowsLinks extends AbstractLinks {
     ])
   }
 
-  static get Instance(): WindowsLinks {
+  static get Instance(): WindowsArmLinks {
     return this._instance || (this._instance = new this())
   }
 

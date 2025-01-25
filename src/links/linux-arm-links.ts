@@ -3,9 +3,9 @@ import {AbstractLinks} from './links'
 /**
  * Singleton class for windows links.
  */
-export class LinuxLinks extends AbstractLinks {
+export class LinuxArmLinks extends AbstractLinks {
   // Singleton instance
-  private static _instance: LinuxLinks
+  private static _instance: LinuxArmLinks
 
   // Private constructor to prevent instantiation
   private constructor() {
@@ -20,7 +20,7 @@ export class LinuxLinks extends AbstractLinks {
     ])
   }
 
-  static get Instance(): LinuxLinks {
+  static get Instance(): LinuxArmLinks {
     return this._instance || (this._instance = new this())
   }
 }
