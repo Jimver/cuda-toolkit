@@ -21,7 +21,7 @@ export async function aptSetup(version: SemVer): Promise<void> {
   const ubuntuVersionNoDot = ubuntuVersion.replace('.', '')
 
   // Dynamically determine architecture
-  let arch: string = 'x86_64' // Default to x86_64
+  let arch = 'x86_64' // Default to x86_64
   if (process.arch === 'arm64') {
     arch = 'sbsa' // This might not work in the future, they are merging arm64 and aarch64
   } else if (process.arch === 'x64') {
