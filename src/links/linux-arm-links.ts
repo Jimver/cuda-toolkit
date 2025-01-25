@@ -1,0 +1,26 @@
+import {AbstractLinks} from './links'
+
+/**
+ * Singleton class for windows links.
+ */
+export class LinuxLinks extends AbstractLinks {
+  // Singleton instance
+  private static _instance: LinuxLinks
+
+  // Private constructor to prevent instantiation
+  private constructor() {
+    super()
+    // Map of cuda SemVer version to download URL
+    // This is still experimental (Windows CUDA ARM is coming soon)
+    this.cudaVersionToURL = new Map([
+      [
+        '12.8.0',
+        'https://developer.download.nvidia.com/compute/cuda/12.8.0/local_installers/cuda_12.8.0_570.86.10_linux_sbsa.run'
+      ]
+    ])
+  }
+
+  static get Instance(): LinuxLinks {
+    return this._instance || (this._instance = new this())
+  }
+}

@@ -19,8 +19,20 @@ export async function aptSetup(version: SemVer): Promise<void> {
   core.debug(`Setup packages for ${version}`)
   const ubuntuVersion: string = await execReturnOutput('lsb_release', ['-sr'])
   const ubuntuVersionNoDot = ubuntuVersion.replace('.', '')
+
+  // Dynamically determine architecture
+  let arch: string = 'x86_64'; // Default to x86_64
+  if (process.arch === 'arm64') {
+    arch = 'aarch64'; // This might not work in the future, they are merging arm64 and aarch64
+  } else if (process.arch === 'x64') {
+    arch = 'x86_64'; // Explicitly set for x64 in case default changes
+  } else {
+      core.warning(`Unknown architecture: ${process.arch}. Defaulting to x86_64 for apt repository setup. This might not work.`);
+  }
+  core.debug(`Detected architecture: ${process.arch}, using arch string: ${arch}`);
+
+
   const pinFilename = `cuda-ubuntu${ubuntuVersionNoDot}.pin`
-  const arch = `x86_64`
   const pinUrl = `https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${ubuntuVersionNoDot}/${arch}/${pinFilename}`
   const repoUrl = `http://developer.download.nvidia.com/compute/cuda/repos/ubuntu${ubuntuVersionNoDot}/${arch}/`
   const keyRingVersion = `1.1-1`
