@@ -14,9 +14,9 @@ export async function getLinks(): Promise<AbstractLinks> {
   switch (osType) {
     case OSType.windows:
       if (osArch === 'arm64') {
-        return WindowsLinks.Instance
-      } else {
         return WindowsArmLinks.Instance
+      } else {
+        return WindowsLinks.Instance
       }
     case OSType.linux:
       if (osArch === 'arm64') {
