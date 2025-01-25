@@ -11,7 +11,6 @@ export class LinuxArmLinks extends AbstractLinks {
   private constructor() {
     super()
     // Map of cuda SemVer version to download URL
-    // This is still experimental (Windows CUDA ARM is coming soon)
     this.cudaVersionToURL = new Map([
       [
         '12.8.0',

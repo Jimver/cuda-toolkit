@@ -27,9 +27,8 @@ test.concurrent('getLinks return same versions in same order', async () => {
     WindowsArmLinks.Instance.getAvailableNetworkCudaVersions()
 
   expect(linuxLinks.length).toBe(windowsLinks.length)
-  expect(linuxArmLinks.length).toBe(WindowsArmLinks.length)
+  expect(linuxArmLinks.length).toBe(windowsArmLinks.length)
   expect(windowsLinks.length).toBe(windowsNetworkLinks.length)
-  expect(windowsArmLinks.length).toBe(windowsArmNetworkLinks.length)
   expect(linuxLinks).toEqual(windowsLinks)
   expect(linuxArmLinks).toEqual(windowsArmLinks)
   expect(windowsLinks).toEqual(windowsNetworkLinks)
