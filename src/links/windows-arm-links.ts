@@ -27,7 +27,7 @@ export class WindowsArmLinks extends AbstractLinks {
     [
       '12.8.0',
       'https://developer.download.nvidia.com/compute/cuda/12.8.0/network_installers/cuda_12.8.0_windows_network.exe'
-    ],
+    ]
   ])
 
   // Private constructor to prevent instantiation
