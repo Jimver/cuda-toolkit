@@ -12,7 +12,9 @@ test.concurrent('Return either x64 or arm64 architecture', async () => {
       expected = CPUArch.arm64
       break
     default:
-      await expect(getArch()).rejects.toThrow(`Unsupported architecture: ${archString}`)
+      await expect(getArch()).rejects.toThrow(
+        `Unsupported architecture: ${archString}`
+      )
       return
   }
 

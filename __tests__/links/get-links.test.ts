@@ -19,7 +19,8 @@ test.concurrent('getLinks return same versions in same order', async () => {
   const linuxLinks = LinuxLinks.Instance.getAvailableLocalCudaVersions()
   const linuxArmLinks = LinuxArmLinks.Instance.getAvailableArmCudaVersions()
   const windowsLinks = WindowsLinks.Instance.getAvailableLocalCudaVersions()
-  const windowsArmLinks = WindowsArmLinks.Instance.getAvailableLocalCudaVersions()
+  const windowsArmLinks =
+    WindowsArmLinks.Instance.getAvailableLocalCudaVersions()
   const windowsNetworkLinks =
     WindowsLinks.Instance.getAvailableNetworkCudaVersions()
   const windowsArmNetworkLinks =
