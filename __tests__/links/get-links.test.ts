@@ -17,7 +17,7 @@ test.concurrent('getLinks gives a valid ILinks class', async () => {
 
 test.concurrent('getLinks return same versions in same order', async () => {
   const linuxLinks = LinuxLinks.Instance.getAvailableLocalCudaVersions()
-  const linuxArmLinks = LinuxArmLinks.Instance.getAvailableArmCudaVersions()
+  const linuxArmLinks = LinuxArmLinks.Instance.getAvailableLocalCudaVersions()
   const windowsLinks = WindowsLinks.Instance.getAvailableLocalCudaVersions()
   const windowsArmLinks =
     WindowsArmLinks.Instance.getAvailableLocalCudaVersions()
