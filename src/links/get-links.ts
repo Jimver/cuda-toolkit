@@ -1,4 +1,5 @@
 import {OSType, getOs} from '../platform'
+import {getArch} from '../arch'
 import {AbstractLinks} from './links'
 import {LinuxLinks} from './linux-links'
 import {LinuxArmLinks} from './linux-arm-links'
@@ -8,7 +9,7 @@ import {WindowsArmLinks} from './windows-arm-links'
 // Platform independent getter for ILinks interface
 export async function getLinks(): Promise<AbstractLinks> {
   const osType = await getOs()
-  const osArch = process.arch;
+  const osArch = await getArch();
 
   switch (osType) {
     case OSType.windows:
