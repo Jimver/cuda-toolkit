@@ -206,7 +206,7 @@ export class LinuxLinks extends AbstractLinks {
   }
 
   async getLocalURLFromCudaVersion(version: SemVer): Promise<URL> {
-    const link = super.getLocalURLFromCudaVersion(version)
+    const link = await super.getLocalURLFromCudaVersion(version)
     const arch: CPUArch = await getArch()
     if (arch === CPUArch.arm64) {
       return new URL(link.toString().replace('_linux.run', '_linux_sbsa.run'))

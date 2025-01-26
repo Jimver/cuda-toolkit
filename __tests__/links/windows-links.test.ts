@@ -16,7 +16,8 @@ test.concurrent(
   'Windows Cuda version to URL map contains valid URLs',
   async () => {
     for (const version of WindowsLinks.Instance.getAvailableLocalCudaVersions()) {
-      const url: URL = WindowsLinks.Instance.getLocalURLFromCudaVersion(version)
+      const url: URL =
+        await WindowsLinks.Instance.getLocalURLFromCudaVersion(version)
       expect(url).toBeInstanceOf(URL)
     }
   }

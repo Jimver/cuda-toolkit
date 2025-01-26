@@ -16,7 +16,8 @@ test.concurrent(
   'Linux Cuda version to URL map contains valid URLs',
   async () => {
     for (const version of LinuxLinks.Instance.getAvailableLocalCudaVersions()) {
-      const url: URL = LinuxLinks.Instance.getLocalURLFromCudaVersion(version)
+      const url: URL =
+        await LinuxLinks.Instance.getLocalURLFromCudaVersion(version)
       expect(url).toBeInstanceOf(URL)
     }
   }
