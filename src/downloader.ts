@@ -151,7 +151,7 @@ async function getDownloadURL(method: string, version: SemVer): Promise<URL> {
   const links: AbstractLinks = await getLinks()
   switch (method) {
     case 'local':
-      return links.getLocalURLFromCudaVersion(version)
+      return await links.getLocalURLFromCudaVersion(version)
     case 'network':
       if (!(links instanceof WindowsLinks)) {
         core.debug(`Tried to get windows links but got linux links instance`)

@@ -4,6 +4,7 @@ import {Method} from './method'
 import {SemVer} from 'semver'
 import {exec} from '@actions/exec'
 import {execReturnOutput} from './run-command'
+import {CPUArch, getArch} from './arch'
 
 export async function useApt(method: Method): Promise<boolean> {
   return method === 'network' && (await getOs()) === OSType.linux
@@ -22,14 +23,12 @@ export async function aptSetup(version: SemVer): Promise<void> {
 
   // Dynamically determine architecture
   let arch = 'x86_64' // Default to x86_64
-  if (process.arch === 'arm64') {
-    arch = 'sbsa' // This might not work in the future, they are merging arm64 and sbsa
-  } else if (process.arch === 'x64') {
-    arch = 'x86_64' // Explicitly set for x64 in case default changes
-  } else {
-    core.warning(
-      `Unknown architecture: ${process.arch}. Defaulting to x86_64 for apt repository setup. This might not work.`
-    )
+  try {
+    if ((await getArch()) === CPUArch.arm64) {
+      arch = 'sbsa' // This might not work in the future, they are merging arm64 and sbsa
+    }
+  } catch (error) {
+    core.warning(`Could not detect architecture, using default ${arch}`)
   }
   core.debug(
     `Detected architecture: ${process.arch}, using arch string: ${arch}`

@@ -1,4 +1,6 @@
+import {SemVer} from 'semver'
 import {AbstractLinks} from './links'
+import {CPUArch, getArch} from '../arch'
 
 /**
  * Singleton class for windows links.
@@ -201,6 +203,16 @@ export class LinuxLinks extends AbstractLinks {
         'https://developer.nvidia.com/compute/cuda/8.0/Prod2/local_installers/cuda_8.0.61_375.26_linux-run'
       ]
     ])
+  }
+
+  async getLocalURLFromCudaVersion(version: SemVer): Promise<URL> {
+    const link = super.getLocalURLFromCudaVersion(version)
+    const arch: CPUArch = await getArch()
+    if (arch === CPUArch.arm64) {
+      return new URL(link.toString().replace('_linux.run', '_linux_sbsa.run'))
+    } else {
+      return link
+    }
   }
 
   static get Instance(): LinuxLinks {
