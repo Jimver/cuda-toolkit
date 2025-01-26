@@ -23,7 +23,7 @@ export async function aptSetup(version: SemVer): Promise<void> {
   // Dynamically determine architecture
   let arch = 'x86_64' // Default to x86_64
   if (process.arch === 'arm64') {
-    arch = 'sbsa' // This might not work in the future, they are merging arm64 and aarch64
+    arch = 'sbsa' // This might not work in the future, they are merging arm64 and sbsa
   } else if (process.arch === 'x64') {
     arch = 'x86_64' // Explicitly set for x64 in case default changes
   } else {
