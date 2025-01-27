@@ -4,6 +4,7 @@ import {Method} from './method'
 import {SemVer} from 'semver'
 import {exec} from '@actions/exec'
 import {execReturnOutput} from './run-command'
+import {CPUArch, getArch} from './arch'
 
 export async function useApt(method: Method): Promise<boolean> {
   return method === 'network' && (await getOs()) === OSType.linux
@@ -19,8 +20,21 @@ export async function aptSetup(version: SemVer): Promise<void> {
   core.debug(`Setup packages for ${version}`)
   const ubuntuVersion: string = await execReturnOutput('lsb_release', ['-sr'])
   const ubuntuVersionNoDot = ubuntuVersion.replace('.', '')
+
+  // Dynamically determine architecture
+  let arch = 'x86_64' // Default to x86_64
+  try {
+    if ((await getArch()) === CPUArch.arm64) {
+      arch = 'sbsa' // This might not work in the future, they are merging arm64 and sbsa
+    }
+  } catch (error) {
+    core.warning(`Could not detect architecture, using default ${arch}`)
+  }
+  core.debug(
+    `Detected architecture: ${process.arch}, using arch string: ${arch}`
+  )
+
   const pinFilename = `cuda-ubuntu${ubuntuVersionNoDot}.pin`
-  const arch = `x86_64`
   const pinUrl = `https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${ubuntuVersionNoDot}/${arch}/${pinFilename}`
   const repoUrl = `http://developer.download.nvidia.com/compute/cuda/repos/ubuntu${ubuntuVersionNoDot}/${arch}/`
   const keyRingVersion = `1.1-1`

@@ -10,6 +10,7 @@ import {SemVer} from 'semver'
 import {WindowsLinks} from './links/windows-links'
 import fs from 'fs'
 import {getLinks} from './links/get-links'
+import {getArch} from './arch'
 
 // Download helper which returns the installer executable and caches it for next runs
 export async function download(
@@ -21,8 +22,9 @@ export async function download(
   // First try to find tool with desired version in tool cache (local to machine)
   const toolName = 'cuda_installer'
   const osType = await getOs()
+  const cpuArch = await getArch()
   const osRelease = await getRelease()
-  const toolId = `${toolName}-${osType}-${osRelease}`
+  const toolId = `${toolName}-${osType}-${osRelease}-${cpuArch}`
   // Path that contains the executable file
   let executableDirectory: string | undefined
   const cacheKey = `${toolId}-${version}`
@@ -73,7 +75,7 @@ export async function download(
       const localCacheDirectory = await tc.cacheFile(
         destFilePath,
         destFileName,
-        `${toolName}-${osType}`,
+        `${toolName}-${osType}-${cpuArch}`,
         `${version}`
       )
       core.debug(
@@ -151,7 +153,7 @@ async function getDownloadURL(method: string, version: SemVer): Promise<URL> {
   const links: AbstractLinks = await getLinks()
   switch (method) {
     case 'local':
-      return links.getLocalURLFromCudaVersion(version)
+      return await links.getLocalURLFromCudaVersion(version)
     case 'network':
       if (!(links instanceof WindowsLinks)) {
         core.debug(`Tried to get windows links but got linux links instance`)
