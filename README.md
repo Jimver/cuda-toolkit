@@ -1,6 +1,6 @@
 # cuda-toolkit
 
-This action installs the [NVIDIA® CUDA® Toolkit](https://developer.nvidia.com/cuda-toolkit) on the system. It adds the cuda install location as `CUDA_PATH` to `GITHUB_ENV` so you can access the CUDA install location in subsequent steps. `CUDA_PATH/bin` is added to `GITHUB_PATH` so you can use commands such as `nvcc` directly in subsequent steps. Right now both `windows-2019` and `ubuntu-20.04` runners have been tested to work successfully.
+This action installs the [NVIDIA® CUDA® Toolkit](https://developer.nvidia.com/cuda-toolkit) on the system. It adds the cuda install location as `CUDA_PATH` to `GITHUB_ENV` so you can access the CUDA install location in subsequent steps. `CUDA_PATH/bin` is added to `GITHUB_PATH` so you can use commands such as `nvcc` directly in subsequent steps. Right now both `windows-2019` and `ubuntu-20.04` runners have been tested to work successfully. Also now it is supported ARM runners to install SBA drivers. Nvidia will merge SBSA and ARM together in the Cuda 13.
 
 ## Inputs
 
@@ -62,7 +62,7 @@ jobs:
   CI:
     strategy:
       matrix:
-        os: [ubuntu-22.04, ubuntu-20.04]
+        os: [ubuntu-22.04, ubuntu-22.04-arm, ubuntu-20.04, ubuntu-20.04-arm]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: Jimver/cuda-toolkit@master
@@ -91,7 +91,7 @@ steps:
 - uses: Jimver/cuda-toolkit@v0.2.21
   id: cuda-toolkit
   with:
-    cuda: '12.5.0'
+    cuda: '12.8.0'
 
 - run: echo "Installed cuda version is: ${{steps.cuda-toolkit.outputs.cuda}}"
 
