@@ -61,3 +61,45 @@ test.concurrent(
     ).toBeGreaterThanOrEqual(1)
   }
 )
+
+test.concurrent(
+  'Local Windows links should start with https://developer.(.download.)nvidia.com and end with .exe',
+  async () => {
+    const versions = WindowsLinks.Instance.getAvailableLocalCudaVersions()
+    const filteredVersions = versions.filter(version => {
+      return (
+        version.version !== '10.0.130' &&
+        version.version !== '9.2.148' &&
+        version.version !== '8.0.61'
+      )
+    })
+    for (const version of filteredVersions) {
+      const url: URL =
+        await WindowsLinks.Instance.getLocalURLFromCudaVersion(version)
+      expect(url.toString()).toMatch(
+        /^https:\/\/developer\.(download\.)?nvidia\.com.+\.exe$/
+      )
+    }
+  }
+)
+
+test.concurrent(
+  'Network Windows links should start with https://developer.(download.)nvidia.com and end with network.exe',
+  async () => {
+    const versions = WindowsLinks.Instance.getAvailableNetworkCudaVersions()
+    const filteredVersions = versions.filter(version => {
+      return (
+        version.version !== '10.0.130' &&
+        version.version !== '9.2.148' &&
+        version.version !== '8.0.61'
+      )
+    })
+    for (const version of filteredVersions) {
+      const url: URL =
+        WindowsLinks.Instance.getNetworkURLFromCudaVersion(version)
+      expect(url.toString()).toMatch(
+        /^https:\/\/developer\.(download\.)?nvidia\.com.+network\.exe$/
+      )
+    }
+  }
+)
