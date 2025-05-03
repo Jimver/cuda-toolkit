@@ -8,7 +8,7 @@ This action installs the [NVIDIA® CUDA® Toolkit](https://developer.nvidia.com/
 
 **Optional** The CUDA version to install. View `src/link/windows-links.ts` and `src/link/linux-links.ts` for available versions.
 
-Default: `'12.8.1'`.
+Default: `'12.9.0'`.
 
 ### `sub-packages`
 
@@ -88,7 +88,7 @@ The path where cuda is installed (same as `CUDA_PATH` in `GITHUB_ENV`).
 
 ```yaml
 steps:
-- uses: Jimver/cuda-toolkit@v0.2.23
+- uses: Jimver/cuda-toolkit@v0.2.24
   id: cuda-toolkit
   with:
     cuda: '12.5.0'
