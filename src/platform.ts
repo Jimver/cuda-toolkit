@@ -1,4 +1,4 @@
-import {debug} from '@actions/core'
+import { debug } from '@actions/core'
 import os from 'os'
 
 export enum OSType {

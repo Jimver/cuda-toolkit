@@ -1,6 +1,6 @@
-import {AbstractLinks} from '../../src/links/links'
-import {LinuxLinks} from '../../src/links/linux-links'
-import {SemVer} from 'semver'
+import { AbstractLinks } from '../../src/links/links'
+import { LinuxLinks } from '../../src/links/linux-links'
+import { SemVer } from 'semver'
 
 test.concurrent('Linux Cuda versions in descending order', async () => {
   const wLinks: AbstractLinks = LinuxLinks.Instance
@@ -33,7 +33,7 @@ test.concurrent(
   'Local Linux links should start with https://developer.(download.)nvidia.com and end with .run',
   async () => {
     const versions = LinuxLinks.Instance.getAvailableLocalCudaVersions()
-    const filteredVersions = versions.filter(version => {
+    const filteredVersions = versions.filter((version) => {
       return (
         version.version !== '10.0.130' &&
         version.version !== '9.2.148' &&

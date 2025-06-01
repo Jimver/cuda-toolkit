@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import {exec} from '@actions/exec'
+import { exec } from '@actions/exec'
 
 export async function execReturnOutput(
   command: string,

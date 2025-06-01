@@ -8,6 +8,7 @@ export async function parsePackages(
   try {
     subPackagesArray = JSON.parse(subPackages)
   } catch (error) {
+    core.debug(`Json parsing error: ${error}`)
     const errString = `Error parsing input '${parameterName}' to a JSON string array: ${subPackages}`
     core.debug(errString)
     throw new Error(errString)

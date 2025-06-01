@@ -1,5 +1,5 @@
-import {AbstractLinks} from './links'
-import {SemVer} from 'semver'
+import { AbstractLinks } from './links.js'
+import { SemVer } from 'semver'
 
 // # Dictionary of known cuda versions and thier download URLS, which do not follow a consistent pattern :(
 // $CUDA_KNOWN_URLS = @{
@@ -432,7 +432,7 @@ export class WindowsLinks extends AbstractLinks {
 
   getAvailableNetworkCudaVersions(): SemVer[] {
     return Array.from(this.cudaVersionToNetworkUrl.keys()).map(
-      s => new SemVer(s)
+      (s) => new SemVer(s)
     )
   }
 
