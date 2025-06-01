@@ -12,6 +12,9 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "CI"
@@ -44,23 +47,21 @@ jobs:
           node-version-file: .node-version
           cache: npm
 
-      - name: Install npm dependencies
+      - name: Install Dependencies
+        id: npm-ci
         run: npm ci
 
-      - name: Build
-        run: npm run build
-
-      - name: Format check
-        run: npm run format-check
+      - name: Check Format
+        id: npm-format-check
+        run: npm run format:check
 
       - name: Lint
+        id: npm-lint
         run: npm run lint
 
-      - name: Package
-        run: npm run package
-
       - name: Test
-        run: npm run test
+        id: npm-ci-test
+        run: npm run ci-test
 
       - name: Run the action on this runner with method ${{matrix.method}}
         uses: ./
@@ -81,11 +82,18 @@ jobs:
 
       - name: Run the action on this runner with nvcc subpackage only (Windows)
         if: runner.os == 'Windows'
+        id: test-action
         uses: ./
         with:
           method: ${{matrix.method}}
           sub-packages: '["nvcc"]'
           log-file-suffix: 'nvcc-${{matrix.method}}-${{matrix.os}}'
+
+      - name: Print output cuda version
+        run: echo "${{ steps.test-action.outputs.cuda }}"
+
+      - name: Print output CUDA_PATH
+        run: echo "${{ steps.test-action.outputs.CUDA_PATH }}"
 
       - name: Test if nvcc is available
         run: nvcc -V
