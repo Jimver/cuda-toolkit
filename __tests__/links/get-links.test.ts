@@ -9,7 +9,7 @@ test.concurrent('getLinks gives a valid ILinks class', async () => {
       links instanceof LinuxLinks || links instanceof WindowsLinks
     ).toBeTruthy()
   } catch (error) {
-    throw new Error(error)
+    throw new Error(`Error getting links: ${error}`)
     // Other OS
   }
 })

@@ -11,7 +11,7 @@ test.concurrent.each<Method>(['local', 'network'])(
       expect(version).toBeInstanceOf(SemVer)
       expect(version.compare(new SemVer(versionString))).toBe(0)
     } catch (error) {
-      throw new Error(error)
+      throw new Error(`Error parsing version: ${error}`)
       // Other OS
     }
   }
@@ -37,7 +37,7 @@ test.concurrent.each<Method>(['local', 'network'])(
         `Version not available: ${versionString}`
       )
     } catch (error) {
-      throw new Error(error)
+      throw new Error(`Error checking version availability: ${error}`)
       // Other OS
     }
   }
