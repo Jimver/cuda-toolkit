@@ -11,8 +11,13 @@ allowed:
   - mit
   - cc0-1.0
   - other
+  - 0bsd
+  - blueoak-1.0.0
 
 ignored:
   npm:
     # Used by Rollup.js when building in GitHub Actions
     - '@rollup/rollup-linux-x64-gnu'
+    - '@bufbuild/protobuf'
+    - 'buffers'
+    - 'chainsaw'
