@@ -1,6 +1,6 @@
-import {LinuxLinks} from '../../src/links/linux-links'
-import {WindowsLinks} from '../../src/links/windows-links'
-import {getLinks} from '../../src/links/get-links'
+import { LinuxLinks } from '../../src/links/linux-links'
+import { WindowsLinks } from '../../src/links/windows-links'
+import { getLinks } from '../../src/links/get-links'
 
 test.concurrent('getLinks gives a valid ILinks class', async () => {
   try {
@@ -9,6 +9,7 @@ test.concurrent('getLinks gives a valid ILinks class', async () => {
       links instanceof LinuxLinks || links instanceof WindowsLinks
     ).toBeTruthy()
   } catch (error) {
+    throw new Error(error)
     // Other OS
   }
 })

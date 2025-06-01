@@ -1,6 +1,6 @@
-import {SemVer} from 'semver'
-import {AbstractLinks} from './links'
-import {CPUArch, getArch} from '../arch'
+import { SemVer } from 'semver'
+import { AbstractLinks } from './links.js'
+import { CPUArch, getArch } from '../arch.js'
 
 /**
  * Singleton class for windows links.

@@ -1,10 +1,10 @@
 import * as core from '@actions/core'
-import {OSType, getOs} from './platform'
-import {Method} from './method'
-import {SemVer} from 'semver'
-import {exec} from '@actions/exec'
-import {execReturnOutput} from './run-command'
-import {CPUArch, getArch} from './arch'
+import { OSType, getOs } from './platform.js'
+import { Method } from './method.js'
+import { SemVer } from 'semver'
+import { exec } from '@actions/exec'
+import { execReturnOutput } from './run-command.js'
+import { CPUArch, getArch } from './arch.js'
 
 export async function useApt(method: Method): Promise<boolean> {
   return method === 'network' && (await getOs()) === OSType.linux
@@ -28,6 +28,7 @@ export async function aptSetup(version: SemVer): Promise<void> {
       arch = 'sbsa' // This might not work in the future, they are merging arm64 and sbsa
     }
   } catch (error) {
+    core.debug(`Error detecting architecture: ${error}`)
     core.warning(`Could not detect architecture, using default ${arch}`)
   }
   core.debug(
@@ -77,12 +78,12 @@ export async function aptInstall(
   } else {
     // Only install specified packages
     const prefixedSubPackages = subPackages.map(
-      subPackage => `cuda-${subPackage}`
+      (subPackage) => `cuda-${subPackage}`
     )
     const versionedSubPackages = prefixedSubPackages
       .concat(nonCudaSubPackages)
       .map(
-        nonCudaSubPackage =>
+        (nonCudaSubPackage) =>
           `${nonCudaSubPackage}-${version.major}-${version.minor}`
       )
     core.debug(`Only install subpackages: ${versionedSubPackages}`)

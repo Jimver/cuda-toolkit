@@ -1,9 +1,9 @@
-import artifact from '@actions/artifact'
+import { DefaultArtifactClient } from '@actions/artifact'
 import * as core from '@actions/core'
 import * as glob from '@actions/glob'
-import {OSType, getOs, getRelease} from './platform'
-import {SemVer} from 'semver'
-import {exec} from '@actions/exec'
+import { OSType, getOs, getRelease } from './platform.js'
+import { SemVer } from 'semver'
+import { exec } from '@actions/exec'
 import * as os from 'os'
 
 export async function install(
@@ -51,7 +51,7 @@ export async function install(
       installArgs = ['-s']
       // Add subpackages to command args (if any)
       installArgs = installArgs.concat(
-        subPackages.map(subPackage => {
+        subPackages.map((subPackage) => {
           // Display driver sub package name is not dependent on version
           if (subPackage === 'Display.Driver') {
             return subPackage
@@ -88,6 +88,7 @@ export async function install(
           await exec(`sudo chown ${username} ${file}`)
         }
         const rootDirectory = '/var/log'
+        const artifact = new DefaultArtifactClient()
         const uploadResult = await artifact.uploadArtifact(
           artifactName,
           files,

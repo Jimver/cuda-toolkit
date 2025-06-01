@@ -1,4 +1,4 @@
-import {CPUArch, getArch} from '../src/arch'
+import { CPUArch, getArch } from '../src/arch'
 import os from 'os'
 
 test.concurrent('Return either x64 or arm64 architecture', async () => {
@@ -12,6 +12,7 @@ test.concurrent('Return either x64 or arm64 architecture', async () => {
       expected = CPUArch.arm64
       break
     default:
+      // eslint-disable-next-line jest/no-conditional-expect
       await expect(getArch()).rejects.toThrow(
         `Unsupported architecture: ${archString}`
       )

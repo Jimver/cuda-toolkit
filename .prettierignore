@@ -1,4 +1,5 @@
+.DS_Store
+.licenses/
 dist/
-lib/
 node_modules/
-tsconfig.json
+coverage/
