@@ -62,7 +62,7 @@
     "@rollup/plugin-json": "^6.1.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^20.17.48",
-    "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "@typescript-eslint/eslint-plugin": "^8.33.1",
     "@typescript-eslint/parser": "^8.32.1",
     "cross-env": "^7.0.3",
     "eslint": "^9.27.0",
