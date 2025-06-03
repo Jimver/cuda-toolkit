@@ -85,8 +85,8 @@ export async function download(
     }
     if (useGitHubCache) {
       // Move file to GitHub cache directory
-      core.debug(`Moving ${destFilePath} to ${cacheDirectory}`)
       const cachePath = `${cacheDirectory}/${destFilePath}`
+      core.debug(`Moving ${destFilePath} to ${cachePath}`)
       await io.mkdirP(cacheDirectory)
       await io.mv(destFilePath, cachePath)
       // List files in cache directory
