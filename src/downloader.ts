@@ -89,6 +89,13 @@ export async function download(
       core.debug(`Moving ${destFilePath} to ${cachePath}`)
       await io.mkdirP(cacheDirectory)
       await io.mv(destFilePath, cachePath)
+      // Create test file in cacheDirectory
+      const testFilePath = `${cacheDirectory}/test.txt`
+      core.debug(`Creating test file at ${testFilePath}`)
+      await fs.promises.writeFile(
+        testFilePath,
+        `This is a test file to verify that the cache directory is working correctly.`
+      )
       // List files in cache directory
       const filesInCacheDirectory = await (
         await glob.create(`${cacheDirectory}/**`)
