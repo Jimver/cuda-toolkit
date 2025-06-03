@@ -96,10 +96,8 @@ export async function download(
         testFilePath,
         `This is a test file to verify that the cache directory is working correctly.`
       )
-      // List files in cache directory
-      const filesInCacheDirectory = await (
-        await glob.create(`${cacheDirectory}/**`)
-      ).glob()
+      // List files in cache directory using fs.promises
+      const filesInCacheDirectory = await fs.promises.readdir(cacheDirectory)
       core.debug(
         `Files in cache directory: ${cacheDirectory}: ${filesInCacheDirectory}`
       )
