@@ -88,6 +88,15 @@ export async function download(
       core.debug(`Copying ${destFilePath} to ${cacheDirectory}`)
       await io.mkdirP(cacheDirectory)
       await io.mv(destFilePath, cacheDirectory)
+      if (core.isDebug()) {
+        // List files in cache directory
+        const filesInCacheDirectory = await (
+          await glob.create(`${cacheDirectory}/**`)
+        ).glob()
+        core.debug(
+          `Files in cache directory: ${cacheDirectory}: ${filesInCacheDirectory}`
+        )
+      }
       // Save cache directory to GitHub cache
       const cacheId = await cache.saveCache([cacheDirectory], cacheKey)
       if (cacheId !== -1) {
