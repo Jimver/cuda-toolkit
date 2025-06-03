@@ -96,10 +96,22 @@ export async function download(
         testFilePath,
         `This is a test file to verify that the cache directory is working correctly.`
       )
+      // Get absolute path to the cache directory
+      const absoluteCacheDirectory = await fs.promises.realpath(cacheDirectory)
+      core.debug(`Absolute path to cache directory: ${absoluteCacheDirectory}`)
+      // Get absolute path to the test file
+      const absoluteTestFilePath = await fs.promises.realpath(testFilePath)
+      core.debug(`Absolute path to test file: ${absoluteTestFilePath}`)
       // List files in cache directory using fs.promises
       const filesInCacheDirectory = await fs.promises.readdir(cacheDirectory)
       core.debug(
         `Files in cache directory: ${cacheDirectory}: ${filesInCacheDirectory}`
+      )
+      // List files in cache directory using glob
+      const globber = await glob.create(`${cacheDirectory}/*`)
+      const filesInCacheDirectoryGlob = await globber.glob()
+      core.debug(
+        `Files in cache directory (glob): ${cacheDirectory}: ${filesInCacheDirectoryGlob}`
       )
       // Save cache directory to GitHub cache
       const cacheId = await cache.saveCache([cacheDirectory], cacheKey)
