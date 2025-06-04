@@ -85,9 +85,50 @@ export async function download(
     }
     if (useGitHubCache) {
       // Move file to GitHub cache directory
-      core.debug(`Copying ${destFilePath} to ${cacheDirectory}`)
+      const cachePath = `${cacheDirectory}/${destFileName}`
+      core.debug(`Moving ${destFilePath} to ${cachePath}`)
       await io.mkdirP(cacheDirectory)
-      await io.mv(destFilePath, cacheDirectory)
+      await io.mv(destFilePath, cachePath)
+      // Create test file in cacheDirectory
+      const testFilePath = `${cacheDirectory}/test.txt`
+      core.debug(`Creating test file at ${testFilePath}`)
+      await fs.promises.writeFile(
+        testFilePath,
+        `This is a test file to verify that the cache directory is working correctly.`
+      )
+      //create test file in current directory
+      const testFileCurrentPath = `test.txt`
+      core.debug(`Creating test file at ${testFileCurrentPath}`)
+      await fs.promises.writeFile(
+        testFileCurrentPath,
+        `This is a test file to verify that the current directory is working correctly.`
+      )
+      // Get absolute path to the cache directory
+      const absoluteCacheDirectory = await fs.promises.realpath(cacheDirectory)
+      core.debug(`Absolute path to cache directory: ${absoluteCacheDirectory}`)
+      // Get absolute path to the test file
+      const absoluteTestFilePath = await fs.promises.realpath(testFilePath)
+      core.debug(`Absolute path to test file: ${absoluteTestFilePath}`)
+      // List files in cache directory using fs.promises
+      const filesInCacheDirectory = await fs.promises.readdir(cacheDirectory)
+      core.debug(
+        `Files in cache directory: ${cacheDirectory}: ${filesInCacheDirectory}`
+      )
+      // List files in cache directory using glob
+      const globber = await glob.create(`${cacheDirectory}/*`)
+      const filesInCacheDirectoryGlob = await globber.glob()
+      core.debug(
+        `Files in cache directory (glob): ${cacheDirectory}: ${filesInCacheDirectoryGlob}`
+      )
+      // List files in current directory using fs.promises
+      const filesInCurrentDirectory = await fs.promises.readdir('.')
+      core.debug(`Files in current directory: ${filesInCurrentDirectory}`)
+      // List files in current directory using glob
+      const globberCurrent = await glob.create(`./*`)
+      const filesInCurrentDirectoryGlob = await globberCurrent.glob()
+      core.debug(
+        `Files in current directory (glob): ${filesInCurrentDirectoryGlob}`
+      )
       // Save cache directory to GitHub cache
       const cacheId = await cache.saveCache([cacheDirectory], cacheKey)
       if (cacheId !== -1) {
