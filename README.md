@@ -15,7 +15,7 @@ been tested to work successfully.
 **Optional** The CUDA version to install. View `src/link/windows-links.ts` and
 `src/link/linux-links.ts` for available versions.
 
-Default: `'12.9.0'`.
+Default: `'12.9.1'`.
 
 ### `sub-packages`
 
