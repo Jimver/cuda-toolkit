@@ -5,7 +5,7 @@ inputs:
   cuda:
     description: 'Cuda version'
     required: false
-    default: '12.9.1'
+    default: '13.0.0'
   sub-packages:
     description:
       'Only installs specified subpackages, must be in the form of a JSON array.
