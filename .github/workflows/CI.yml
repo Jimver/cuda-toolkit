@@ -63,6 +63,10 @@ jobs:
         id: npm-ci-test
         run: npm run ci-test
 
+      - name: Bundle
+        id: npm-bundle
+        run: npm run bundle
+
       - name: Run the action on this runner with method ${{matrix.method}}
         uses: ./
         with:
