@@ -1,6 +1,6 @@
 import { DefaultArtifactClient } from '@actions/artifact'
 import * as core from '@actions/core'
-import * as glob from '@actions/glob'
+import { filterReadable } from './fs-utils.js'
 import { OSType, getOs, getRelease } from './platform.js'
 import { SemVer } from 'semver'
 import { exec } from '@actions/exec'
@@ -76,9 +76,8 @@ export async function install(
     const osRelease = await getRelease()
     if (osType === OSType.linux) {
       const artifactName = `cuda-install-${osType}-${osRelease}-${method}-${logFileSuffix}`
-      const patterns = ['/var/log/cuda-installer.log']
-      const globber = await glob.create(patterns.join('\n'))
-      const files = await globber.glob()
+      const candidates = ['/var/log/cuda-installer.log']
+      const files = await filterReadable(candidates)
       const username = os.userInfo().username
       if (files.length > 0) {
         // If any of the files is not readable without root permissions, the upload will fail, so we need to
