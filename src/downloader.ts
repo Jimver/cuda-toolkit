@@ -1,6 +1,5 @@
 import * as cache from '@actions/cache'
 import * as core from '@actions/core'
-import * as glob from '@actions/glob'
 import * as tc from '@actions/tool-cache'
 import * as io from '@actions/io'
 import { OSType, getOs, getRelease } from './platform.js'
@@ -11,6 +10,7 @@ import { WindowsLinks } from './links/windows-links.js'
 import fs from 'fs'
 import { getLinks } from './links/get-links.js'
 import { getArch } from './arch.js'
+import { getFilesRecursive } from './fs-utils.js'
 
 // Download helper which returns the installer executable and caches it for next runs
 export async function download(
@@ -88,6 +88,15 @@ export async function download(
       core.debug(`Copying ${destFilePath} to ${cacheDirectory}`)
       await io.mkdirP(cacheDirectory)
       await io.mv(destFilePath, cacheDirectory)
+      // Log full path and files in cache directory
+      const filesInCacheDir = await getFilesRecursive(cacheDirectory)
+      core.debug(`Files in GitHub cache directory ${cacheDirectory}:`)
+      for (const f of filesInCacheDir) {
+        core.debug(f)
+      }
+      // Log absolute path
+      const absoluteCacheDir = await fs.promises.realpath(cacheDirectory)
+      core.debug(`Absolute path of cache directory: ${absoluteCacheDir}`)
       // Save cache directory to GitHub cache
       const cacheId = await cache.saveCache([cacheDirectory], cacheKey)
       if (cacheId !== -1) {
@@ -105,10 +114,8 @@ export async function download(
   core.debug(`Executable path ${executableDirectory}`)
   // String with full executable path
   let fullExecutablePath: string
-  // Get list of files in tool cache
-  const filesInCache = await (
-    await glob.create(`${executableDirectory}/**.*`)
-  ).glob()
+  // Get list of files in tool cache using readdir recursive helper
+  const filesInCache = await getFilesRecursive(executableDirectory)
   core.debug(`Files in tool cache:`)
   for (const f of filesInCache) {
     core.debug(f)
