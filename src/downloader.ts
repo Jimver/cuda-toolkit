@@ -83,7 +83,7 @@ export async function download(
       )
       executableDirectory = localCacheDirectory
     }
-    if (useGitHubCache) {
+    if (useGitHubCache && osType !== OSType.windows) {
       // Move file to GitHub cache directory
       core.debug(`Copying ${destFilePath} to ${cacheDirectory}`)
       await io.mkdirP(cacheDirectory)
