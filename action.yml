@@ -49,7 +49,7 @@ inputs:
     description:
       'Use local cache to cache downloaded installer on the local runner'
     required: false
-    default: 'true'
+    default: 'false'
   log-file-suffix:
     description: 'Suffix of log file name in artifact'
     required: false
