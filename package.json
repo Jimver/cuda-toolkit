@@ -1,7 +1,7 @@
 {
   "name": "cuda-toolkit",
   "description": "GitHub Action to install the NVIDIA CUDA Toolkit",
-  "version": "0.2.29",
+  "version": "0.2.30",
   "author": "Jim Verheijde",
   "type": "module",
   "private": true,
