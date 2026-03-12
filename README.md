@@ -15,7 +15,7 @@ been tested to work successfully.
 **Optional** The CUDA version to install. View `src/link/windows-links.ts` and
 `src/link/linux-links.ts` for available versions.
 
-Default: `'13.1.1'`.
+Default: `'13.2.0'`.
 
 ### `sub-packages`
 
@@ -106,10 +106,10 @@ The path where cuda is installed (same as `CUDA_PATH` in `GITHUB_ENV`).
 
 ```yaml
 steps:
-- uses: Jimver/cuda-toolkit@v0.2.31
+- uses: Jimver/cuda-toolkit@v0.2.32
   id: cuda-toolkit
   with:
-    cuda: '13.1.1'
+    cuda: '13.2.0'
 
 - run: echo "Installed cuda version is: ${{steps.cuda-toolkit.outputs.cuda}}"
 
