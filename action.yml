@@ -60,7 +60,7 @@ outputs:
   cuda:
     description: 'Version of CUDA installed'
 runs:
-  using: 'node20'
+  using: 'node24'
   main: dist/index.js
 branding:
   icon: box
