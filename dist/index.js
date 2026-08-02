@@ -80252,8 +80252,28 @@ class WindowsLinks extends AbstractLinks {
     static _instance;
     cudaVersionToNetworkUrl = new Map([
         [
+            '13.3.1',
+            'https://developer.download.nvidia.com/compute/cuda/13.3.1/network_installers/cuda_13.3.1_windows_network.exe'
+        ],
+        [
+            '13.3.0',
+            'https://developer.download.nvidia.com/compute/cuda/13.3.0/network_installers/cuda_13.3.0_windows_network.exe'
+        ],
+        [
+            '13.2.2',
+            'https://developer.download.nvidia.com/compute/cuda/13.2.2/network_installers/cuda_13.2.2_windows_network.exe'
+        ],
+        [
+            '13.2.1',
+            'https://developer.download.nvidia.com/compute/cuda/13.2.1/network_installers/cuda_13.2.1_windows_network.exe'
+        ],
+        [
             '13.2.0',
             'https://developer.download.nvidia.com/compute/cuda/13.2.0/network_installers/cuda_13.2.0_windows_network.exe'
+        ],
+        [
+            '13.1.2',
+            'https://developer.download.nvidia.com/compute/cuda/13.1.2/network_installers/cuda_13.1.2_windows_network.exe'
         ],
         [
             '13.1.1',
@@ -80262,6 +80282,10 @@ class WindowsLinks extends AbstractLinks {
         [
             '13.1.0',
             'https://developer.download.nvidia.com/compute/cuda/13.1.0/network_installers/cuda_13.1.0_windows_network.exe'
+        ],
+        [
+            '13.0.3',
+            'https://developer.download.nvidia.com/compute/cuda/13.0.3/network_installers/cuda_13.0.3_windows_network.exe'
         ],
         [
             '13.0.2',
@@ -80276,12 +80300,20 @@ class WindowsLinks extends AbstractLinks {
             'https://developer.download.nvidia.com/compute/cuda/13.0.0/network_installers/cuda_13.0.0_windows_network.exe'
         ],
         [
+            '12.9.2',
+            'https://developer.download.nvidia.com/compute/cuda/12.9.2/network_installers/cuda_12.9.2_windows_x86_64_network.exe'
+        ],
+        [
             '12.9.1',
             'https://developer.download.nvidia.com/compute/cuda/12.9.1/network_installers/cuda_12.9.1_windows_network.exe'
         ],
         [
             '12.9.0',
             'https://developer.download.nvidia.com/compute/cuda/12.9.0/network_installers/cuda_12.9.0_windows_network.exe'
+        ],
+        [
+            '12.8.2',
+            'https://developer.download.nvidia.com/compute/cuda/12.8.2/network_installers/cuda_12.8.2_windows_network.exe'
         ],
         [
             '12.8.1',
@@ -80482,8 +80514,28 @@ class WindowsLinks extends AbstractLinks {
         // Map of cuda SemVer version to download URL
         this.cudaVersionToURL = new Map([
             [
+                '13.3.1',
+                'https://developer.download.nvidia.com/compute/cuda/13.3.1/local_installers/cuda_13.3.1_windows.exe'
+            ],
+            [
+                '13.3.0',
+                'https://developer.download.nvidia.com/compute/cuda/13.3.0/local_installers/cuda_13.3.0_windows.exe'
+            ],
+            [
+                '13.2.2',
+                'https://developer.download.nvidia.com/compute/cuda/13.2.2/local_installers/cuda_13.2.2_windows.exe'
+            ],
+            [
+                '13.2.1',
+                'https://developer.download.nvidia.com/compute/cuda/13.2.1/local_installers/cuda_13.2.1_windows.exe'
+            ],
+            [
                 '13.2.0',
                 'https://developer.download.nvidia.com/compute/cuda/13.2.0/local_installers/cuda_13.2.0_windows.exe'
+            ],
+            [
+                '13.1.2',
+                'https://developer.download.nvidia.com/compute/cuda/13.1.2/local_installers/cuda_13.1.2_windows.exe'
             ],
             [
                 '13.1.1',
@@ -80492,6 +80544,10 @@ class WindowsLinks extends AbstractLinks {
             [
                 '13.1.0',
                 'https://developer.download.nvidia.com/compute/cuda/13.1.0/local_installers/cuda_13.1.0_windows.exe'
+            ],
+            [
+                '13.0.3',
+                'https://developer.download.nvidia.com/compute/cuda/13.0.3/local_installers/cuda_13.0.3_windows.exe'
             ],
             [
                 '13.0.2',
@@ -80506,12 +80562,20 @@ class WindowsLinks extends AbstractLinks {
                 'https://developer.download.nvidia.com/compute/cuda/13.0.0/local_installers/cuda_13.0.0_windows.exe'
             ],
             [
+                '12.9.2',
+                'https://developer.download.nvidia.com/compute/cuda/12.9.2/local_installers/cuda_12.9.2_576.57_windows.exe'
+            ],
+            [
                 '12.9.1',
                 'https://developer.download.nvidia.com/compute/cuda/12.9.1/local_installers/cuda_12.9.1_576.57_windows.exe'
             ],
             [
                 '12.9.0',
                 'https://developer.download.nvidia.com/compute/cuda/12.9.0/local_installers/cuda_12.9.0_576.02_windows.exe'
+            ],
+            [
+                '12.8.2',
+                'https://developer.download.nvidia.com/compute/cuda/12.8.2/local_installers/cuda_12.8.2_572.61_windows.exe'
             ],
             [
                 '12.8.1',
@@ -80734,8 +80798,28 @@ class LinuxLinks extends AbstractLinks {
         // Map of cuda SemVer version to download URL
         this.cudaVersionToURL = new Map([
             [
+                '13.3.1',
+                'https://developer.download.nvidia.com/compute/cuda/13.3.1/local_installers/cuda_13.3.1_610.43.02_linux.run'
+            ],
+            [
+                '13.3.0',
+                'https://developer.download.nvidia.com/compute/cuda/13.3.0/local_installers/cuda_13.3.0_610.43.02_linux.run'
+            ],
+            [
+                '13.2.2',
+                'https://developer.download.nvidia.com/compute/cuda/13.2.2/local_installers/cuda_13.2.2_595.71.05_linux.run'
+            ],
+            [
+                '13.2.1',
+                'https://developer.download.nvidia.com/compute/cuda/13.2.1/local_installers/cuda_13.2.1_595.58.03_linux.run'
+            ],
+            [
                 '13.2.0',
                 'https://developer.download.nvidia.com/compute/cuda/13.2.0/local_installers/cuda_13.2.0_595.45.04_linux.run'
+            ],
+            [
+                '13.1.2',
+                'https://developer.download.nvidia.com/compute/cuda/13.1.2/local_installers/cuda_13.1.2_590.48.01_linux.run'
             ],
             [
                 '13.1.1',
@@ -80744,6 +80828,10 @@ class LinuxLinks extends AbstractLinks {
             [
                 '13.1.0',
                 'https://developer.download.nvidia.com/compute/cuda/13.1.0/local_installers/cuda_13.1.0_590.44.01_linux.run'
+            ],
+            [
+                '13.0.3',
+                'https://developer.download.nvidia.com/compute/cuda/13.0.3/local_installers/cuda_13.0.3_580.126.20_linux.run'
             ],
             [
                 '13.0.2',
@@ -80758,12 +80846,20 @@ class LinuxLinks extends AbstractLinks {
                 'https://developer.download.nvidia.com/compute/cuda/13.0.0/local_installers/cuda_13.0.0_580.65.06_linux.run'
             ],
             [
+                '12.9.2',
+                'https://developer.download.nvidia.com/compute/cuda/12.9.2/local_installers/cuda_12.9.2_575.57.08_linux.run'
+            ],
+            [
                 '12.9.1',
                 'https://developer.download.nvidia.com/compute/cuda/12.9.1/local_installers/cuda_12.9.1_575.57.08_linux.run'
             ],
             [
                 '12.9.0',
                 'https://developer.download.nvidia.com/compute/cuda/12.9.0/local_installers/cuda_12.9.0_575.51.03_linux.run'
+            ],
+            [
+                '12.8.2',
+                'https://developer.download.nvidia.com/compute/cuda/12.8.2/local_installers/cuda_12.8.2_570.211.01_linux.run'
             ],
             [
                 '12.8.1',
