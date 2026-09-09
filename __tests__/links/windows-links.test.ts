@@ -47,7 +47,7 @@ test.concurrent(
   async () => {
     for (const version of WindowsLinks.Instance.getAvailableNetworkCudaVersions()) {
       const url: URL =
-        WindowsLinks.Instance.getNetworkURLFromCudaVersion(version)
+        await WindowsLinks.Instance.getNetworkURLFromCudaVersion(version)
       expect(url).toBeInstanceOf(URL)
     }
   }
@@ -96,7 +96,7 @@ test.concurrent(
     })
     for (const version of filteredVersions) {
       const url: URL =
-        WindowsLinks.Instance.getNetworkURLFromCudaVersion(version)
+        await WindowsLinks.Instance.getNetworkURLFromCudaVersion(version)
       expect(url.toString()).toMatch(
         /^https:\/\/developer\.(download\.)?nvidia\.com.+network\.exe$/
       )
