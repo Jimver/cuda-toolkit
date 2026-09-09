@@ -33,6 +33,13 @@ jobs:
             ubuntu-22.04-arm
           ]
         method: [local, network]
+        include:
+          - os: windows-11-arm
+            method: local
+            cuda: '13.4.1'
+          - os: windows-11-arm
+            method: network
+            cuda: '13.4.1'
     runs-on: ${{ matrix.os }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -66,6 +73,7 @@ jobs:
       - name: Run the action on this runner with method ${{matrix.method}}
         uses: ./
         with:
+          cuda: ${{ matrix.cuda || '13.2.0' }}
           method: ${{matrix.method}}
           log-file-suffix: '${{matrix.method}}-${{matrix.os}}'
 
@@ -85,6 +93,7 @@ jobs:
         id: test-action
         uses: ./
         with:
+          cuda: ${{ matrix.cuda || '13.2.0' }}
           method: ${{matrix.method}}
           sub-packages: '["nvcc"]'
           log-file-suffix: 'nvcc-${{matrix.method}}-${{matrix.os}}'
