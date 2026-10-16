@@ -107,7 +107,7 @@ async function run(): Promise<void> {
     const cudaPath: string = await updatePath(version)
 
     // Set output variables
-    core.setOutput('cuda', cuda)
+    core.setOutput('cuda', version.version)
     core.setOutput('CUDA_PATH', cudaPath)
   } catch (error) {
     if (error instanceof Error) {
