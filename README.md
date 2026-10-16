@@ -12,8 +12,12 @@ been tested to work successfully.
 
 ### `cuda`
 
-**Optional** The CUDA version to install. View `src/link/windows-links.ts` and
-`src/link/linux-links.ts` for available versions.
+**Optional** The CUDA version to install. A full version like `'13.2.0'`
+installs exactly that version; a major.minor pin like `'13.2'` resolves to the
+newest available patch of that series, and a major-only pin like `'13'` resolves
+to the newest available release of that major series. View
+`src/link/windows-links.ts` and `src/link/linux-links.ts` for available
+versions.
 
 Default: `'13.2.0'`.
 
@@ -96,7 +100,8 @@ Default: `'log.txt'`
 
 ### `cuda`
 
-The cuda version installed (same as `cuda` from input).
+The cuda version installed (the input with a version pin resolved to the
+installed release).
 
 ### `CUDA_PATH`
 

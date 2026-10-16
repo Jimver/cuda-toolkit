@@ -81267,9 +81267,26 @@ async function getDownloadURL(method, version) {
     }
 }
 
+// Convert a version string to SemVer plus its pin level. Anything that is
+// neither full semver nor a bare major(.minor) number is rejected.
+function parseVersion(versionString) {
+    try {
+        return { version: new semverExports.SemVer(versionString), pin: 'full' };
+    }
+    catch {
+        const match = versionString.trim().match(/^v?(\d+)(?:\.(\d+))?/);
+        if (match === null) {
+            throw new TypeError(`Invalid Version: ${versionString}`);
+        }
+        return {
+            version: new semverExports.SemVer(`${match[1]}.${match[2] ?? '0'}.0`),
+            pin: match[2] === undefined ? 'major' : 'major.minor'
+        };
+    }
+}
 // Helper for converting string to SemVer and verifying it exists in the links
 async function getVersion(versionString, method) {
-    const version = new semverExports.SemVer(versionString);
+    const { version, pin } = parseVersion(versionString);
     const links = await getLinks();
     let versions;
     switch (method) {
@@ -81288,14 +81305,24 @@ async function getVersion(versionString, method) {
             }
     }
     coreExports.debug(`Available versions: ${versions}`);
-    if (versions.find((v) => v.compare(version) === 0) !== undefined) {
+    if (pin !== 'full') {
+        // A pin floats to the newest listed release it covers, matching how apt
+        // resolves cuda-nvcc-<major>-<minor> on network installs.
+        const newest = versions
+            .filter((v) => v.major === version.major &&
+            (pin === 'major' || v.minor === version.minor))
+            .reduce((newest, v) => (newest === undefined || v.compare(newest) > 0 ? v : newest), undefined);
+        if (newest !== undefined) {
+            coreExports.debug(`Version pin ${version} resolves to: ${newest}`);
+            return newest;
+        }
+    }
+    else if (versions.find((v) => v.compare(version) === 0) !== undefined) {
         coreExports.debug(`Version available: ${version}`);
         return version;
     }
-    else {
-        coreExports.debug(`Version not available error!`);
-        throw new Error(`Version not available: ${version}`);
-    }
+    coreExports.debug(`Version not available error!`);
+    throw new Error(`Version not available: ${version}`);
 }
 
 var artifact$1 = {};
@@ -212446,7 +212473,7 @@ async function run() {
         // Add CUDA environment variables to GitHub environment variables
         const cudaPath = await updatePath(version);
         // Set output variables
-        coreExports.setOutput('cuda', cuda);
+        coreExports.setOutput('cuda', version.version);
         coreExports.setOutput('CUDA_PATH', cudaPath);
     }
     catch (error) {

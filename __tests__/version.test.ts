@@ -42,3 +42,48 @@ test.concurrent.each<Method>(['local', 'network'])(
     }
   }
 )
+
+test.concurrent.each<Method>(['local', 'network'])(
+  'Resolve major.minor version pin to the newest listed patch for method %s',
+  async (method) => {
+    const version = await getVersion('11.2', method)
+    expect(version).toBeInstanceOf(SemVer)
+    expect(version.compare(new SemVer('11.2.2'))).toBe(0)
+  }
+)
+
+test.concurrent.each<Method>(['local', 'network'])(
+  'Resolve major-only version pin to the newest listed release of the series for method %s',
+  async (method) => {
+    const version = await getVersion('11', method)
+    expect(version).toBeInstanceOf(SemVer)
+    expect(version.compare(new SemVer('11.8.0'))).toBe(0)
+  }
+)
+
+test.concurrent.each<Method>(['local', 'network'])(
+  'Expect error to be thrown on unavailable major.minor pin for method %s',
+  async (method) => {
+    await expect(getVersion('0.1', method)).rejects.toThrow(
+      'Version not available: 0.1.0'
+    )
+  }
+)
+
+test.concurrent.each<Method>(['local', 'network'])(
+  'Expect error to be thrown on unavailable major-only pin for method %s',
+  async (method) => {
+    await expect(getVersion('0', method)).rejects.toThrow(
+      'Version not available: 0.0.0'
+    )
+  }
+)
+
+test.concurrent.each<Method>(['local', 'network'])(
+  'Expect error to be thrown on full version outside the listed patches for method %s',
+  async (method) => {
+    await expect(getVersion('11.2.3', method)).rejects.toThrow(
+      'Version not available: 11.2.3'
+    )
+  }
+)
